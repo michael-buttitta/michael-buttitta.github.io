@@ -83,8 +83,9 @@ theme_mode: dark
 cdn:
 
 # the avatar on sidebar, support local or CORS resources
-# TODO: drop your headshot at assets/img/headshot.jpg
-avatar: /assets/img/headshot.jpg
+# TODO: drop your headshot at assets/img/headshot.jpg, then set:
+# avatar: /assets/img/headshot.jpg
+avatar:
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 social_preview_image: # string, local or CORS resources
