@@ -1,0 +1,24 @@
+<!-- Email capture (Kit / ConvertKit). Reference at the end of a post body with:
+       {% include post-footer-cta.html %}
+     Setup: sign up at kit.com, create an INLINE form, then replace
+     YOUR_KIT_SUBDOMAIN and YOUR_FORM_ID below with the values from its embed snippet. -->
+<div style="background: var(--card-bg, #f5f5f5);
+            border: 1px solid var(--card-border-color, #e3e5e8);
+            border-left: 4px solid var(--link-color, #0066cc);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2.5rem;">
+  <h3 style="margin-top: 0; color: var(--heading-color, inherit);">Never miss an analysis</h3>
+  <p style="color: var(--text-muted-color, #555); font-size: 0.9rem; margin-bottom: 1rem;">
+    Get teardowns of DeFi protocols, tokenomics, and risk delivered to your inbox.
+  </p>
+
+  <!-- TODO: replace YOUR_KIT_SUBDOMAIN and YOUR_FORM_ID with your Kit inline-form values. -->
+  <script async data-uid="YOUR_FORM_ID"
+          src="https://YOUR_KIT_SUBDOMAIN.kit.com/YOUR_FORM_ID/index.js"></script>
+
+  <!-- Fallback while the form ID is not yet configured (delete once Kit is live): -->
+  <noscript>
+    <a href="mailto:michaelbuttitta52@gmail.com?subject=Subscribe">Email me to subscribe</a>
+  </noscript>
+</div>
