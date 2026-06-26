@@ -1,8 +1,8 @@
 ---
-# the default layout is 'page'
+layout: page
 title: Consulting
 icon: fas fa-briefcase
-order: 4
+order: 2
 ---
 
 I work with **treasuries, DAOs, and fintech builders** to quantify protocol risk and
@@ -37,6 +37,8 @@ metrics in real time for protocols, treasuries, and trading desks.
   </a>
 </div>
 
-> Prefer a calendar link? <!-- TODO: paste your Calendly URL here -->
-> Add your Calendly link once you have one.
+<!-- TODO: Once you have a Calendly (or Cal.com) link, replace the mailto button above with:
+     <a class="btn btn-primary btn-lg" href="https://calendly.com/YOUR_SLUG/30min">Book a discovery call</a>
+     and delete this comment. -->
+> **TODO (owner):** Add your Calendly or Cal.com booking link above to replace the email button.
 {: .prompt-info }
