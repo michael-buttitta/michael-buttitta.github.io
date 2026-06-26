@@ -5,40 +5,35 @@ icon: fas fa-briefcase
 order: 2
 ---
 
-I work with **treasuries, DAOs, and fintech builders** to quantify protocol risk and
-optimize financial strategy. This is high-end risk analysis and financial engineering
-for sophisticated actors — not trading signals or beginner courses.
+> **OWNER — Fill in:** One or two sentences on who you work with and what you offer. Replace all the placeholder copy on this page with your real positioning. (If you decide not to offer services, you can hide this tab by adding `published: false` to the front matter above.)
+{: .prompt-warning }
 
 ## Services
 
-### 1. Tokenomics Modeling & Stress Testing
-Custom Monte Carlo stress-testing to model failure scenarios and optimize incentive
-alignment for protocol DAOs planning emissions or treasuries evaluating risk.
+### 1. [Service name]
+A sentence or two describing your first offering and who it's for.
 
-### 2. DeFi Treasury Risk Assessment
-Quantify liquidation-cascade risk, oracle dependency, and concentration exposure across
-multi-sig treasuries holding ETH, stablecoins, and governance tokens — with optional
-ongoing monitoring.
+### 2. [Service name]
+A sentence or two describing your second offering.
 
-### 3. On-Chain Analytics Dashboards
-Build custom Dune/Nansen dashboards to monitor TVL, liquidations, fee trends, and risk
-metrics in real time for protocols, treasuries, and trading desks.
+### 3. [Service name]
+A sentence or two describing your third offering.
 
 ## How engagements work
 
 1. **Discovery call (free, 30 min).** We scope the problem and check fit.
 2. **Proposal.** Fixed scope, timeline, and price.
-3. **Delivery.** Models, dashboards, or written risk assessments you can act on.
+3. **Delivery.** The work product you can act on.
 
 <div class="text-center mt-4 mb-4">
   <a class="btn btn-primary btn-lg"
-     href="mailto:michaelbuttitta52@gmail.com?subject=Consulting%20Inquiry&body=Service%20of%20interest%3A%0ACompany%2FDAO%3A%0AProject%20scope%3A%0ATimeline%3A%0A">
-    Schedule a discovery call
+     href="mailto:michaelbuttitta52@gmail.com?subject=Inquiry">
+    Get in touch
   </a>
 </div>
 
 <!-- TODO: Once you have a Calendly (or Cal.com) link, replace the mailto button above with:
-     <a class="btn btn-primary btn-lg" href="https://calendly.com/YOUR_SLUG/30min">Book a discovery call</a>
+     <a class="btn btn-primary btn-lg" href="https://calendly.com/YOUR_SLUG/30min">Book a call</a>
      and delete this comment. -->
 > **TODO (owner):** Add your Calendly or Cal.com booking link above to replace the email button.
 {: .prompt-info }

@@ -14,11 +14,10 @@ timezone: America/New_York
 
 title: Michael Buttitta # the main title
 
-tagline: Strategic analysis of crypto protocols & DeFi mechanisms # subtitle
+tagline: # OWNER: optional one-line subtitle shown under your name (left blank while you decide your direction)
 
 description: >- # used by seo meta and the atom feed
-  Rigorous, data-driven teardowns of DeFi protocols, tokenomics, and treasury
-  risk for strategic finance professionals and protocol builders.
+  The personal website of Michael Buttitta.
 
 # Fill in the protocol & hostname for your site.
 url: "https://michael-buttitta.github.io"

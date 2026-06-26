@@ -29,7 +29,7 @@ order: 1
 <!-- OWNER — Fill in: Your career arc in plain prose or bullets.
      Suggested content:
      - Where you came from (education, early career)
-     - Key roles / companies / domains (strategic finance, crypto, etc.)
+     - Key roles, companies, or domains — whatever's relevant to you
      - The thread that connects them
      Be specific: years, institutions, and outcomes land better than vague claims. -->
 
@@ -43,11 +43,11 @@ order: 1
 <!-- OWNER — Fill in: The specific work you do and how you do it.
      Suggested content:
      - Types of problems you solve
-     - Methods / tools you use (on-chain data, Python/SQL, Monte Carlo, etc.)
-     - Outputs you deliver (reports, models, dashboards, advisory)
-     This section should directly support the Consulting page. -->
+     - The methods, tools, or process you use
+     - Outputs you deliver (reports, products, designs, advisory — whatever you produce)
+     This section can directly support the Consulting page. -->
 
-> **OWNER — Fill in:** Describe your analytical focus areas, methods, and the kinds of problems you're best at solving.
+> **OWNER — Fill in:** Describe your focus areas, methods, and the kinds of problems you're best at solving.
 {: .prompt-warning }
 
 ---
@@ -55,8 +55,7 @@ order: 1
 ## Focus areas
 
 <!-- OWNER — Fill in: 3–5 specific topic areas you cover on this site.
-     These should match the categories you plan to post in.
-     Examples: protocol teardowns · tokenomics · treasury risk · market structure -->
+     These should match the categories you plan to post in. -->
 
 > **OWNER — Fill in:** List 3–5 focus areas with a one-line description each.
 {: .prompt-warning }
@@ -76,7 +75,8 @@ order: 1
 
 ## Work with me
 
-I consult with treasuries, DAOs, and fintech builders on protocol risk and financial strategy.
+> **OWNER — Fill in:** One line on how people can work with you.
+{: .prompt-warning }
 
 → See the [Consulting](/consulting/) page for services and how to engage.
 

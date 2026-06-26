@@ -3,11 +3,11 @@
 #   _posts/YYYY-MM-DD-your-slug.md  and set published: true (or remove the line).
 # This file has no date in its name AND published:false, so Jekyll never builds it.
 layout: post
-title: "[PROTOCOL/TOPIC]: [SPECIFIC INSIGHT]"
+title: "[TOPIC]: [SPECIFIC ANGLE OR INSIGHT]"
 date: 2026-01-01 10:00:00 -0500
-categories: [Analysis, Protocol Teardown]
-tags: [defi, tokenomics, risk]   # lowercase
-math: true                       # enable LaTeX (use $$ ... $$)
+categories: [Category]
+tags: [tag-one, tag-two]         # lowercase
+math: false                      # set true to enable LaTeX (use $$ ... $$)
 # mermaid: true                  # uncomment for diagrams
 # image: /assets/img/og-images/your-slug.png   # social/share preview
 published: false
@@ -16,82 +16,56 @@ published: false
 ## Executive Summary
 
 > 3–4 sentences. Assume busy readers stop here.
-> Main finding · why it matters · the risk flag or contrarian take.
+> The main point · why it matters · your takeaway.
 
 ---
 
-## Methodology & Data Sources
+## Background
 
-### Data collection
-- On-chain data via Dune Analytics — [query link]
-- Smart-contract audits / protocol docs — [link]
-- Historical price data via CoinGecko API
-- Treasury holdings via Etherscan / public tracker
-
-### Analysis period
-- Timeframe: `[e.g., Jan 2024 – Jan 2026]`
-- Sample size: `[e.g., 12,000+ transactions]`
-- Limitations: `[e.g., excludes L2 activity; mainnet Ethereum only]`
-
-### Method
-1. Quantitative stress-testing (Monte Carlo)
-2. Qualitative assessment (contract review)
-3. Comparative benchmarking (vs. Protocol Y and Z)
+Set up the context a reader needs before the main argument.
 
 ---
 
-## Analysis
+## [Main section #1]
 
-### Core finding #1
-2–3 paragraphs with embedded data/charts.
+2–3 paragraphs. Embed data, charts, or code where it helps.
 
-**Key metric:** `[pull-out number with units]` `[VERIFY: source]`
+**Key point:** `[the one thing to remember from this section]`
 
 ```python
-# Show the calculation behind a claim
-stress_ratio = (liquid_reserves / total_borrows) * (1 - oracle_volatility)
+# Optional — show a calculation or snippet behind a claim
+result = some_function(inputs)
 ```
 
-### Core finding #2
+## [Main section #2]
+
 …
 
-### Core finding #3
+## [Main section #3]
+
 …
 
 ---
 
-## Risk Assessment
+## Key takeaways
 
-| Risk | Impact | Likelihood | Mitigation |
-|------|--------|------------|------------|
-| [Risk 1] | High/Med/Low | High/Med/Low | [what helps] |
-| [Risk 2] | High/Med/Low | High/Med/Low | [what helps] |
-
-**Red-flag scenario:** describe a concrete failure mode.
-
----
-
-## Implications for Strategic Managers
-
-- If you manage `[treasury / portfolio / protocol risk]`, this means…
-- Stress-test scenario: …
-- Recommended action: …
+- …
+- …
+- …
 
 ---
 
 ## References
 
-[1] Protocol Team. *Technical Documentation.* <https://…>
-[2] Your Dune query. <https://dune.com/…>
-[3] On-chain snapshot. Ethereum mainnet, `[date]`.
+[1] Author / Source. *Title.* <https://…>
+[2] …
 
 ---
 
 ## Further reading
 
-- [Related analysis you wrote]
-- [Industry-standard resource]
-- [Competing viewpoint]
+- [Related piece you wrote]
+- [Useful external resource]
 
 {% include post-footer-cta.html %}
 
