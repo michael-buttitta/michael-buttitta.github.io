@@ -38,8 +38,8 @@ social:
     # The first element serves as the copyright owner's link
     - https://twitter.com/tarheel5252
     - https://github.com/michael-buttitta
-    # TODO: replace with your real LinkedIn URL
-    - https://www.linkedin.com/in/YOUR_LINKEDIN_SLUG
+    # TODO: replace with your real LinkedIn URL and uncomment:
+    # - https://www.linkedin.com/in/YOUR_LINKEDIN_SLUG
 
 # Site Verification Settings
 webmaster_verifications:
@@ -83,12 +83,15 @@ theme_mode: dark
 cdn:
 
 # the avatar on sidebar, support local or CORS resources
-# TODO: drop your headshot at assets/img/headshot.jpg, then set:
+# TODO: When you have a real headshot, drop it at assets/img/headshot.jpg and change this to:
 # avatar: /assets/img/headshot.jpg
-avatar:
+avatar: /assets/img/avatar.svg
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
-social_preview_image: # string, local or CORS resources
+# NOTE: The SVG at this path works as a local asset, but social scrapers (Twitter/X, LinkedIn,
+# Slack, iMessage) require a PNG. TODO: export og-default.svg as a 1200x630 PNG and place it at
+# assets/img/og-default.png, then update this path accordingly.
+social_preview_image: /assets/img/og-default.svg
 
 # boolean type, the global switch for TOC in posts.
 toc: true
