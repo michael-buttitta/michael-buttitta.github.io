@@ -1,0 +1,497 @@
+---
+---
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* =============================================================================
+   Michael Buttitta — Personal Brand
+   "Modern Fintech" skin for Chirpy 7.5
+   Accent: teal/cyan  (#2DD4BF bright / #14B8A6 deep)
+   Background: deep slate (#0F172A dark / #F8FAFC light)
+   Font: Inter (Google Fonts)
+   =============================================================================*/
+
+/* ---------- Google Fonts: Inter ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ---------- Font overrides ---------- */
+:root {
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+body {
+  font-family: var(--font-family-base) !important;
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading) !important;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+code, pre, kbd, samp {
+  font-family: var(--font-family-mono) !important;
+}
+
+/* ---------- Dark scheme overrides ---------- */
+[data-mode='dark'],
+html[data-mode='dark'] {
+  /* Background & frame */
+  --main-bg: #0F172A;
+  --mask-bg: rgb(30 41 59);
+  --main-border-color: rgb(30 41 59);
+
+  /* Text */
+  --text-color: #CBD5E1;
+  --text-muted-color: #64748B;
+  --text-muted-highlight-color: #94A3B8;
+  --heading-color: #F1F5F9;
+  --label-color: #94A3B8;
+
+  /* Links & accents */
+  --link-color: #2DD4BF;
+  --link-underline-color: rgba(45, 212, 191, 0.3);
+
+  /* Blockquotes */
+  --blockquote-border-color: #2DD4BF;
+  --blockquote-text-color: #94A3B8;
+
+  /* Buttons */
+  --button-bg: #1E293B;
+  --btn-border-color: #334155;
+  --btn-backtotop-color: #2DD4BF;
+  --btn-backtotop-border-color: #334155;
+
+  /* Cards */
+  --card-bg: #1E293B;
+  --card-header-bg: #162032;
+  --card-hover-bg: #243447;
+  --card-shadow: rgba(0, 0, 0, 0.5) 0 8px 24px 0, rgba(45, 212, 191, 0.08) 0 0 0 1px;
+
+  /* Sidebar */
+  --site-title-color: #F1F5F9;
+  --site-subtitle-color: #2DD4BF;
+  --sidebar-bg: #0B1120;
+  --sidebar-border-color: #1E293B;
+  --sidebar-muted-color: #64748B;
+  --sidebar-active-color: #2DD4BF;
+  --sidebar-hover-bg: #1E293B;
+  --sidebar-btn-bg: #1E293B;
+  --sidebar-btn-color: #64748B;
+  --avatar-border-color: rgba(45, 212, 191, 0.4);
+
+  /* Topbar */
+  --topbar-bg: rgba(11, 17, 32, 0.88);
+  --topbar-text-color: #CBD5E1;
+  --search-border-color: #334155;
+  --search-icon-color: #64748B;
+  --input-focus-border-color: #2DD4BF;
+
+  /* Home page */
+  --post-list-text-color: #CBD5E1;
+  --btn-patinator-text-color: #CBD5E1;
+  --btn-paginator-hover-color: #1E293B;
+
+  /* Posts */
+  --toc-highlight: #2DD4BF;
+  --toc-popup-border-color: #334155;
+  --tag-hover: rgba(45, 212, 191, 0.15);
+  --tb-odd-bg: #1E293B;
+  --tb-even-bg: #162032;
+  --tb-border-color: #334155;
+  --footnote-target-bg: rgba(45, 212, 191, 0.2);
+  --btn-share-color: #64748B;
+  --btn-share-hover-color: #2DD4BF;
+  --kbd-wrap-color: #334155;
+  --kbd-text-color: #CBD5E1;
+  --kbd-bg-color: #1E293B;
+  --prompt-text-color: rgba(203, 213, 225, 0.85);
+  --prompt-tip-bg: rgba(45, 212, 191, 0.12);
+  --prompt-tip-icon-color: #2DD4BF;
+  --prompt-info-bg: rgba(56, 189, 248, 0.12);
+  --prompt-info-icon-color: #38BDF8;
+  --prompt-warning-bg: rgba(251, 191, 36, 0.12);
+  --prompt-warning-icon-color: rgba(251, 191, 36, 0.9);
+  --prompt-danger-bg: rgba(248, 113, 113, 0.12);
+  --prompt-danger-icon-color: #F87171;
+
+  /* Tags */
+  --tag-border: #334155;
+  --tag-shadow: #0F172A;
+  --dash-color: #334155;
+  --search-tag-bg: #1E293B;
+
+  /* Categories */
+  --categories-border: rgba(45, 212, 191, 0.2);
+  --categories-hover-bg: #1E293B;
+  --categories-icon-hover-color: #2DD4BF;
+
+  /* Archive timeline */
+  --timeline-node-bg: #2DD4BF;
+  --timeline-color: #334155;
+  --timeline-year-dot-color: #0F172A;
+
+  /* Code blocks */
+  --language-border-color: #1E293B;
+  --highlight-bg-color: #0D1B2A;
+  --highlighter-rouge-color: #7DD3FC;
+  --highlight-lineno-color: #475569;
+  --inline-code-bg: rgba(45, 212, 191, 0.1);
+  --code-color: #CBD5E1;
+  --code-header-text-color: #64748B;
+  --code-header-muted-color: #1E293B;
+  --code-header-icon-color: #475569;
+  --clipboard-checked-color: #2DD4BF;
+  --filepath-text-color: #94A3B8;
+
+  /* Checkbox */
+  --checkbox-color: #475569;
+  --checkbox-checked-color: #2DD4BF;
+
+  /* Image bg */
+  --img-bg: radial-gradient(circle, #1E293B 0%, #0F172A 100%);
+}
+
+/* ---------- Light scheme overrides ---------- */
+html:not([data-mode]),
+html[data-mode='light'] {
+  /* Background & frame */
+  --main-bg: #F8FAFC;
+  --mask-bg: #CBD5E1;
+  --main-border-color: #E2E8F0;
+
+  /* Text */
+  --text-color: #1E293B;
+  --text-muted-color: #64748B;
+  --text-muted-highlight-color: inherit;
+  --heading-color: #0F172A;
+  --label-color: #475569;
+
+  /* Links & accents */
+  --link-color: #0D9488;
+  --link-underline-color: #99F6E4;
+
+  /* Blockquotes */
+  --blockquote-border-color: #14B8A6;
+  --blockquote-text-color: #64748B;
+
+  /* Buttons */
+  --button-bg: #FFFFFF;
+  --btn-border-color: #E2E8F0;
+  --btn-backtotop-color: #0D9488;
+  --btn-backtotop-border-color: #E2E8F0;
+
+  /* Cards */
+  --card-bg: #FFFFFF;
+  --card-header-bg: #F1F5F9;
+  --card-hover-bg: #F1F5F9;
+  --card-shadow: rgba(100, 116, 139, 0.08) 0 2px 8px 0, rgba(0, 0, 0, 0.05) 0 0 0 1px;
+
+  /* Sidebar */
+  --site-title-color: #1E293B;
+  --site-subtitle-color: #0D9488;
+  --sidebar-bg: #F1F5F9;
+  --sidebar-border-color: #E2E8F0;
+  --sidebar-muted-color: #64748B;
+  --sidebar-active-color: #0D9488;
+  --sidebar-hover-bg: rgba(20, 184, 166, 0.08);
+  --sidebar-btn-bg: #FFFFFF;
+  --sidebar-btn-color: #94A3B8;
+  --avatar-border-color: #FFFFFF;
+
+  /* Topbar */
+  --topbar-bg: rgba(248, 250, 252, 0.88);
+  --topbar-text-color: #475569;
+  --search-border-color: #E2E8F0;
+  --search-icon-color: #CBD5E1;
+  --input-focus-border-color: #14B8A6;
+
+  /* Home page */
+  --post-list-text-color: #475569;
+  --btn-patinator-text-color: #64748B;
+  --btn-paginator-hover-color: #F1F5F9;
+
+  /* Posts */
+  --toc-highlight: #0D9488;
+  --toc-popup-border-color: #E2E8F0;
+  --tag-hover: rgba(20, 184, 166, 0.1);
+  --tb-odd-bg: #F8FAFC;
+  --tb-even-bg: #FFFFFF;
+  --tb-border-color: #E2E8F0;
+  --footnote-target-bg: #CCFBF1;
+  --btn-share-color: #94A3B8;
+  --btn-share-hover-color: #0D9488;
+  --kbd-wrap-color: #CBD5E1;
+  --kbd-text-color: #1E293B;
+  --kbd-bg-color: #FFFFFF;
+  --prompt-text-color: rgba(30, 41, 59, 0.8);
+  --prompt-tip-bg: rgba(20, 184, 166, 0.1);
+  --prompt-tip-icon-color: #0D9488;
+  --prompt-info-bg: #E0F2FE;
+  --prompt-info-icon-color: #0284C7;
+  --prompt-warning-bg: #FEF9C3;
+  --prompt-warning-icon-color: #CA8A04;
+  --prompt-danger-bg: #FEE2E2;
+  --prompt-danger-icon-color: #DC2626;
+
+  /* Tags */
+  --tag-border: #E2E8F0;
+  --tag-shadow: #F1F5F9;
+  --dash-color: #CBD5E1;
+  --search-tag-bg: #F8FAFC;
+
+  /* Categories */
+  --categories-border: rgba(20, 184, 166, 0.25);
+  --categories-hover-bg: #F1F5F9;
+  --categories-icon-hover-color: #0D9488;
+
+  /* Archive */
+  --timeline-color: rgba(0, 0, 0, 0.07);
+  --timeline-node-bg: #14B8A6;
+  --timeline-year-dot-color: #FFFFFF;
+
+  /* Code blocks */
+  --language-border-color: #E2E8F0;
+  --highlight-bg-color: #F8FAFC;
+  --highlighter-rouge-color: #0E7490;
+  --highlight-lineno-color: #94A3B8;
+  --inline-code-bg: rgba(20, 184, 166, 0.08);
+  --code-color: #334155;
+  --code-header-text-color: #94A3B8;
+  --code-header-muted-color: #E2E8F0;
+  --code-header-icon-color: #CBD5E1;
+  --clipboard-checked-color: #0D9488;
+
+  /* Checkbox */
+  --checkbox-color: #CBD5E1;
+  --checkbox-checked-color: #0D9488;
+
+  /* Image bg */
+  --img-bg: radial-gradient(circle, #FFFFFF 0%, #F1F5F9 100%);
+}
+
+/* ---------- Typography enhancements ---------- */
+p {
+  line-height: 1.75;
+}
+
+.post-content h2 {
+  margin-top: 2.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--main-border-color);
+}
+
+/* ---------- Navigation / sidebar active state ---------- */
+#sidebar .nav-link.active,
+#sidebar .nav-link:hover {
+  color: var(--sidebar-active-color) !important;
+}
+
+#sidebar #avatar {
+  border: 2px solid var(--avatar-border-color);
+  transition: border-color 0.2s ease;
+}
+
+#sidebar #avatar:hover {
+  border-color: var(--link-color);
+}
+
+/* Site title & tagline */
+#sidebar .site-title a {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+#sidebar .site-subtitle {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* ---------- Topbar blur glass effect ---------- */
+#topbar-wrapper {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary,
+a.btn-primary {
+  background-color: #14B8A6 !important;
+  border-color: #14B8A6 !important;
+  color: #0F172A !important;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover,
+a.btn-primary:hover {
+  background-color: #2DD4BF !important;
+  border-color: #2DD4BF !important;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.3);
+}
+
+.btn-outline-primary,
+a.btn-outline-primary {
+  color: #14B8A6 !important;
+  border-color: #14B8A6 !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover,
+a.btn-outline-primary:hover {
+  background-color: rgba(20, 184, 166, 0.12) !important;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+}
+
+/* ---------- Post cards ---------- */
+.card-wrapper.card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card-wrapper.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow);
+}
+
+.card-wrapper .card-title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Code blocks ---------- */
+div.highlight,
+pre.highlight {
+  border-radius: 8px;
+}
+
+code.highlighter-rouge {
+  border-radius: 4px;
+  font-size: 0.84em;
+  padding: 0.15em 0.4em;
+}
+
+/* ---------- Tags ---------- */
+.post-tag {
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+/* ---------- Hero section (home page) ---------- */
+.hero-section {
+  padding: 4rem 0 3rem;
+  border-bottom: 1px solid var(--main-border-color);
+  margin-bottom: 2.5rem;
+}
+
+.hero-section .hero-name {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--heading-color);
+}
+
+.hero-section .hero-tagline {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--link-color);
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.hero-section .hero-positioning {
+  font-size: 1rem;
+  color: var(--text-muted-color);
+  max-width: 560px;
+  line-height: 1.65;
+}
+
+.hero-section .hero-ctas {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  background-color: #14B8A6;
+  color: #0F172A !important;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  text-decoration: none !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-cta-primary:hover {
+  background-color: #2DD4BF;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.3);
+}
+
+.hero-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  border: 1.5px solid #14B8A6;
+  color: #14B8A6 !important;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.hero-cta-secondary:hover {
+  background-color: rgba(20, 184, 166, 0.1);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+}
+
+/* Empty post list message */
+.no-posts-message {
+  padding: 3rem 0;
+  text-align: center;
+  color: var(--text-muted-color);
+  font-size: 0.95rem;
+}
+
+/* ---------- About page sections ---------- */
+.about-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--link-color);
+  margin-bottom: 0.5rem;
+}
+
+/* ---------- Consulting page ---------- */
+.consulting-cta-block {
+  border-left: 3px solid var(--link-color);
+  padding: 1.25rem 1.5rem;
+  background-color: var(--card-bg);
+  border-radius: 0 8px 8px 0;
+  margin: 2rem 0;
+}
