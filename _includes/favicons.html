@@ -1,0 +1,20 @@
+<!--
+  Favicon overrides — Chirpy 7.5
+  SVG-only approach (no ImageMagick pipeline needed).
+  When a real PNG set is ready, drop files into assets/img/favicons/
+  and restore the png/ico/apple-touch lines.
+
+  Source reference: https://github.com/cotes2020/jekyll-theme-chirpy/blob/v7.5.0/_includes/favicons.html
+-->
+
+{% capture favicon_path %}{{ '/assets/img/favicons' | relative_url }}{% endcapture %}
+
+<!-- SVG favicon — modern browsers only need this -->
+<link rel="icon" type="image/svg+xml" href="{{ favicon_path }}/favicon.svg">
+
+<!-- Fallback: plain favicon.ico — create if needed; currently absent so browser silently skips -->
+<!-- <link rel="shortcut icon" href="{{ favicon_path }}/favicon.ico"> -->
+
+{% if site.pwa.enabled %}
+  <link rel="manifest" href="{{ favicon_path }}/site.webmanifest">
+{% endif %}
