@@ -45,8 +45,10 @@ code, pre, kbd, samp {
 }
 
 /* ---------- Dark scheme overrides ---------- */
-[data-mode='dark'],
-html[data-mode='dark'] {
+/* Chirpy 7.5 scopes its color vars under :root[data-bs-theme=dark] (Bootstrap
+   5.3 dark attribute). Match it exactly: equal specificity + our rules load
+   after `@use 'main'`, so source order wins the cascade. */
+:root[data-bs-theme='dark'] {
   /* Background & frame */
   --main-bg: #0F172A;
   --mask-bg: rgb(30 41 59);
@@ -164,8 +166,7 @@ html[data-mode='dark'] {
 }
 
 /* ---------- Light scheme overrides ---------- */
-html:not([data-mode]),
-html[data-mode='light'] {
+:root[data-bs-theme='light'] {
   /* Background & frame */
   --main-bg: #F8FAFC;
   --mask-bg: #CBD5E1;
