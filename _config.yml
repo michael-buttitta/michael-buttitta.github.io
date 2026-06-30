@@ -192,6 +192,10 @@ exclude:
   - purgecss.js
   - "*.config.js"
   - "package*.json"
+  # Internal docs — keep out of the published site
+  - CLAUDE.md
+  - BUILD-NOTES.md
+  - CONTENT-PLAYBOOK.md
 
 jekyll-archives:
   enabled: [categories, tags]
