@@ -25,3 +25,8 @@ package-lock.json
 # Misc
 _sass/vendors
 assets/js/dist
+
+# Internal docs — kept on disk locally, never tracked or published
+CLAUDE.md
+BUILD-NOTES.md
+CONTENT-PLAYBOOK.md
