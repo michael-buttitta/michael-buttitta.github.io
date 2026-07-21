@@ -14,13 +14,13 @@ order: 1
 
 <!-- ── SECTION 1: SHORT INTRO / POSITIONING ─────────────────── -->
 
-> **OWNER — Fill in:** One or two sentences. Who you are, what you do, and who you do it for. This is your above-the-fold statement — be direct and specific.
-{: .prompt-warning }
+I write about AI and crypto, starting from first principles. What a GPU does, what
+Bitcoin is, and where the two are heading — agents with wallets, paying in stablecoins.
 
-<!-- Example structure (delete this comment when done):
-     "I'm a [role] with X years in [domain]. I [specific activity]
-      for [audience] — helping them [outcome]."
--->
+I studied business and computer science at UNC Kenan-Flagler, spent four years at
+Microsoft — including a year at GitHub working on Copilot's AI strategy, economics, and
+pricing — and now work at a crypto startup. I build projects along the way and post them
+here.
 
 ---
 
