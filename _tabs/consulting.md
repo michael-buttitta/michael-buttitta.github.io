@@ -3,6 +3,7 @@ layout: page
 title: Consulting
 icon: fas fa-briefcase
 order: 2
+published: false
 ---
 
 > **OWNER — Fill in:** One or two sentences on who you work with and what you offer. Replace all the placeholder copy on this page with your real positioning. (If you decide not to offer services, you can hide this tab by adding `published: false` to the front matter above.)

@@ -23,7 +23,9 @@ layout: default
 
   <div class="hero-ctas">
     <a href="{{ '/about/' | relative_url }}" class="hero-cta-primary">About me</a>
-    <a href="{{ '/consulting/' | relative_url }}" class="hero-cta-secondary">Work with me</a>
+    <!-- Consulting CTA removed while /consulting/ is published: false — restoring the
+         tab means restoring this button too (html-proofer fails on a dead link). -->
+
   </div>
 </section>
 

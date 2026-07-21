@@ -78,6 +78,4 @@ here.
 > **OWNER — Fill in:** One line on how people can work with you.
 {: .prompt-warning }
 
-→ See the [Consulting](/consulting/) page for services and how to engage.
-
 → Reach me directly at [michaelbuttitta52@gmail.com](mailto:michaelbuttitta52@gmail.com).
