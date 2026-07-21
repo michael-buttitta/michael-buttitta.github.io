@@ -26,7 +26,7 @@ them here.
 
 ## Background & experience
 
-I dual majored at UNC — business at Kenan-Flagler and computer science across campus.
+I dual majored at UNC, studying computer science and then business at Kenan-Flagler.
 That's most of why I write the way I do: I want to know how the machine works *and* why
 anyone is paying for it.
 
