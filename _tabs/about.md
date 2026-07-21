@@ -46,20 +46,6 @@ Now I'm on the FP&A and strategic finance team at a crypto startup.
 
 ---
 
-## What I do
-
-<!-- OWNER — Fill in: The specific work you do and how you do it.
-     Suggested content:
-     - Types of problems you solve
-     - The methods, tools, or process you use
-     - Outputs you deliver (reports, products, designs, advisory — whatever you produce)
-     This section can directly support the Consulting page. -->
-
-> **OWNER — Fill in:** Describe your focus areas, methods, and the kinds of problems you're best at solving.
-{: .prompt-warning }
-
----
-
 ## Focus areas
 
 <!-- OWNER — Fill in: 3–5 specific topic areas you cover on this site.
