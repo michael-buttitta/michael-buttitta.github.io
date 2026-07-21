@@ -17,24 +17,32 @@ order: 1
 I write about AI and crypto, starting from first principles. What a GPU does, what
 Bitcoin is, and where the two are heading.
 
-I studied business and computer science at UNC Kenan-Flagler, spent four years at
-Microsoft — including a year at GitHub working on Copilot's AI strategy, economics, and
-pricing — and now work at a crypto startup. I build projects along the way and post them
-here.
+I dual majored in business and computer science at UNC, spent four years at Microsoft —
+including a year at GitHub working on Copilot's AI strategy, economics, and pricing — and
+now work in strategic finance at a crypto startup. I build projects along the way and post
+them here.
 
 ---
 
 ## Background & experience
 
-<!-- OWNER — Fill in: Your career arc in plain prose or bullets.
-     Suggested content:
-     - Where you came from (education, early career)
-     - Key roles, companies, or domains — whatever's relevant to you
-     - The thread that connects them
-     Be specific: years, institutions, and outcomes land better than vague claims. -->
+I dual majored at UNC — business at Kenan-Flagler and computer science across campus.
+That's most of why I write the way I do: I want to know how the machine works *and* why
+anyone is paying for it.
 
-> **OWNER — Fill in:** 3–5 sentences or a short bullet list covering your career arc, key roles, and what makes your background distinctive.
-{: .prompt-warning }
+I started at Microsoft as a finance rotation analyst, which meant four seats in two years:
+supply chain finance, central sales finance, the Central and Eastern Europe HQ finance team
+in Prague, and Azure cloud finance. After the program I spent a year on Azure for
+Operators, the telecom side of Azure, and then a year at GitHub on Copilot — AI strategy,
+economics, and pricing.
+
+Copilot is the one that shaped what I write about now. Pricing an AI product means
+answering in dollars what the rest of the industry argues about in the abstract: what
+inference costs, what a token is worth, and what happens to margins when the model
+underneath you changes every quarter. The job also meant working directly with OpenAI and
+Anthropic, and studying what Cursor, Lovable, and the rest of the field were doing.
+
+Now I'm on the FP&A and strategic finance team at a crypto startup.
 
 ---
 
