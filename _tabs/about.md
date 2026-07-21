@@ -15,7 +15,7 @@ order: 1
 <!-- ── SECTION 1: SHORT INTRO / POSITIONING ─────────────────── -->
 
 I write about AI and crypto, starting from first principles. What a GPU does, what
-Bitcoin is, and where the two are heading — agents with wallets, paying in stablecoins.
+Bitcoin is, and where the two are heading.
 
 I studied business and computer science at UNC Kenan-Flagler, spent four years at
 Microsoft — including a year at GitHub working on Copilot's AI strategy, economics, and
