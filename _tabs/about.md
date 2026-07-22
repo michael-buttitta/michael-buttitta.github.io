@@ -14,35 +14,33 @@ order: 1
 
 <!-- ── SECTION 1: SHORT INTRO / POSITIONING ─────────────────── -->
 
-I write about AI and crypto, starting from first principles. What a GPU does, what
-Bitcoin is, and where the two are heading.
+I write about AI and crypto, starting from first principles. What a GPU does, how
+Bitcoin is mined, and where technologies intersect.
 
 I dual majored in business and computer science at UNC, spent four years at Microsoft —
-including a year at GitHub working on Copilot's AI strategy, economics, and pricing — and
-now work in strategic finance at a crypto startup. I build projects along the way and post
-them here.
+including a year at GitHub working on Github Copilot's AI GTM strategy, economics, and pricing — and
+now work in strategic finance at a crypto startup. I build projects and post findings along the way.
 
 ---
 
 ## Background & experience
 
-I dual majored at UNC, studying computer science and then business at Kenan-Flagler.
-That's most of why I write the way I do: I want to know how the machine works *and* why
-anyone is paying for it.
+I dual majored at UNC, studying computer science and business at Kenan-Flagler. I find myself striving to 
+live and work in the intersection of finance and technology. 
 
 I started at Microsoft as a finance rotation analyst, which meant four seats in two years:
-supply chain finance, central sales finance, the Central and Eastern Europe HQ finance team
+supply chain finance, sales finance, the Central and Eastern Europe HQ finance team
 in Prague, and Azure cloud finance. After the program I spent a year on Azure for
-Operators, the telecom side of Azure, and then a year at GitHub on Copilot — AI strategy,
-economics, and pricing.
+Operators, at the time a nascent Azure for Telecom cloud unit, and then a year at GitHub. 
 
-Copilot is the one that shaped what I write about now. Pricing an AI product means
-answering in dollars what the rest of the industry argues about in the abstract: what
-inference costs, what a token is worth, and what happens to margins when the model
-underneath you changes every quarter. The job also meant working directly with OpenAI and
-Anthropic, and studying what Cursor, Lovable, and the rest of the field were doing.
+Covering GitHubCopilot is the one that shaped my focus now. Pricing an AI product means
+answering in dollars what the rest of the industry argues about in the abstract: how do you allocate
+GPUs, what does inference cost, how do users behave on various models, and what happens to margins
+when the model underneath you changes every month. The job also meant working directly with OpenAI and
+Anthropic as we procure capacity, and studying what Cursor, Lovable, and the rest of the field were doing.
 
-Now I'm on the FP&A and strategic finance team at a crypto startup.
+Now I'm on the FP&A and strategic finance team at a crypto startup, as I pivoted to take an opportunity working
+in another interest I have had, crypto.
 
 ---
 
