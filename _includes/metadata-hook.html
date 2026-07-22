@@ -1,0 +1,12 @@
+<!-- A placeholder to allow defining custom metadata -->
+<!-- Override of Chirpy v7.5 metadata-hook.html (gem copy is empty).
+     Adds per-page stylesheet injection: any page can declare
+       extra_css:
+         - /assets/css/example.css
+     in its front matter to load additional styles inside <head>.
+     Pages without `extra_css` are unaffected. -->
+{% if page.extra_css %}
+  {% for css in page.extra_css %}
+    <link rel="stylesheet" href="{{ css | relative_url }}">
+  {% endfor %}
+{% endif %}

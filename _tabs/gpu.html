@@ -1,0 +1,1269 @@
+---
+layout: gpu
+title: GPU
+icon: fas fa-microchip
+order: 3
+description: >-
+  An interactive visual guide to how modern GPUs work — massive parallelism,
+  the graphics pipeline, VRAM and bandwidth, tensor cores, ray tracing, and
+  GPU architecture, explained with live simulations.
+extra_css:
+  - /assets/css/gpu.css
+extra_js:
+  - /assets/js/gpu.js
+---
+
+<div id="gpu-experience">
+  <noscript>
+    <p class="gx-noscript">
+      The live simulations on this page need JavaScript. All of the explanations
+      below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="gx-rail" aria-label="Chapters">
+    <a class="gx-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="gx-rail-dot" href="#why" data-label="Why GPUs exist"><span></span></a>
+    <a class="gx-rail-dot" href="#inside" data-label="Inside the GPU"><span></span></a>
+    <a class="gx-rail-dot" href="#parallel" data-label="Massive parallelism"><span></span></a>
+    <a class="gx-rail-dot" href="#pipeline" data-label="Rendering a frame"><span></span></a>
+    <a class="gx-rail-dot" href="#memory" data-label="VRAM &amp; memory"><span></span></a>
+    <a class="gx-rail-dot" href="#ai" data-label="GPUs &amp; AI"><span></span></a>
+    <a class="gx-rail-dot" href="#rt" data-label="Ray tracing"><span></span></a>
+    <a class="gx-rail-dot" href="#arch" data-label="Architecture deep dive"><span></span></a>
+    <a class="gx-rail-dot" href="#metrics" data-label="Reading a spec sheet"><span></span></a>
+    <a class="gx-rail-dot" href="#history" data-label="Three decades of GPUs"><span></span></a>
+    <a class="gx-rail-dot" href="#playground" data-label="Become the GPU"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="gx-hero" id="top">
+    <canvas id="gx-hero-canvas" aria-hidden="true"></canvas>
+    <div class="gx-hero-inner">
+      <p class="gx-kicker">An interactive exhibit</p>
+      <h1 class="gx-hero-title">Inside a Modern GPU</h1>
+      <p class="gx-hero-sub">
+        Explore how billions of transistors work together to render graphics,
+        accelerate simulations, and power today's AI revolution.
+      </p>
+      <div class="gx-hero-cta">
+        <a class="gx-btn gx-btn-primary" id="gx-hero-cta" href="#why">Begin exploring</a>
+        <span class="gx-hero-hint">10 chapters &middot; live simulations &middot; no installs</span>
+      </div>
+    </div>
+    <div class="gx-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       01 - WHY GPUS EXIST
+  ================================================================ -->
+  <section class="gx-section" id="why" aria-labelledby="why-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">01</span> The problem</p>
+      <h2 id="why-h">Why GPUs exist</h2>
+      <p class="gx-lede">
+        A CPU is built to finish <em>one</em> thing as fast as possible. But a
+        3D scene needs the same small computation repeated for millions of
+        pixels — and none of those pixels needs to wait for the others. That is
+        a different problem, and it deserved a different machine.
+      </p>
+    </div>
+
+    <div class="gx-race" data-gx-reveal>
+      <div class="gx-race-panel" data-kind="cpu">
+        <div class="gx-race-head">
+          <h3>CPU</h3>
+          <span class="gx-chip gx-chip-cpu">8 cores &middot; one task each</span>
+        </div>
+        <canvas id="gx-race-cpu" class="gx-race-canvas" role="img"
+                aria-label="Animation of a CPU finishing 256 tasks a few at a time, in sequence"></canvas>
+        <p class="gx-race-meta">Finished: <output id="gx-race-cpu-done">0</output> / 256
+          &middot; <output id="gx-race-cpu-time">0.0</output> ms</p>
+      </div>
+      <div class="gx-race-panel" data-kind="gpu">
+        <div class="gx-race-head">
+          <h3>GPU</h3>
+          <span class="gx-chip gx-chip-gpu">Hundreds of lanes at once</span>
+        </div>
+        <canvas id="gx-race-gpu" class="gx-race-canvas" role="img"
+                aria-label="Animation of a GPU finishing the same 256 tasks in large simultaneous waves"></canvas>
+        <p class="gx-race-meta">Finished: <output id="gx-race-gpu-done">0</output> / 256
+          &middot; <output id="gx-race-gpu-time">0.0</output> ms</p>
+      </div>
+    </div>
+
+    <div class="gx-race-foot">
+      <p id="gx-race-verdict" class="gx-race-verdict" aria-live="polite"></p>
+      <button type="button" id="gx-race-replay" class="gx-btn gx-btn-ghost">Replay the race</button>
+    </div>
+
+    <p class="gx-caption">
+      Each GPU lane is slower and simpler than a CPU core — it wins on volume,
+      not speed. That is the whole trade, and every chapter below is a
+      consequence of it.
+    </p>
+
+    <div class="gx-table-wrap" data-gx-reveal>
+      <table class="gx-compare">
+        <caption class="gx-visually-hidden">How CPUs and GPUs differ</caption>
+        <thead>
+          <tr><th scope="col"></th><th scope="col">CPU</th><th scope="col">GPU</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Cores</th>
+            <td>A few powerful cores (8&ndash;24)</td>
+            <td>Thousands of lightweight cores</td>
+          </tr>
+          <tr>
+            <th scope="row">Optimized for</th>
+            <td>Latency — finish <em>this</em> task now</td>
+            <td>Throughput — finish <em>all</em> tasks soon</td>
+          </tr>
+          <tr>
+            <th scope="row">Control logic</th>
+            <td>Branch prediction, out-of-order execution, speculation</td>
+            <td>Simple in-order lanes; stalls hidden by switching threads</td>
+          </tr>
+          <tr>
+            <th scope="row">Ideal workloads</th>
+            <td>Branch-heavy, serial logic: operating systems, databases, general computing</td>
+            <td>Massive parallel math: graphics, AI, scientific computing</td>
+          </tr>
+          <tr>
+            <th scope="row">A cache miss costs</th>
+            <td>A stalled program</td>
+            <td>Nothing visible — thousands of other threads keep the chip busy</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       02 - INSIDE THE GPU
+  ================================================================ -->
+  <section class="gx-section" id="inside" aria-labelledby="inside-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">02</span> The silicon</p>
+      <h2 id="inside-h">Inside the GPU</h2>
+      <p class="gx-lede">
+        A GPU is not one processor — it is a small city of specialized blocks.
+        Select any component to see what it does, why it exists, and who it
+        talks to.
+      </p>
+    </div>
+
+    <div class="gx-die-layout" data-gx-reveal>
+      <div class="gx-die-stage">
+        <svg id="gx-die" viewBox="0 0 960 620" role="group"
+             aria-label="Stylized diagram of a GPU board and die. Components are selectable.">
+          <!-- board -->
+          <rect class="gx-svg-board" x="4" y="4" width="952" height="612" rx="14"></rect>
+
+          <!-- VRAM modules, left -->
+          <g class="gx-part" data-part="vram" tabindex="0" role="button" aria-label="VRAM, GDDR memory modules">
+            <rect class="gx-svg-vram" x="22" y="120" width="76" height="118" rx="6"></rect>
+            <rect class="gx-svg-vram" x="22" y="256" width="76" height="118" rx="6"></rect>
+            <rect class="gx-svg-vram" x="22" y="392" width="76" height="118" rx="6"></rect>
+            <text class="gx-svg-label" x="60" y="182" transform="rotate(-90 60 182)">GDDR7</text>
+            <text class="gx-svg-label" x="60" y="318" transform="rotate(-90 60 318)">GDDR7</text>
+            <text class="gx-svg-label" x="60" y="454" transform="rotate(-90 60 454)">GDDR7</text>
+          </g>
+          <!-- VRAM modules, right -->
+          <g class="gx-part" data-part="vram" tabindex="0" role="button" aria-label="VRAM, GDDR memory modules">
+            <rect class="gx-svg-vram" x="862" y="120" width="76" height="118" rx="6"></rect>
+            <rect class="gx-svg-vram" x="862" y="256" width="76" height="118" rx="6"></rect>
+            <rect class="gx-svg-vram" x="862" y="392" width="76" height="118" rx="6"></rect>
+            <text class="gx-svg-label" x="900" y="182" transform="rotate(90 900 182)">GDDR7</text>
+            <text class="gx-svg-label" x="900" y="318" transform="rotate(90 900 318)">GDDR7</text>
+            <text class="gx-svg-label" x="900" y="454" transform="rotate(90 900 454)">GDDR7</text>
+          </g>
+
+          <!-- die shell -->
+          <rect class="gx-svg-die" x="140" y="52" width="680" height="512" rx="16"></rect>
+          <text class="gx-svg-die-name" x="800" y="80" text-anchor="end">GPU die</text>
+
+          <!-- command front end -->
+          <g class="gx-part" data-part="frontend" tabindex="0" role="button" aria-label="Command front end">
+            <rect class="gx-svg-block" x="168" y="76" width="428" height="40" rx="8"></rect>
+            <text class="gx-svg-label" x="382" y="101" text-anchor="middle">COMMAND FRONT END &middot; GIGATHREAD</text>
+          </g>
+
+          <!-- raster engine -->
+          <g class="gx-part" data-part="raster" tabindex="0" role="button" aria-label="Raster engine">
+            <rect class="gx-svg-block" x="612" y="76" width="120" height="40" rx="8"></rect>
+            <text class="gx-svg-label" x="672" y="101" text-anchor="middle">RASTER</text>
+          </g>
+
+          <!-- display engine -->
+          <g class="gx-part" data-part="display" tabindex="0" role="button" aria-label="Display engine">
+            <rect class="gx-svg-block" x="748" y="76" width="52" height="40" rx="8"></rect>
+            <text class="gx-svg-label" x="774" y="101" text-anchor="middle">DISP</text>
+          </g>
+
+          <!-- memory controllers -->
+          <g class="gx-part" data-part="memctl" tabindex="0" role="button" aria-label="Memory controllers, left side">
+            <rect class="gx-svg-mc" x="152" y="140" width="26" height="380" rx="6"></rect>
+            <text class="gx-svg-label" x="165" y="330" transform="rotate(-90 165 330)" text-anchor="middle">MEM CTRL</text>
+          </g>
+          <g class="gx-part" data-part="memctl" tabindex="0" role="button" aria-label="Memory controllers, right side">
+            <rect class="gx-svg-mc" x="782" y="140" width="26" height="380" rx="6"></rect>
+            <text class="gx-svg-label" x="795" y="330" transform="rotate(90 795 330)" text-anchor="middle">MEM CTRL</text>
+          </g>
+
+          <!-- SM row 1 -->
+          <g class="gx-part" data-part="sm" tabindex="0" role="button" aria-label="Streaming multiprocessor">
+            <rect class="gx-svg-sm" x="196" y="140" width="132" height="118" rx="10"></rect>
+            <text class="gx-svg-label" x="262" y="205" text-anchor="middle">SM</text>
+          </g>
+          <g class="gx-part" data-part="sm" tabindex="0" role="button" aria-label="Streaming multiprocessor">
+            <rect class="gx-svg-sm" x="344" y="140" width="132" height="118" rx="10"></rect>
+            <text class="gx-svg-label" x="410" y="205" text-anchor="middle">SM</text>
+          </g>
+          <g class="gx-part" data-part="sm" tabindex="0" role="button" aria-label="Streaming multiprocessor">
+            <rect class="gx-svg-sm" x="492" y="140" width="132" height="118" rx="10"></rect>
+            <text class="gx-svg-label" x="558" y="205" text-anchor="middle">SM</text>
+          </g>
+          <g class="gx-part" data-part="sm" tabindex="0" role="button" aria-label="Streaming multiprocessor">
+            <rect class="gx-svg-sm" x="640" y="140" width="132" height="118" rx="10"></rect>
+            <text class="gx-svg-label" x="706" y="205" text-anchor="middle">SM</text>
+          </g>
+
+          <!-- L2 cache band -->
+          <g class="gx-part" data-part="l2" tabindex="0" role="button" aria-label="L2 cache">
+            <rect class="gx-svg-l2" x="196" y="276" width="576" height="52" rx="10"></rect>
+            <text class="gx-svg-label" x="484" y="308" text-anchor="middle">L2 CACHE &mdash; SHARED BY EVERY SM</text>
+          </g>
+
+          <!-- SM row 2 -->
+          <g class="gx-part" data-part="sm" tabindex="0" role="button" aria-label="Streaming multiprocessor">
+            <rect class="gx-svg-sm" x="196" y="346" width="132" height="118" rx="10"></rect>
+            <text class="gx-svg-label" x="262" y="411" text-anchor="middle">SM</text>
+          </g>
+          <g class="gx-part" data-part="sm" tabindex="0" role="button" aria-label="Streaming multiprocessor">
+            <rect class="gx-svg-sm" x="344" y="346" width="132" height="118" rx="10"></rect>
+            <text class="gx-svg-label" x="410" y="411" text-anchor="middle">SM</text>
+          </g>
+          <g class="gx-part" data-part="sm" tabindex="0" role="button" aria-label="Streaming multiprocessor">
+            <rect class="gx-svg-sm" x="492" y="346" width="132" height="118" rx="10"></rect>
+            <text class="gx-svg-label" x="558" y="411" text-anchor="middle">SM</text>
+          </g>
+          <g class="gx-part" data-part="sm" tabindex="0" role="button" aria-label="Streaming multiprocessor">
+            <rect class="gx-svg-sm" x="640" y="346" width="132" height="118" rx="10"></rect>
+            <text class="gx-svg-label" x="706" y="411" text-anchor="middle">SM</text>
+          </g>
+
+          <!-- media strip (decorative filler inside die) -->
+          <rect class="gx-svg-filler" x="196" y="482" width="576" height="38" rx="8"></rect>
+          <text class="gx-svg-label gx-svg-label-dim" x="484" y="506" text-anchor="middle">NVENC / NVDEC &middot; I/O &middot; FABRIC</text>
+
+          <!-- PCIe edge -->
+          <g class="gx-part" data-part="pcie" tabindex="0" role="button" aria-label="PCI Express interface">
+            <rect class="gx-svg-pcie" x="240" y="578" width="480" height="26" rx="6"></rect>
+            <text class="gx-svg-label" x="480" y="596" text-anchor="middle">PCIe 5.0 x16 &mdash; TO THE CPU</text>
+          </g>
+        </svg>
+        <p class="gx-caption">Stylized die — block sizes are illustrative, not to scale.</p>
+      </div>
+
+      <aside class="gx-part-card" id="gx-part-card" aria-live="polite">
+        <p class="gx-part-eyebrow">Component</p>
+        <h3 id="gx-part-name">Select a component</h3>
+        <p class="gx-part-tag" id="gx-part-tag">Click or tab to any block in the diagram — or in the SM detail below.</p>
+        <div id="gx-part-body">
+          <p>Every block exists to keep one number high: useful work completed
+          per second per watt. The tour starts wherever you click.</p>
+        </div>
+      </aside>
+    </div>
+
+    <h3 class="gx-subhead" data-gx-reveal>Zoom in: one Streaming Multiprocessor</h3>
+    <svg id="gx-sm" viewBox="0 0 960 330" role="group" data-gx-reveal
+         aria-label="Stylized diagram of the units inside one streaming multiprocessor. Components are selectable.">
+      <rect class="gx-svg-die" x="8" y="8" width="944" height="314" rx="14"></rect>
+
+      <!-- four processing partitions -->
+      <g class="gx-part" data-part="sched" tabindex="0" role="button" aria-label="Warp schedulers">
+        <rect class="gx-svg-block" x="32" y="30" width="212" height="30" rx="6"></rect>
+        <rect class="gx-svg-block" x="260" y="30" width="212" height="30" rx="6"></rect>
+        <rect class="gx-svg-block" x="488" y="30" width="212" height="30" rx="6"></rect>
+        <rect class="gx-svg-block" x="716" y="30" width="212" height="30" rx="6"></rect>
+        <text class="gx-svg-label" x="138" y="50" text-anchor="middle">WARP SCHEDULER</text>
+        <text class="gx-svg-label" x="366" y="50" text-anchor="middle">WARP SCHEDULER</text>
+        <text class="gx-svg-label" x="594" y="50" text-anchor="middle">WARP SCHEDULER</text>
+        <text class="gx-svg-label" x="822" y="50" text-anchor="middle">WARP SCHEDULER</text>
+      </g>
+
+      <g class="gx-part" data-part="reg" tabindex="0" role="button" aria-label="Register file">
+        <rect class="gx-svg-reg" x="32" y="68" width="212" height="24" rx="6"></rect>
+        <rect class="gx-svg-reg" x="260" y="68" width="212" height="24" rx="6"></rect>
+        <rect class="gx-svg-reg" x="488" y="68" width="212" height="24" rx="6"></rect>
+        <rect class="gx-svg-reg" x="716" y="68" width="212" height="24" rx="6"></rect>
+        <text class="gx-svg-label" x="138" y="85" text-anchor="middle">REGISTERS</text>
+        <text class="gx-svg-label" x="366" y="85" text-anchor="middle">REGISTERS</text>
+        <text class="gx-svg-label" x="594" y="85" text-anchor="middle">REGISTERS</text>
+        <text class="gx-svg-label" x="822" y="85" text-anchor="middle">REGISTERS</text>
+      </g>
+
+      <!-- shader core grids: 4 partitions x 32 dots drawn as 8x2 blocks -->
+      <g class="gx-part" data-part="shader" tabindex="0" role="button" aria-label="Shader cores, also called CUDA cores">
+        <rect class="gx-svg-shader" x="32" y="100" width="212" height="88" rx="6"></rect>
+        <rect class="gx-svg-shader" x="260" y="100" width="212" height="88" rx="6"></rect>
+        <rect class="gx-svg-shader" x="488" y="100" width="212" height="88" rx="6"></rect>
+        <rect class="gx-svg-shader" x="716" y="100" width="212" height="88" rx="6"></rect>
+        <text class="gx-svg-label" x="138" y="140" text-anchor="middle">32x FP32 / INT32</text>
+        <text class="gx-svg-label gx-svg-label-dim" x="138" y="160" text-anchor="middle">SHADER CORES</text>
+        <text class="gx-svg-label" x="366" y="140" text-anchor="middle">32x FP32 / INT32</text>
+        <text class="gx-svg-label gx-svg-label-dim" x="366" y="160" text-anchor="middle">SHADER CORES</text>
+        <text class="gx-svg-label" x="594" y="140" text-anchor="middle">32x FP32 / INT32</text>
+        <text class="gx-svg-label gx-svg-label-dim" x="594" y="160" text-anchor="middle">SHADER CORES</text>
+        <text class="gx-svg-label" x="822" y="140" text-anchor="middle">32x FP32 / INT32</text>
+        <text class="gx-svg-label gx-svg-label-dim" x="822" y="160" text-anchor="middle">SHADER CORES</text>
+      </g>
+
+      <g class="gx-part" data-part="tensor" tabindex="0" role="button" aria-label="Tensor cores">
+        <rect class="gx-svg-tensor" x="32" y="196" width="212" height="34" rx="6"></rect>
+        <rect class="gx-svg-tensor" x="260" y="196" width="212" height="34" rx="6"></rect>
+        <rect class="gx-svg-tensor" x="488" y="196" width="212" height="34" rx="6"></rect>
+        <rect class="gx-svg-tensor" x="716" y="196" width="212" height="34" rx="6"></rect>
+        <text class="gx-svg-label" x="138" y="218" text-anchor="middle">TENSOR CORE</text>
+        <text class="gx-svg-label" x="366" y="218" text-anchor="middle">TENSOR CORE</text>
+        <text class="gx-svg-label" x="594" y="218" text-anchor="middle">TENSOR CORE</text>
+        <text class="gx-svg-label" x="822" y="218" text-anchor="middle">TENSOR CORE</text>
+      </g>
+
+      <!-- shared strip -->
+      <g class="gx-part" data-part="shmem" tabindex="0" role="button" aria-label="L1 cache and shared memory">
+        <rect class="gx-svg-l2" x="32" y="246" width="536" height="34" rx="6"></rect>
+        <text class="gx-svg-label" x="300" y="268" text-anchor="middle">128 KB L1 / SHARED MEMORY</text>
+      </g>
+      <g class="gx-part" data-part="tex" tabindex="0" role="button" aria-label="Texture units">
+        <rect class="gx-svg-block" x="584" y="246" width="204" height="34" rx="6"></rect>
+        <text class="gx-svg-label" x="686" y="268" text-anchor="middle">4x TEXTURE UNITS</text>
+      </g>
+      <g class="gx-part" data-part="rt" tabindex="0" role="button" aria-label="Ray tracing core">
+        <rect class="gx-svg-rt" x="804" y="246" width="124" height="34" rx="6"></rect>
+        <text class="gx-svg-label" x="866" y="268" text-anchor="middle">RT CORE</text>
+      </g>
+
+      <text class="gx-svg-label gx-svg-label-dim" x="480" y="308" text-anchor="middle">
+        ONE SM &mdash; A FLAGSHIP GPU CARRIES 100+ OF THESE
+      </text>
+    </svg>
+
+    <!-- Component copy (hidden data source for the detail card) -->
+    <section id="gx-part-data" hidden>
+      <article data-part="pcie">
+        <h4>PCIe interface</h4>
+        <p data-role="alias">The GPU's front door</p>
+        <p data-role="what">The link to the CPU and system RAM. A PCIe 5.0 x16
+          slot moves about 64 GB/s each way — commands, textures, and model
+          weights all arrive through it.</p>
+        <p data-role="why">A discrete GPU is a co-processor: without a host
+          link it never receives work. But 64 GB/s is a trickle next to VRAM's
+          terabytes per second, which is why data is copied into VRAM once and
+          kept there.</p>
+        <p data-role="talks">Receives command buffers from the driver; DMA
+          engines stream data through the memory controllers into VRAM.</p>
+      </article>
+      <article data-part="vram">
+        <h4>VRAM</h4>
+        <p data-role="alias">GDDR7 on consumer cards &middot; HBM stacks on data-center parts</p>
+        <p data-role="what">Dedicated graphics memory surrounding the die. It
+          holds everything the GPU works on: textures, meshes, framebuffers,
+          and AI model weights, at 1&ndash;2+ TB/s of aggregate bandwidth.</p>
+        <p data-role="why">Thousands of cores consume data faster than any
+          CPU-style memory system could serve it. Capacity is a hard cliff,
+          too: spill past it and data pages over PCIe at 1/30th the speed.</p>
+        <p data-role="talks">Served by the on-die memory controllers; the L2
+          cache absorbs its hottest lines; the display engine scans the
+          finished frame straight out of it.</p>
+      </article>
+      <article data-part="memctl">
+        <h4>Memory controllers</h4>
+        <p data-role="alias">The traffic engineers</p>
+        <p data-role="what">On-die partitions that schedule every read and
+          write to the GDDR chips, reordering and batching requests to keep
+          each memory channel saturated.</p>
+        <p data-role="why">DRAM rewards sequential, grouped access. Smart
+          scheduling here is the difference between using 60% and 95% of the
+          bus you paid for.</p>
+        <p data-role="talks">Sits between the L2 slices and the VRAM chips.
+          When a warp's 32 loads are coalesced (Chapter 08), they arrive here
+          as a handful of transactions instead of 32.</p>
+      </article>
+      <article data-part="l2">
+        <h4>L2 cache</h4>
+        <p data-role="alias">AMD adds a larger L3: "Infinity Cache"</p>
+        <p data-role="what">A pool of on-die SRAM — tens of megabytes — shared
+          by every SM. The last stop before a request pays the full price of
+          VRAM.</p>
+        <p data-role="why">A hit here is several times faster and far cheaper
+          in energy than DRAM. Depth buffers, reused tiles, and neighboring
+          threads' data live here for free.</p>
+        <p data-role="talks">Backs every SM's L1; misses flow to the memory
+          controllers. The raster engine's blends also land here on their way
+          to the framebuffer.</p>
+      </article>
+      <article data-part="frontend">
+        <h4>Command front end</h4>
+        <p data-role="alias">NVIDIA: GigaThread Engine &middot; AMD: command processor + ACEs</p>
+        <p data-role="what">Reads command buffers written by the driver, chops
+          the work into thread blocks (workgroups), and deals them out to SMs
+          the moment slots free up.</p>
+        <p data-role="why">A hundred-plus SMs are useless if any of them sits
+          idle. Global scheduling and load-balancing keeps the whole chip
+          saturated.</p>
+        <p data-role="talks">Fed by the PCIe interface; dispatches to every
+          SM; hands raster output back to SMs as fragment-shading work.</p>
+      </article>
+      <article data-part="raster">
+        <h4>Raster engine</h4>
+        <p data-role="alias">Includes the ROPs (render output units)</p>
+        <p data-role="what">Fixed-function triangle hardware: clips and culls,
+          walks each triangle to find the pixels it covers, and emits
+          fragments. Its ROP partners run depth tests and blend final colors
+          into the framebuffer.</p>
+        <p data-role="why">Rasterization is so regular and so relentless that
+          dedicated silicon beats programmable cores at it by orders of
+          magnitude, in both speed and energy.</p>
+        <p data-role="talks">Takes assembled triangles from vertex shading on
+          the SMs; sends fragments back to the SMs; ROPs write through L2 to
+          VRAM.</p>
+      </article>
+      <article data-part="display">
+        <h4>Display engine</h4>
+        <p data-role="alias">Scanout hardware</p>
+        <p data-role="what">Reads the finished framebuffer and streams it to
+          your monitor — resolutions, refresh rates, HDR, and variable refresh
+          (G-Sync / FreeSync) all live here.</p>
+        <p data-role="why">Scanout is hard real-time: a missed deadline is a
+          visible glitch. A dedicated block never misses, no matter how busy
+          the rest of the chip is.</p>
+        <p data-role="talks">Reads from VRAM on a fixed clock; drives the
+          DisplayPort / HDMI links.</p>
+      </article>
+      <article data-part="sm">
+        <h4>Streaming Multiprocessor (SM)</h4>
+        <p data-role="alias">AMD: Compute Unit (CU) / dual-CU WGP</p>
+        <p data-role="what">The GPU's repeating worker block: warp schedulers,
+          a big register file, 128 shader cores, tensor cores, an RT core,
+          texture units, and shared memory. A flagship die carries 100&ndash;170
+          of them.</p>
+        <p data-role="why">GPUs scale by stamping out identical SMs and wiring
+          them to a shared L2 — more silicon budget, more SMs, more parallel
+          throughput.</p>
+        <p data-role="talks">Receives thread blocks from the command front
+          end; reads and writes through its L1 to the shared L2 and VRAM.
+          Zoom in below to see inside one.</p>
+      </article>
+      <article data-part="shader">
+        <h4>Shader cores</h4>
+        <p data-role="alias">NVIDIA: CUDA cores &middot; AMD: stream processors</p>
+        <p data-role="what">The scalar FP32 / INT32 arithmetic units — 128 per
+          SM — that execute one warp instruction across 32 threads in
+          lockstep.</p>
+        <p data-role="why">They are the general-purpose muscle: vertex math,
+          pixel shading, physics, any parallel arithmetic that isn't a matrix
+          multiply or a ray hit.</p>
+        <p data-role="talks">Issued by the warp schedulers, operands from the
+          register file; loads go through L1 / shared memory, then L2.</p>
+      </article>
+      <article data-part="tensor">
+        <h4>Tensor cores</h4>
+        <p data-role="alias">AMD: Matrix cores / WMMA instructions</p>
+        <p data-role="what">Matrix engines that multiply-accumulate an entire
+          small tile (e.g. 16&times;16) per operation in FP16, BF16, FP8 or
+          INT8 — accumulating in FP32 to keep results stable.</p>
+        <p data-role="why">Deep learning is nearly all matrix multiplication.
+          Doing it as one fused hardware operation is 10&ndash;30&times; the
+          per-clock throughput of the shader cores. Chapter 06 shows it live.</p>
+        <p data-role="talks">Shares the SM's schedulers and register file with
+          the shader cores — it is an execution unit, not a separate chip
+          region.</p>
+      </article>
+      <article data-part="rt">
+        <h4>RT cores</h4>
+        <p data-role="alias">AMD: Ray Accelerators</p>
+        <p data-role="what">Fixed-function ray units that walk BVH trees (the
+          scene's spatial index) and test ray-vs-box and ray-vs-triangle
+          intersections in hardware.</p>
+        <p data-role="why">Finding what a ray hits is branchy pointer-chasing
+          that wastes shader cores. Casting it into silicon is what made
+          real-time ray tracing (Chapter 07) possible.</p>
+        <p data-role="talks">Shader programs fire rays at it and get hit
+          results back; the material shading of each hit still runs on the
+          shader cores.</p>
+      </article>
+      <article data-part="tex">
+        <h4>Texture units</h4>
+        <p data-role="alias">TMUs</p>
+        <p data-role="what">Fetch texels, decompress GPU texture formats, pick
+          mip levels, and run bilinear / trilinear / anisotropic filtering —
+          all in hardware, one instruction from the shader's point of view.</p>
+        <p data-role="why">A single filtered sample would otherwise cost
+          dozens of ALU operations and multiple scattered loads. Games issue
+          billions of samples per second.</p>
+        <p data-role="talks">Read through a dedicated texture path in L1, then
+          L2, then VRAM.</p>
+      </article>
+      <article data-part="shmem">
+        <h4>L1 / shared memory</h4>
+        <p data-role="alias">AMD: LDS (local data share)</p>
+        <p data-role="what">~128 KB of on-SM storage that is both an L1 cache
+          and a software-managed scratchpad. Threads in the same block
+          cooperate through it explicitly.</p>
+        <p data-role="why">Data a tile will reuse — say a block of a matrix —
+          gets fetched from VRAM once instead of 32 times. It is the single
+          most important tool for beating the bandwidth wall.</p>
+        <p data-role="talks">A few cycles from the shader cores; refills from
+          L2 on miss.</p>
+      </article>
+      <article data-part="sched">
+        <h4>Warp schedulers</h4>
+        <p data-role="alias">Four per SM</p>
+        <p data-role="what">Every clock, each scheduler looks at its dozens of
+          resident warps and issues the next instruction from one that is
+          ready — skipping any warp stalled on memory.</p>
+        <p data-role="why">This is the GPU's latency-hiding trick. A memory
+          wait that would stall a CPU core simply means a different warp runs.
+          The math units barely notice.</p>
+        <p data-role="talks">Reads warp state from the register file; drives
+          the shader and tensor cores.</p>
+      </article>
+      <article data-part="reg">
+        <h4>Register file</h4>
+        <p data-role="alias">256 KB per SM</p>
+        <p data-role="what">Fast storage where every resident thread keeps its
+          variables — permanently, for the thread's whole life. No saving or
+          restoring on a switch.</p>
+        <p data-role="why">Zero-cost warp switching only works because every
+          warp's state is already on-chip. The budget is real, though: greedy
+          kernels that use many registers per thread reduce how many warps fit
+          (Chapter 08).</p>
+        <p data-role="talks">Feeds operands to shader and tensor cores under
+          the schedulers' control.</p>
+      </article>
+    </section>
+  </section>
+
+  <!-- ================================================================
+       03 - MASSIVE PARALLELISM
+  ================================================================ -->
+  <section class="gx-section" id="parallel" aria-labelledby="parallel-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">03</span> The superpower</p>
+      <h2 id="parallel-h">Massive parallelism</h2>
+      <p class="gx-lede">
+        Here are 1,024 independent tasks — one per square. Run them on a CPU,
+        then switch to the GPU and run them again. Watch the live counters,
+        not just the wall of color: the GPU's lanes are <em>slower</em> per
+        task, and it still isn't close.
+      </p>
+    </div>
+
+    <div class="gx-sim" data-gx-reveal>
+      <div class="gx-sim-controls">
+        <div class="gx-seg" id="gx-par-mode" role="group" aria-label="Execution mode">
+          <button type="button" data-mode="cpu" aria-pressed="true">CPU mode</button>
+          <button type="button" data-mode="gpu" aria-pressed="false">GPU mode</button>
+        </div>
+        <button type="button" id="gx-par-run" class="gx-btn gx-btn-primary">Run 1,024 tasks</button>
+        <button type="button" id="gx-par-reset" class="gx-btn gx-btn-ghost">Reset</button>
+      </div>
+
+      <canvas id="gx-par-canvas" role="img"
+              aria-label="Grid of 1,024 tasks being completed. In CPU mode a few tasks complete at a time; in GPU mode large waves complete simultaneously."></canvas>
+
+      <div class="gx-stats" role="group" aria-label="Live statistics">
+        <div class="gx-stat"><span class="gx-stat-label">Active threads</span><output id="gx-par-active">0</output></div>
+        <div class="gx-stat"><span class="gx-stat-label">Time elapsed</span><output id="gx-par-time">0.0 ms</output></div>
+        <div class="gx-stat"><span class="gx-stat-label">Throughput</span><output id="gx-par-tput">0 tasks/ms</output></div>
+        <div class="gx-stat"><span class="gx-stat-label">Lane utilization</span><output id="gx-par-util">0%</output></div>
+      </div>
+    </div>
+
+    <p class="gx-caption">
+      Scaled for visibility: the model CPU runs 8 cores at one task per tick;
+      the model GPU issues 256 lanes per tick but needs 4 ticks per task.
+      Real chips run tens of thousands of resident threads — the ratio is the
+      point, not the absolute numbers. Notice the waves in GPU mode: threads
+      advance in lockstep groups of 32, called <strong>warps</strong>. Chapter
+      08 digs into why.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       04 - RENDERING A FRAME
+  ================================================================ -->
+  <section class="gx-section" id="pipeline" aria-labelledby="pipeline-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">04</span> The classic job</p>
+      <h2 id="pipeline-h">Rendering a frame</h2>
+      <p class="gx-lede">
+        Every frame of every game crosses this assembly line — typically in
+        under 16 milliseconds. Select a stage to see the same tiny scene at
+        that point in its life, or play the whole pipeline.
+      </p>
+    </div>
+
+    <div class="gx-pipe-wrap" data-gx-reveal>
+      <ol class="gx-pipe" id="gx-pipe" aria-label="Graphics pipeline stages">
+        <li><button type="button" class="gx-stage" data-stage="vertex" aria-pressed="true"><span class="gx-stage-num">1</span><span class="gx-stage-name">Vertex processing</span></button></li>
+        <li><button type="button" class="gx-stage" data-stage="assembly" aria-pressed="false"><span class="gx-stage-num">2</span><span class="gx-stage-name">Primitive assembly</span></button></li>
+        <li><button type="button" class="gx-stage" data-stage="raster" aria-pressed="false"><span class="gx-stage-num">3</span><span class="gx-stage-name">Rasterization</span></button></li>
+        <li><button type="button" class="gx-stage" data-stage="fragment" aria-pressed="false"><span class="gx-stage-num">4</span><span class="gx-stage-name">Fragment shading</span></button></li>
+        <li><button type="button" class="gx-stage" data-stage="lighting" aria-pressed="false"><span class="gx-stage-num">5</span><span class="gx-stage-name">Lighting</span></button></li>
+        <li><button type="button" class="gx-stage" data-stage="post" aria-pressed="false"><span class="gx-stage-num">6</span><span class="gx-stage-name">Post-processing</span></button></li>
+        <li><button type="button" class="gx-stage" data-stage="framebuffer" aria-pressed="false"><span class="gx-stage-num">7</span><span class="gx-stage-name">Frame buffer</span></button></li>
+        <li><button type="button" class="gx-stage" data-stage="display" aria-pressed="false"><span class="gx-stage-num">8</span><span class="gx-stage-name">Display</span></button></li>
+      </ol>
+
+      <div class="gx-pipe-stage-view">
+        <canvas id="gx-pipe-canvas" role="img" aria-label="Preview of the example scene at the selected pipeline stage"></canvas>
+        <aside class="gx-stage-info">
+          <div aria-live="polite">
+            <h3 id="gx-stage-title">Vertex processing</h3>
+            <p id="gx-stage-text"></p>
+          </div>
+          <div class="gx-pipe-controls">
+            <button type="button" id="gx-pipe-prev" class="gx-btn gx-btn-ghost" aria-label="Previous stage">&larr;</button>
+            <button type="button" id="gx-pipe-play" class="gx-btn gx-btn-primary">Play all stages</button>
+            <button type="button" id="gx-pipe-next" class="gx-btn gx-btn-ghost" aria-label="Next stage">&rarr;</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <section id="gx-stage-data" hidden>
+      <article data-stage="vertex"><p>Every vertex of every model runs a small
+        program — the vertex shader — that transforms it from 3D object space
+        into screen coordinates. Thousands of vertices are processed in
+        parallel across the SMs.</p></article>
+      <article data-stage="assembly"><p>Transformed vertices are grouped back
+        into triangles. Triangles facing away from the camera are culled and
+        off-screen ones are clipped — a huge share of the scene is discarded
+        here, nearly for free.</p></article>
+      <article data-stage="raster"><p>Fixed-function hardware walks each
+        surviving triangle and answers one question: which pixels does it
+        cover? Each covered pixel becomes a fragment, its attributes (depth,
+        UVs, normal) interpolated from the triangle's corners.</p></article>
+      <article data-stage="fragment"><p>Every fragment runs the fragment
+        shader: sample textures through the texture units, evaluate the
+        material. At 4K that can be 8+ million fragments — usually the
+        heaviest stage of the frame.</p></article>
+      <article data-stage="lighting"><p>Surfaces meet lights: N&middot;L
+        diffuse math, specular highlights, shadow-map lookups. Forward
+        renderers do this inside the fragment shader; deferred renderers
+        replay it as a separate full-screen pass over the G-buffer.</p></article>
+      <article data-stage="post"><p>The finished image is graded and polished:
+        tone mapping, bloom, anti-aliasing — and increasingly an AI upscaler
+        (DLSS / FSR) that renders fewer pixels and reconstructs the rest on
+        the tensor cores.</p></article>
+      <article data-stage="framebuffer"><p>Fragments pass the depth test and
+        are blended by the ROPs into the framebuffer in VRAM. When possible,
+        early-Z runs the depth test <em>before</em> shading, discarding hidden
+        fragments without paying for them.</p></article>
+      <article data-stage="display"><p>The display engine scans the completed
+        buffer out over DisplayPort or HDMI, line by line. Double buffering
+        plus vsync or variable refresh keeps a half-drawn frame from ever
+        reaching the glass.</p></article>
+    </section>
+  </section>
+
+  <!-- ================================================================
+       05 - VRAM & MEMORY
+  ================================================================ -->
+  <section class="gx-section" id="memory" aria-labelledby="memory-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">05</span> The supply chain</p>
+      <h2 id="memory-h">VRAM &amp; memory</h2>
+      <p class="gx-lede">
+        Compute is only half the machine. The other half is logistics: keeping
+        thousands of cores fed. Here is what actually occupies a 24 GB card —
+        and why the speed of that memory matters more than its size.
+      </p>
+    </div>
+
+    <div class="gx-mem" data-gx-reveal>
+      <div class="gx-mem-head">
+        <div class="gx-seg" id="gx-mem-preset" role="group" aria-label="Workload preset">
+          <button type="button" data-preset="game" aria-pressed="true">Gaming at 4K</button>
+          <button type="button" data-preset="ai" aria-pressed="false">Running a 7B LLM</button>
+        </div>
+        <p class="gx-mem-total" id="gx-mem-total">24 GB GDDR7</p>
+      </div>
+
+      <div class="gx-memmap" id="gx-memmap" role="group" aria-label="Memory map of VRAM contents. Select a segment for details."></div>
+      <p class="gx-mem-detail" id="gx-mem-detail" aria-live="polite">Select a segment of the memory map.</p>
+    </div>
+
+    <div class="gx-grid-2">
+      <div class="gx-card" data-gx-reveal>
+        <h3>Capacity is a cliff. Bandwidth is a ceiling.</h3>
+        <p>Run out of <strong>capacity</strong> and data spills over PCIe at
+        ~1/30th the speed — performance falls off a cliff. But long before
+        that, <strong>bandwidth</strong> caps you: if a task reads more bytes
+        than the bus can deliver, the cores idle no matter how many you have.
+        An LLM generating one token must read <em>every weight once</em> —
+        that is why inference speed tracks memory bandwidth almost linearly.</p>
+      </div>
+      <div class="gx-card" data-gx-reveal>
+        <h3>Latency is hidden, not eliminated</h3>
+        <p>A VRAM access costs hundreds of clock cycles. The GPU's answer is
+        the cache ladder below — and, when that fails, the warp switch from
+        Chapter 08: while one warp waits, others compute. Latency is still
+        there; it is simply somebody else's problem.</p>
+      </div>
+    </div>
+
+    <div class="gx-bw" data-gx-reveal>
+      <h3 class="gx-subhead">Bandwidth, visualized</h3>
+      <canvas id="gx-bw-canvas" role="img"
+              aria-label="Animation of dense data streams between VRAM and the compute units, next to a far thinner stream over PCIe to system RAM"></canvas>
+      <p class="gx-caption">
+        VRAM to SMs: ~1,800 GB/s on a flagship card. PCIe to system RAM:
+        ~64 GB/s. The dense stream is why data lives in VRAM; the thin one is
+        why running out of VRAM hurts.
+      </p>
+    </div>
+
+    <div class="gx-lat" data-gx-reveal>
+      <h3 class="gx-subhead">The cache ladder (approximate access cost)</h3>
+      <div class="gx-lat-row"><span class="gx-lat-name">Registers</span><span class="gx-lat-bar"><i style="--w:2%"></i></span><span class="gx-lat-val">~1 cycle</span></div>
+      <div class="gx-lat-row"><span class="gx-lat-name">Shared memory / L1</span><span class="gx-lat-bar"><i style="--w:9%"></i></span><span class="gx-lat-val">~30 cycles</span></div>
+      <div class="gx-lat-row"><span class="gx-lat-name">L2 cache</span><span class="gx-lat-bar"><i style="--w:34%"></i></span><span class="gx-lat-val">~200 cycles</span></div>
+      <div class="gx-lat-row"><span class="gx-lat-name">VRAM</span><span class="gx-lat-bar"><i style="--w:62%"></i></span><span class="gx-lat-val">~500 cycles</span></div>
+      <div class="gx-lat-row"><span class="gx-lat-name">System RAM via PCIe</span><span class="gx-lat-bar"><i style="--w:100%"></i></span><span class="gx-lat-val">microseconds</span></div>
+      <p class="gx-caption">Bars are illustrative and not to linear scale — the last rung is
+        roughly 10&times; the one above it.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 - HOW GPUS POWER AI
+  ================================================================ -->
+  <section class="gx-section" id="ai" aria-labelledby="ai-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">06</span> The new job</p>
+      <h2 id="ai-h">How GPUs power AI</h2>
+      <p class="gx-lede">
+        Strip a neural network to its skeleton and you find one operation
+        repeated billions of times: multiply a row by a column, add it up.
+        Matrix multiplication. It happens to be the most parallel workload
+        ever put in front of a computer.
+      </p>
+    </div>
+
+    <div class="gx-mm-wrap" data-gx-reveal>
+      <div class="gx-mm" id="gx-mm">
+        <div class="gx-mm-block">
+          <p class="gx-mm-label">A <span>(activations)</span></p>
+          <div class="gx-mm-matrix" id="gx-mm-a" aria-label="Matrix A"></div>
+        </div>
+        <span class="gx-mm-op" aria-hidden="true">&times;</span>
+        <div class="gx-mm-block">
+          <p class="gx-mm-label">B <span>(weights)</span></p>
+          <div class="gx-mm-matrix" id="gx-mm-b" aria-label="Matrix B"></div>
+        </div>
+        <span class="gx-mm-op" aria-hidden="true">=</span>
+        <div class="gx-mm-block">
+          <p class="gx-mm-label">C <span>(output)</span></p>
+          <div class="gx-mm-matrix" id="gx-mm-c" aria-label="Matrix C, filled in as the animation runs"></div>
+        </div>
+      </div>
+
+      <p class="gx-mm-read" id="gx-mm-read">Press play: each output cell is one row of A dotted with one column of B.</p>
+
+      <div class="gx-mm-controls">
+        <button type="button" id="gx-mm-play" class="gx-btn gx-btn-primary">Play</button>
+        <button type="button" id="gx-mm-step" class="gx-btn gx-btn-ghost">Step</button>
+        <button type="button" id="gx-mm-reset" class="gx-btn gx-btn-ghost">Reset</button>
+        <span class="gx-stat gx-stat-inline"><span class="gx-stat-label">Multiply-accumulates</span><output id="gx-mm-macs">0</output></span>
+      </div>
+
+      <p class="gx-caption">
+        A shader core does these multiply-accumulates one at a time. A
+        <strong>tensor core</strong> consumes an entire tile of this matrix in
+        a single operation — and a big model is nothing but tiles. One
+        generated LLM token is roughly <em>2 &times; (parameter count)</em>
+        operations: ~14 billion of these for a 7B model. Per token.
+      </p>
+    </div>
+
+    <div class="gx-prec" data-gx-reveal>
+      <h3 class="gx-subhead">Mixed precision: smaller numbers, faster math</h3>
+      <p>Neural networks tolerate low-precision arithmetic remarkably well, so
+      tensor cores compute in FP16, FP8 — even FP4 — while accumulating sums in
+      FP32 so error doesn't compound. Halving the bits roughly doubles the
+      math rate <em>and</em> halves the bytes moved.</p>
+      <div class="gx-prec-rows" role="img" aria-label="Relative matrix throughput: FP32 shader cores 1x, FP16 tensor cores about 15x, FP8 tensor cores about 30x">
+        <div class="gx-prec-row"><span class="gx-prec-name">FP32 &middot; shader cores</span><span class="gx-prec-bar"><i style="--w:4%"></i></span><span class="gx-prec-val">1&times;</span></div>
+        <div class="gx-prec-row"><span class="gx-prec-name">FP16 &middot; tensor cores</span><span class="gx-prec-bar"><i style="--w:50%"></i></span><span class="gx-prec-val">~15&times;</span></div>
+        <div class="gx-prec-row"><span class="gx-prec-name">FP8 &middot; tensor cores</span><span class="gx-prec-bar"><i style="--w:100%"></i></span><span class="gx-prec-val">~30&times;</span></div>
+      </div>
+      <p class="gx-caption">Dense-matrix throughput relative to FP32 shader
+        ALUs, H100-class hardware. Vendor slides often double these again by
+        assuming "structured sparsity" — read the footnotes.</p>
+    </div>
+
+    <div class="gx-grid-2">
+      <div class="gx-card" data-gx-reveal>
+        <h3>Training</h3>
+        <p>Run the network forward, measure the error, run it <em>backward</em>
+        to compute gradients, update every weight. Roughly 3&times; the compute
+        of a forward pass, plus optimizer state that multiplies memory use.
+        Modern frontier models train on tens of thousands of GPUs for months —
+        the workload that made GPUs the world's most valuable silicon.</p>
+      </div>
+      <div class="gx-card" data-gx-reveal>
+        <h3>Inference</h3>
+        <p>Forward pass only: weights are frozen, the job is answering fast
+        and cheap. Generating each token means reading every weight from VRAM
+        once — so inference lives and dies on <strong>memory bandwidth</strong>
+        and clever batching, while training leans harder on raw compute.</p>
+      </div>
+    </div>
+
+    <div class="gx-card gx-card-wide" data-gx-reveal>
+      <h3>Why GPUs beat CPUs at deep learning</h3>
+      <ul class="gx-list">
+        <li><strong>The shape fits.</strong> Matrix multiplies are millions of independent multiply-adds — exactly what thousands of lanes want.</li>
+        <li><strong>Dedicated silicon.</strong> Tensor cores turn the inner loop into a single hardware instruction; CPUs have nothing comparable at scale.</li>
+        <li><strong>Bandwidth.</strong> HBM feeds terabytes per second; a CPU socket delivers a tenth of that.</li>
+        <li><strong>The software moat.</strong> CUDA, cuDNN, PyTorch and a decade of kernels mean the fast path is also the easy path.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 - RAY TRACING
+  ================================================================ -->
+  <section class="gx-section" id="rt" aria-labelledby="rt-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">07</span> Simulating light</p>
+      <h2 id="rt-h">Ray tracing</h2>
+      <p class="gx-lede">
+        Rasterization asks "which pixels does this triangle cover?" — fast,
+        but light is faked afterward. Ray tracing asks "what does this pixel
+        actually see?" and follows the light. The scene below is ray-traced
+        live in JavaScript, one ray at a time. Drag the divider.
+      </p>
+    </div>
+
+    <div class="gx-rt-wrap" data-gx-reveal>
+      <div class="gx-rt-stage">
+        <canvas id="gx-rt-canvas" role="img"
+                aria-label="Split view of the same 3D scene: the left side rasterized with approximate shadows and no true reflections, the right side ray traced with accurate shadows, reflections and soft ambient light"></canvas>
+        <span class="gx-rt-tag gx-rt-tag-left" aria-hidden="true">Rasterized (approximated light)</span>
+        <span class="gx-rt-tag gx-rt-tag-right" aria-hidden="true">Ray traced (simulated light)</span>
+        <input type="range" id="gx-rt-divider" min="5" max="95" value="50" step="1"
+               aria-label="Comparison divider position, percent from left">
+      </div>
+
+      <div class="gx-rt-controls">
+        <label class="gx-check"><input type="checkbox" id="gx-rt-shadows" checked> Traced shadows</label>
+        <label class="gx-check"><input type="checkbox" id="gx-rt-reflect" checked> Traced reflections</label>
+        <label class="gx-check"><input type="checkbox" id="gx-rt-gi" checked> Ambient light (GI)</label>
+        <span class="gx-stat gx-stat-inline"><span class="gx-stat-label">Rays this frame</span><output id="gx-rt-rays">0</output></span>
+      </div>
+
+      <p class="gx-caption">
+        Watch the right half: contact shadows are sharp where objects touch,
+        the mirror sphere reflects the <em>actual scene</em>, and the ambient
+        light "grain" refines over a second — that is Monte Carlo sampling
+        converging, the same reason real RT hardware pairs with AI denoisers.
+        Your machine just traced thousands of rays; an RT-core GPU traces
+        <strong>billions per second</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 - ARCHITECTURE DEEP DIVE
+  ================================================================ -->
+  <section class="gx-section" id="arch" aria-labelledby="arch-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">08</span> The machinery</p>
+      <h2 id="arch-h">Architecture deep dive</h2>
+      <p class="gx-lede">
+        Four small machines explain most of GPU performance: lockstep
+        execution, divergence, occupancy, and coalescing. Master these and
+        spec sheets start making sense.
+      </p>
+    </div>
+
+    <div class="gx-grid-2 gx-grid-widgets">
+      <div class="gx-card gx-widget" data-gx-reveal>
+        <h3>SIMT: one instruction, 32 threads</h3>
+        <p>Threads execute in fixed lockstep groups — <strong>warps</strong>
+        of 32 on NVIDIA, <strong>wavefronts</strong> of 32/64 on AMD. One
+        instruction is issued; every thread in the group runs it on its own
+        data. Branches are handled by <em>masking</em>: if threads disagree,
+        the warp runs both paths, muting half each time.</p>
+        <div class="gx-seg" id="gx-div-mode" role="group" aria-label="Branch behavior">
+          <button type="button" data-div="uniform" aria-pressed="true">Threads agree</button>
+          <button type="button" data-div="divergent" aria-pressed="false">Threads diverge</button>
+        </div>
+        <pre class="gx-code" aria-hidden="true"><code>if (value &gt; 0) { pathA(); } else { pathB(); }</code></pre>
+        <div id="gx-div-passes" class="gx-div-passes" aria-hidden="true"></div>
+        <p class="gx-widget-note" id="gx-div-note" aria-live="polite"></p>
+      </div>
+
+      <div class="gx-card gx-widget" data-gx-reveal>
+        <h3>Occupancy: how many warps fit</h3>
+        <p>Every resident warp keeps its registers on-chip. Ask for more
+        registers per thread and fewer warps fit — fewer warps means less
+        latency hiding. Drag the slider:</p>
+        <div class="gx-slider">
+          <label for="gx-occ-regs">Registers per thread</label>
+          <input type="range" id="gx-occ-regs" min="32" max="256" step="32" value="64">
+          <output id="gx-occ-regs-out">64</output>
+        </div>
+        <div class="gx-occ-slots" id="gx-occ-slots" aria-hidden="true"></div>
+        <p class="gx-widget-note" id="gx-occ-note" aria-live="polite"></p>
+      </div>
+
+      <div class="gx-card gx-widget" data-gx-reveal>
+        <h3>Memory coalescing</h3>
+        <p>When a warp loads memory, the hardware merges the 32 addresses into
+        as few 32-byte transactions as possible. Neighboring threads reading
+        neighboring addresses = one cache line. Strided access = 32 separate
+        transactions for the same useful data.</p>
+        <div class="gx-seg" id="gx-coal-mode" role="group" aria-label="Access pattern">
+          <button type="button" data-coal="coalesced" aria-pressed="true">Coalesced</button>
+          <button type="button" data-coal="strided" aria-pressed="false">Strided</button>
+        </div>
+        <div class="gx-coal-viz" id="gx-coal-viz" aria-hidden="true"></div>
+        <p class="gx-widget-note" id="gx-coal-note" aria-live="polite"></p>
+      </div>
+
+      <div class="gx-card gx-widget" data-gx-reveal>
+        <h3>SIMD vs SIMT</h3>
+        <p><strong>SIMD</strong> (CPUs): one thread drives a wide register —
+        "add these 8 floats to those 8 floats." The programmer manages lanes,
+        edges, and masks explicitly.</p>
+        <p><strong>SIMT</strong> (GPUs): you write a program for <em>one</em>
+        thread; the hardware runs 32 copies in lockstep and handles the
+        masking. Same silicon idea — radically better ergonomics, which is a
+        real reason GPU computing took off.</p>
+        <p class="gx-widget-note">Under the hood a warp instruction <em>is</em>
+        a 32-lane SIMD operation — SIMT is the programming model on top.</p>
+      </div>
+    </div>
+
+    <div class="gx-table-wrap" data-gx-reveal>
+      <table class="gx-compare gx-compare-terms">
+        <caption class="gx-visually-hidden">NVIDIA and AMD terminology for the same concepts</caption>
+        <thead>
+          <tr><th scope="col">Concept</th><th scope="col">NVIDIA</th><th scope="col">AMD</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Worker block</th><td>Streaming Multiprocessor (SM)</td><td>Compute Unit (CU) / WGP</td></tr>
+          <tr><th scope="row">Lockstep thread group</th><td>Warp (32 threads)</td><td>Wavefront (32 or 64)</td></tr>
+          <tr><th scope="row">Scalar ALU</th><td>CUDA core</td><td>Stream processor</td></tr>
+          <tr><th scope="row">Matrix unit</th><td>Tensor Core</td><td>Matrix Core / WMMA</td></tr>
+          <tr><th scope="row">Ray unit</th><td>RT Core</td><td>Ray Accelerator</td></tr>
+          <tr><th scope="row">Per-block scratchpad</th><td>Shared memory</td><td>LDS (Local Data Share)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 - PERFORMANCE METRICS
+  ================================================================ -->
+  <section class="gx-section" id="metrics" aria-labelledby="metrics-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">09</span> The spec sheet</p>
+      <h2 id="metrics-h">Reading a spec sheet</h2>
+      <p class="gx-lede">
+        Every number below is real, and every one of them is routinely
+        misread. Expand a metric for what it means, why it matters, and the
+        trap. Values shown are flagship-class, 2025, for scale.
+      </p>
+    </div>
+
+    <div class="gx-metrics" data-gx-reveal>
+      <details class="gx-metric">
+        <summary><span>CUDA / shader cores</span><span class="gx-chip">~20,000+</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> The count of scalar FP32 ALUs across all SMs.</p>
+          <p><strong>Why it matters.</strong> First-order proxy for parallel math capacity within one architecture generation.</p>
+          <p><strong>Misconception.</strong> Counts are not comparable across vendors or generations — a "core" is whatever the marketing department says it is. Compare benchmarks, not core counts.</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>Clock speed</span><span class="gx-chip">~2.5 GHz</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> How many cycles per second the cores run; boost clocks vary with thermals and load.</p>
+          <p><strong>Why it matters.</strong> Throughput = lanes &times; ops/clock &times; clock. It is a straight multiplier.</p>
+          <p><strong>Misconception.</strong> GPU clocks are <em>deliberately</em> lower than CPU clocks — wide and slow wins on performance per watt, which is the budget that actually binds.</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>TFLOPS (FP32)</span><span class="gx-chip">~80&ndash;100</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> Trillions of floating-point operations per second, assuming every lane does a fused multiply-add every clock.</p>
+          <p><strong>Why it matters.</strong> The theoretical ceiling on compute-bound work.</p>
+          <p><strong>Misconception.</strong> It is a <em>peak</em>, not a promise — real workloads hit a fraction of it, usually because memory can't keep the lanes fed (see the playground below).</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>Tensor TFLOPS</span><span class="gx-chip">~1,000&ndash;4,000</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> Matrix-multiply throughput of the tensor cores at reduced precision (FP16/FP8/FP4).</p>
+          <p><strong>Why it matters.</strong> The number that predicts AI training and inference capability.</p>
+          <p><strong>Misconception.</strong> Always check the precision <em>and</em> whether the figure assumes 2:4 structured sparsity — that footnote doubles the number for a feature most models don't use.</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>RT performance</span><span class="gx-chip">vendor units</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> Ray-triangle / ray-box intersection and BVH traversal rate of the RT cores, quoted in vendor-specific units ("RT TFLOPS", "gigarays").</p>
+          <p><strong>Why it matters.</strong> Sets how much ray budget a frame gets before the denoiser has to work miracles.</p>
+          <p><strong>Misconception.</strong> RT numbers from different vendors are not the same unit. Shading the hits still costs shader-core time — RT cores only find the hits.</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>VRAM capacity</span><span class="gx-chip">16&ndash;32 GB</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> How much data can live in graphics memory at once.</p>
+          <p><strong>Why it matters.</strong> Textures at 4K, or model weights: it is a hard fit-or-don't-fit test. A 7B-parameter model in FP16 needs ~14 GB before you type a word.</p>
+          <p><strong>Misconception.</strong> More VRAM does not make anything faster — until you run out, at which point nothing else matters.</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>Memory bandwidth</span><span class="gx-chip">~1&ndash;2 TB/s</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> Bytes per second the VRAM bus can move: bus width &times; memory clock &times; data rate.</p>
+          <p><strong>Why it matters.</strong> The most under-appreciated spec on the sheet — LLM token rate and 4K frame rate both track it closely.</p>
+          <p><strong>Misconception.</strong> TFLOPS get the headlines, but most real workloads are bandwidth-bound. When in doubt, this number is the bottleneck.</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>Cache size</span><span class="gx-chip">~64&ndash;128 MB</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> On-die L2 (NVIDIA) or L3 "Infinity Cache" (AMD) shared by all SMs.</p>
+          <p><strong>Why it matters.</strong> Every hit is a VRAM trip you didn't pay for — big caches let a narrower, cheaper memory bus punch above its weight.</p>
+          <p><strong>Misconception.</strong> Cache helps re-used data (framebuffers, tiles). Streaming workloads that touch everything once — like LLM weights — blow straight through it.</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>Clock vs power</span><span class="gx-chip">350&ndash;600 W</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> Total graphics power (TGP): the board's power budget under load.</p>
+          <p><strong>Why it matters.</strong> Power is <em>the</em> binding constraint of modern silicon — data centers are sited next to power plants for a reason. Perf-per-watt decides what is buildable.</p>
+          <p><strong>Misconception.</strong> The last 10% of clock speed costs far more than 10% more power — voltage scales quadratically. Slightly slower, wider chips are the efficient shape.</p>
+        </div>
+      </details>
+      <details class="gx-metric">
+        <summary><span>Memory bus width</span><span class="gx-chip">256&ndash;512 bit</span></summary>
+        <div class="gx-metric-body">
+          <p><strong>Definition.</strong> How many wires connect the die to its VRAM chips, in bits transferred per clock edge.</p>
+          <p><strong>Why it matters.</strong> Bandwidth = bus width &times; memory speed. Wide buses are expensive board- and die-area, which is why cache sizes ballooned instead.</p>
+          <p><strong>Misconception.</strong> A narrow bus is not automatically slow — judge the delivered GB/s (and cache) rather than the wire count alone.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 - TIMELINE
+  ================================================================ -->
+  <section class="gx-section" id="history" aria-labelledby="history-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">10</span> How we got here</p>
+      <h2 id="history-h">Three decades of GPUs</h2>
+      <p class="gx-lede">
+        From a chip that could only draw textured triangles to the engine of
+        the AI economy — scroll the timeline.
+      </p>
+    </div>
+
+    <div class="gx-tl" data-gx-reveal>
+      <div class="gx-tl-nav">
+        <button type="button" id="gx-tl-prev" class="gx-btn gx-btn-ghost" aria-label="Scroll timeline backward">&larr;</button>
+        <button type="button" id="gx-tl-next" class="gx-btn gx-btn-ghost" aria-label="Scroll timeline forward">&rarr;</button>
+      </div>
+      <div class="gx-timeline" id="gx-timeline" role="list" aria-label="GPU history timeline" tabindex="0">
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">1996</span>
+          <h3>Fixed-function 3D</h3>
+          <p>3dfx Voodoo brings dedicated triangle hardware to consumers.
+          Every effect is a hard-wired switch: the chip can do exactly what
+          its designers anticipated, brilliantly, and nothing else.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">1999</span>
+          <h3>"The world's first GPU"</h3>
+          <p>GeForce 256 pulls transform &amp; lighting onto the chip and
+          NVIDIA coins the term GPU. Geometry math leaves the CPU for good.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2001</span>
+          <h3>Programmable shaders</h3>
+          <p>GeForce 3 and DirectX 8 let developers write small programs per
+          vertex and per pixel. Graphics stops being a fixed menu and becomes
+          software.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2006</span>
+          <h3>Unified shaders</h3>
+          <p>G80 (GeForce 8800) merges vertex and pixel hardware into one pool
+          of general-purpose cores — the direct ancestor of every modern SM.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2007</span>
+          <h3>CUDA</h3>
+          <p>NVIDIA exposes those cores to C programmers. GPGPU computing —
+          physics, imaging, finance — turns the graphics card into a general
+          parallel computer.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2012</span>
+          <h3>AlexNet</h3>
+          <p>A neural network trained on two consumer GTX 580s demolishes the
+          ImageNet benchmark. Deep learning's GPU era — and arguably the
+          modern AI boom — starts here.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2017</span>
+          <h3>Tensor cores</h3>
+          <p>Volta (V100) adds dedicated matrix engines and mixed-precision
+          math. AI throughput per chip jumps an order of magnitude.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2018</span>
+          <h3>RTX: real-time ray tracing</h3>
+          <p>Turing adds RT cores for hardware BVH traversal plus AI denoising
+          — traced shadows and reflections become playable at 60 fps.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2020</span>
+          <h3>RT goes mainstream</h3>
+          <p>Ampere doubles down and AMD's RDNA2 puts Ray Accelerators in the
+          PS5 and Xbox Series X. Ray tracing stops being a tech demo.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2022</span>
+          <h3>The AI turn</h3>
+          <p>Hopper's FP8 transformer engine targets LLMs directly; RDNA3
+          ships the first chiplet gaming GPU. ChatGPT launches, and GPUs
+          become the scarcest hardware on Earth.</p>
+        </article>
+        <article class="gx-era" role="listitem">
+          <span class="gx-era-year">2024+</span>
+          <h3>The Blackwell era</h3>
+          <p>Two reticle-limit dies act as one GPU; NVLink fuses 72 of them
+          into a single rack-scale accelerator for trillion-parameter models.
+          The "chip" is now the whole rack.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       FINALE - PLAYGROUND
+  ================================================================ -->
+  <section class="gx-section" id="playground" aria-labelledby="playground-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker"><span class="gx-kicker-num">11</span> Finale</p>
+      <h2 id="playground-h">Become the GPU</h2>
+      <p class="gx-lede">
+        Design a chip, pick a workload, run it. The simulator uses the real
+        first-order model — time = the slower of compute and memory — so you
+        can discover the lesson every GPU architect lives by: <em>balance
+        beats brute force</em>.
+      </p>
+    </div>
+
+    <div class="gx-pg" data-gx-reveal>
+      <div class="gx-pg-controls">
+        <div class="gx-slider">
+          <label for="gx-pg-sms">SMs (cores &times;128)</label>
+          <input type="range" id="gx-pg-sms" min="8" max="160" step="8" value="64">
+          <output id="gx-pg-sms-out">64</output>
+        </div>
+        <div class="gx-slider">
+          <label for="gx-pg-clock">Clock (GHz)</label>
+          <input type="range" id="gx-pg-clock" min="0.8" max="3.2" step="0.1" value="2.0">
+          <output id="gx-pg-clock-out">2.0</output>
+        </div>
+        <div class="gx-slider">
+          <label for="gx-pg-bw">Memory bandwidth (GB/s)</label>
+          <input type="range" id="gx-pg-bw" min="100" max="3500" step="100" value="1000">
+          <output id="gx-pg-bw-out">1000</output>
+        </div>
+        <div class="gx-slider">
+          <label for="gx-pg-vram">VRAM (GB)</label>
+          <input type="range" id="gx-pg-vram" min="8" max="96" step="8" value="24">
+          <output id="gx-pg-vram-out">24</output>
+        </div>
+        <div class="gx-slider">
+          <label for="gx-pg-data">Workload data (GB)</label>
+          <input type="range" id="gx-pg-data" min="1" max="128" step="1" value="16">
+          <output id="gx-pg-data-out">16</output>
+        </div>
+        <div class="gx-slider gx-slider-select">
+          <label for="gx-pg-preset">Workload type</label>
+          <select id="gx-pg-preset">
+            <option value="24" selected>Game frame (24 FLOP/byte)</option>
+            <option value="8">Image filter (8 FLOP/byte)</option>
+            <option value="6">Physics sim (6 FLOP/byte)</option>
+            <option value="1.5">LLM inference (1.5 FLOP/byte)</option>
+            <option value="300">Dense training (300 FLOP/byte)</option>
+          </select>
+        </div>
+        <p class="gx-pg-peak" id="gx-pg-peak"></p>
+        <button type="button" id="gx-pg-run" class="gx-btn gx-btn-primary">Run simulation</button>
+      </div>
+
+      <div class="gx-pg-stage">
+        <canvas id="gx-pg-canvas" role="img"
+                aria-label="Animation of the simulated GPU: a grid of SMs lights up with compute activity while a stream below shows memory traffic"></canvas>
+        <div class="gx-pg-results">
+          <div class="gx-bars" id="gx-pg-bars">
+            <div class="gx-bar-row" data-bar="compute"><span class="gx-bar-name">Compute time</span><span class="gx-bar-track"><i></i></span><span class="gx-bar-val"></span></div>
+            <div class="gx-bar-row" data-bar="memory"><span class="gx-bar-name">Memory time</span><span class="gx-bar-track"><i></i></span><span class="gx-bar-val"></span></div>
+            <div class="gx-bar-row" data-bar="pcie"><span class="gx-bar-name">PCIe spill</span><span class="gx-bar-track"><i></i></span><span class="gx-bar-val"></span></div>
+          </div>
+          <p class="gx-pg-total"><span>Total time</span><output id="gx-pg-total">&mdash;</output></p>
+          <p class="gx-pg-verdict" id="gx-pg-verdict" aria-live="polite">Set your sliders and run.</p>
+        </div>
+      </div>
+
+      <div class="gx-pg-roofline">
+        <h3 class="gx-subhead">The roofline: why your result is what it is</h3>
+        <canvas id="gx-pg-roof" role="img"
+                aria-label="Roofline chart: achievable performance versus arithmetic intensity. A slanted memory-bound roof meets a flat compute-bound roof; a dot marks your workload."></canvas>
+        <p class="gx-caption">
+          Left of the ridge: memory-bound — more bandwidth (or more reuse per
+          byte) is the only cure. Right of it: compute-bound — now cores and
+          clocks pay off. Every optimization guide ever written is a footnote
+          to this chart.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       OUTRO
+  ================================================================ -->
+  <footer class="gx-outro">
+    <p class="gx-outro-line">
+      Billions of transistors, one idea: <span>do everything, everywhere, all at once — slowly.</span>
+    </p>
+    <p class="gx-outro-small">
+      Built with semantic HTML, modern CSS, and vanilla JavaScript — every
+      simulation on this page runs live in your browser; no frameworks, no
+      libraries.
+      <a href="https://github.com/michael-buttitta/michael-buttitta.github.io" rel="noopener" target="_blank">View the source</a>
+      &middot; <a href="#top">Back to top</a>
+    </p>
+  </footer>
+</div>
