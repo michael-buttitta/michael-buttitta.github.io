@@ -49,6 +49,7 @@
      fires on every later ResizeObserver-driven refit. */
   function setupCanvas(canvas, onResize) {
     var ctx = canvas.getContext('2d');
+    if (!ctx) { throw new Error('2d context unavailable'); }
     var state = { w: 0, h: 0, dpr: 1 };
     var initial = true;
     function resize() {
@@ -987,6 +988,7 @@
     };
 
     var segs = {};
+    map.innerHTML = '';
     KINDS.forEach(function (kind) {
       var b = document.createElement('button');
       b.type = 'button';
@@ -1535,6 +1537,7 @@
     var MAX_WARPS = 48, REGFILE = 65536;
 
     var cells = [];
+    slots.innerHTML = '';
     for (var i = 0; i < MAX_WARPS; i++) {
       var c = document.createElement('span');
       c.className = 'gx-occ-slot';
@@ -1874,22 +1877,40 @@
      boot
      ========================================================================== */
 
+  /* Each widget boots in isolation: one failure (e.g. a canvas context that
+     is transiently unavailable while the page loads hidden/prerendered) must
+     not take the other widgets down. Failed inits are retried once when the
+     page becomes visible or the user first interacts. */
   function boot() {
-    initReveal();
-    initRail();
-    initHero();
-    initRace();
-    initDie();
-    initParallel();
-    initPipeline();
-    initMemory();
-    initMatmul();
-    initRT();
-    initDivergence();
-    initOccupancy();
-    initCoalescing();
-    initTimeline();
-    initPlayground();
+    var inits = [
+      initReveal, initRail, initHero, initRace, initDie, initParallel,
+      initPipeline, initMemory, initMatmul, initRT, initDivergence,
+      initOccupancy, initCoalescing, initTimeline, initPlayground
+    ];
+    var failed = [];
+
+    function tryInit(fn) {
+      try { fn(); } catch (err) {
+        failed.push(fn);
+        if (window.console && console.error) { console.error('gpu.js: ' + (fn.name || 'init') + ' failed', err); }
+      }
+    }
+
+    inits.forEach(tryInit);
+
+    if (failed.length) {
+      var retry = function () {
+        document.removeEventListener('visibilitychange', retry);
+        window.removeEventListener('pointerdown', retry, true);
+        window.removeEventListener('keydown', retry, true);
+        var again = failed;
+        failed = [];
+        again.forEach(tryInit);
+      };
+      document.addEventListener('visibilitychange', retry);
+      window.addEventListener('pointerdown', retry, true);
+      window.addEventListener('keydown', retry, true);
+    }
   }
 
   if (document.readyState === 'loading') {
