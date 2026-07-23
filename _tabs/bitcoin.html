@@ -1,0 +1,1526 @@
+---
+layout: gpu
+title: Bitcoin
+icon: fab fa-bitcoin
+order: 4
+description: >-
+  An interactive visual guide to how Bitcoin works — the double-spending
+  problem, blockchains, keys and signatures, mining and proof of work,
+  consensus, the 21 million supply schedule, and the Lightning Network,
+  explained with live cryptography running in your browser.
+extra_css:
+  - /assets/css/bitcoin.css
+extra_js:
+  - /assets/js/bitcoin.js
+---
+
+<div id="bitcoin-experience">
+  <noscript>
+    <p class="bx-noscript">
+      The live demos on this page — real SHA-256 hashing, key generation, a
+      mining simulator — need JavaScript. All of the explanations below still
+      read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="bx-rail" aria-label="Chapters">
+    <a class="bx-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="bx-rail-dot" href="#money" data-label="The copy-paste problem"><span></span></a>
+    <a class="bx-rail-dot" href="#origins" data-label="The birth of Bitcoin"><span></span></a>
+    <a class="bx-rail-dot" href="#what" data-label="What Bitcoin is"><span></span></a>
+    <a class="bx-rail-dot" href="#blockchain" data-label="Blocks &amp; chains"><span></span></a>
+    <a class="bx-rail-dot" href="#transactions" data-label="A transaction's journey"><span></span></a>
+    <a class="bx-rail-dot" href="#keys" data-label="Keys &amp; signatures"><span></span></a>
+    <a class="bx-rail-dot" href="#wallets" data-label="Wallets"><span></span></a>
+    <a class="bx-rail-dot" href="#mining" data-label="Mining &amp; proof of work"><span></span></a>
+    <a class="bx-rail-dot" href="#consensus" data-label="Consensus"><span></span></a>
+    <a class="bx-rail-dot" href="#supply" data-label="The supply schedule"><span></span></a>
+    <a class="bx-rail-dot" href="#security" data-label="Why it holds"><span></span></a>
+    <a class="bx-rail-dot" href="#lightning" data-label="Lightning"><span></span></a>
+    <a class="bx-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
+    <a class="bx-rail-dot" href="#playground" data-label="Network playground"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="bx-hero" id="top">
+    <canvas id="bx-hero-canvas" aria-hidden="true"></canvas>
+    <div class="bx-hero-inner">
+      <p class="bx-kicker">An interactive exhibit</p>
+      <h1 class="bx-hero-title">Understanding Bitcoin</h1>
+      <p class="bx-hero-sub">
+        Explore how mathematics, cryptography, and decentralized consensus
+        created the world's first truly digital money.
+      </p>
+      <div class="bx-hero-cta">
+        <a class="bx-btn bx-btn-primary" id="bx-hero-cta" href="#money">Begin exploring</a>
+        <span class="bx-hero-hint">14 chapters &middot; live cryptography &middot; no installs</span>
+      </div>
+    </div>
+    <div class="bx-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       01 - THE PROBLEM BITCOIN SOLVES
+  ================================================================ -->
+  <section class="bx-section" id="money" aria-labelledby="money-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">01</span> The problem</p>
+      <h2 id="money-h">Money, trust, and the copy-paste problem</h2>
+      <p class="bx-lede">
+        Money is a technology, and humanity has upgraded it many times: from
+        favors to shells to gold to paper to database rows. Every upgrade traded
+        one problem for another &mdash; and the digital era introduced the
+        strangest problem of all: <em>perfect copies</em>.
+      </p>
+    </div>
+
+    <div class="bx-eras" data-bx-reveal>
+      <div class="bx-eras-nav">
+        <h3 class="bx-subhead">A short history of money</h3>
+        <div class="bx-eras-btns">
+          <button type="button" id="bx-eras-prev" class="bx-btn bx-btn-ghost" aria-label="Scroll timeline backward">&larr;</button>
+          <button type="button" id="bx-eras-next" class="bx-btn bx-btn-ghost" aria-label="Scroll timeline forward">&rarr;</button>
+        </div>
+      </div>
+      <div class="bx-eras-progress" aria-hidden="true"><i id="bx-eras-bar"></i></div>
+      <ol class="bx-eras-track" id="bx-eras-track" tabindex="0"
+          aria-label="Timeline of money, from barter to digital payments. Use arrow keys to scroll.">
+        <li class="bx-era">
+          <span class="bx-era-date">Prehistory</span>
+          <h4>Barter</h4>
+          <p>Trading goods directly works only when each side wants exactly what
+          the other has &mdash; the <em>double coincidence of wants</em>. It
+          doesn't scale past a village.</p>
+        </li>
+        <li class="bx-era">
+          <span class="bx-era-date">&asymp; 1200 BCE</span>
+          <h4>Commodity money</h4>
+          <p>Cowrie shells, salt, cattle: scarce, useful things become a shared
+          measure of value. Money turns out to be a <em>social agreement</em>,
+          not a particular object.</p>
+        </li>
+        <li class="bx-era">
+          <span class="bx-era-date">&asymp; 600 BCE</span>
+          <h4>Coinage</h4>
+          <p>Lydia mints standardized metal coins. Gold and silver win for
+          durable reasons: scarce, divisible, portable, and nearly impossible
+          to counterfeit at scale.</p>
+        </li>
+        <li class="bx-era">
+          <span class="bx-era-date">&asymp; 1000s CE</span>
+          <h4>Paper promises</h4>
+          <p>Song-dynasty China circulates paper notes; Europe follows centuries
+          later. Paper is a <em>claim</em> on value held elsewhere &mdash; money
+          becomes a ledger entry plus trust.</p>
+        </li>
+        <li class="bx-era">
+          <span class="bx-era-date">1600s&ndash;1900s</span>
+          <h4>Banks &amp; central banks</h4>
+          <p>Goldsmiths' receipts evolve into banking. The Bank of England
+          (1694) centralizes note issue. Trusted institutions now keep the
+          ledgers &mdash; and set the rules.</p>
+        </li>
+        <li class="bx-era">
+          <span class="bx-era-date">1971</span>
+          <h4>The fiat era</h4>
+          <p>The United States ends the dollar's convertibility to gold. Since
+          then, every major currency floats on government policy rather than a
+          commodity anchor.</p>
+        </li>
+        <li class="bx-era">
+          <span class="bx-era-date">1950s&ndash;2000s</span>
+          <h4>Digital payments</h4>
+          <p>Cards, wires, and online banking make money feel digital &mdash;
+          but every payment is really an instruction to intermediaries to
+          update <em>their</em> private ledgers.</p>
+        </li>
+        <li class="bx-era bx-era-question">
+          <span class="bx-era-date">2008</span>
+          <h4>The open question</h4>
+          <p>Value that moves like email, with no institution in the middle. One
+          obstacle stood in the way for decades: the double-spending
+          problem.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="bx-copydemo" id="bx-copy-demo" data-bx-reveal>
+      <div class="bx-copydemo-panel" data-kind="physical">
+        <h4>A gold coin</h4>
+        <div class="bx-copydemo-stage" id="bx-copy-gold" aria-hidden="true">
+          <svg viewBox="0 0 64 64" class="bx-coin bx-coin-gold" id="bx-copy-gold-coin">
+            <circle cx="32" cy="32" r="26" class="c1"></circle>
+            <circle cx="32" cy="32" r="20" class="c2"></circle>
+            <path d="M32 20v24M26 26h9a5 5 0 0 1 0 10h-9M26 36h10" class="c3"></path>
+          </svg>
+        </div>
+        <button type="button" class="bx-btn bx-btn-ghost" id="bx-copy-gold-btn">Try to copy it</button>
+        <p class="bx-copydemo-note" id="bx-copy-gold-note" aria-live="polite">Matter doesn't copy. Scarcity is physics.</p>
+      </div>
+      <div class="bx-copydemo-panel" data-kind="digital">
+        <h4>A digital coin</h4>
+        <div class="bx-copydemo-stage" id="bx-copy-file" aria-hidden="true"></div>
+        <button type="button" class="bx-btn bx-btn-ghost" id="bx-copy-file-btn">Copy the file</button>
+        <p class="bx-copydemo-note" id="bx-copy-file-note" aria-live="polite">Information copies perfectly, for free, forever.</p>
+      </div>
+    </div>
+
+    <div class="bx-prose" data-bx-reveal>
+      <h3 class="bx-subhead">The double-spending problem</h3>
+      <p>
+        If digital cash were just a file, you could pay Alice with it and then
+        pay Bob with an identical copy. Both payments would look perfectly
+        valid, because the copies <em>are</em> perfect. This is the
+        <strong>double-spending problem</strong>, and for decades it had exactly
+        one solution: appoint a trusted bookkeeper. Your bank doesn't move
+        digital coins around; it maintains a private ledger and promises not to
+        let the same dollar leave your account twice.
+      </p>
+      <p>
+        That works &mdash; but it concentrates enormous power. The bookkeeper
+        decides who may open an account, which payments go through, and how
+        many new units exist. Central banks can and do change the money supply;
+        payment networks can and do freeze transfers. Whether you consider that
+        power well-used or not, it is <em>required</em> by the design. Digital
+        cash pioneers &mdash; DigiCash in the 1990s, e-gold, Hashcash, b-money,
+        bit gold &mdash; kept circling one unsolved question:
+      </p>
+    </div>
+
+    <div class="bx-bigq" data-bx-reveal>
+      <p>How do you create digital money that cannot be copied &mdash;
+      <span>without putting anyone in charge of it?</span></p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       02 - THE BIRTH OF BITCOIN
+  ================================================================ -->
+  <section class="bx-section" id="origins" aria-labelledby="origins-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">02</span> Origins</p>
+      <h2 id="origins-h">The birth of Bitcoin</h2>
+      <p class="bx-lede">
+        In the autumn of 2008, while the global financial system was being
+        rescued in real time, a nine-page paper appeared on an obscure
+        cryptography mailing list. It solved the double-spending problem with
+        no bookkeeper at all.
+      </p>
+    </div>
+
+    <div class="bx-history" data-bx-reveal>
+      <div class="bx-eras-nav">
+        <h3 class="bx-subhead">Milestones, 2008 &rarr; today</h3>
+        <div class="bx-eras-btns">
+          <button type="button" id="bx-history-prev" class="bx-btn bx-btn-ghost" aria-label="Scroll milestones backward">&larr;</button>
+          <button type="button" id="bx-history-next" class="bx-btn bx-btn-ghost" aria-label="Scroll milestones forward">&rarr;</button>
+        </div>
+      </div>
+      <div class="bx-eras-progress" aria-hidden="true"><i id="bx-history-bar"></i></div>
+      <ol class="bx-eras-track bx-history-track" id="bx-history-track" tabindex="0"
+          aria-label="Timeline of Bitcoin's history. Use arrow keys to scroll.">
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">Sep 2008</span>
+          <h4>The crisis</h4>
+          <p>Lehman Brothers files the largest bankruptcy in U.S. history.
+          Governments launch extraordinary bank rescues, and the world gets a
+          crash course in counterparty risk &mdash; the danger that the
+          institution holding your money fails.</p>
+        </li>
+        <li class="bx-era bx-ms bx-ms-key">
+          <span class="bx-era-date">Oct 31, 2008</span>
+          <h4>The whitepaper</h4>
+          <p>A pseudonymous author, <strong>Satoshi Nakamoto</strong>, posts
+          <em>&ldquo;Bitcoin: A Peer-to-Peer Electronic Cash System&rdquo;</em>
+          to the metzdowd cryptography mailing list: nine pages proposing
+          online payments &ldquo;without going through a financial
+          institution.&rdquo;</p>
+        </li>
+        <li class="bx-era bx-ms bx-ms-key">
+          <span class="bx-era-date">Jan 3, 2009</span>
+          <h4>The genesis block</h4>
+          <p>Satoshi mines block&nbsp;0. Embedded in it, forever, is that day's
+          Times of London headline: <em>&ldquo;Chancellor on brink of second
+          bailout for banks&rdquo;</em> &mdash; a timestamp, and perhaps a
+          statement of purpose.</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">Jan 2009</span>
+          <h4>First transaction</h4>
+          <p>Cryptographer Hal Finney downloads the software, tweets
+          &ldquo;Running bitcoin&rdquo;, and receives 10 BTC from Satoshi in
+          block&nbsp;170 &mdash; the first bitcoin transaction between two
+          people.</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">May 22, 2010</span>
+          <h4>Pizza day</h4>
+          <p>Laszlo Hanyecz pays 10,000 BTC for two delivered pizzas &mdash;
+          about $41 at the time, and the first documented purchase of a
+          physical good with bitcoin. The date is still celebrated (and
+          winced at) annually.</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">2010&ndash;2011</span>
+          <h4>Satoshi steps away</h4>
+          <p>After roughly two years of public work, Satoshi hands the code to
+          other developers, writes &ldquo;I've moved on to other things&rdquo;,
+          and vanishes. The network doesn't notice: it was designed not to
+          need its creator.</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">Nov 28, 2012</span>
+          <h4>First halving</h4>
+          <p>At block 210,000 the new-coin reward drops from 50 to 25 BTC
+          &mdash; the first beat of a supply schedule fixed in code, repeating
+          every four years. (More in <a href="#supply">chapter 10</a>.)</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">Feb 2014</span>
+          <h4>Mt. Gox collapses</h4>
+          <p>The largest bitcoin exchange fails, losing roughly 850,000
+          customer BTC. A painful lesson that still matters: coins held by a
+          company are a promise, not a possession. The protocol itself was
+          untouched.</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">Aug 2017</span>
+          <h4>SegWit &amp; a fork</h4>
+          <p>After a years-long scaling debate, the SegWit upgrade activates.
+          A faction preferring bigger blocks splits off as Bitcoin Cash &mdash;
+          a live demonstration that changing Bitcoin's rules requires
+          convincing nearly everyone. (See <a href="#consensus">chapter 9</a>.)</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">2018</span>
+          <h4>Lightning goes live</h4>
+          <p>The Lightning Network launches on mainnet: a second layer for
+          instant, tiny payments that settle back to the base chain.
+          (Explored in <a href="#lightning">chapter 12</a>.)</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">2020&ndash;2021</span>
+          <h4>Halving three, Taproot</h4>
+          <p>The third halving cuts issuance to 6.25 BTC per block. El Salvador
+          adopts bitcoin as legal tender in 2021, and the Taproot upgrade adds
+          Schnorr signatures &mdash; the largest protocol change in years.</p>
+        </li>
+        <li class="bx-era bx-ms">
+          <span class="bx-era-date">2024</span>
+          <h4>ETFs &amp; halving four</h4>
+          <p>U.S. spot bitcoin ETFs are approved in January; traditional
+          brokerage accounts can now hold exposure. In April, the fourth
+          halving cuts the block reward to 3.125 BTC.</p>
+        </li>
+        <li class="bx-era bx-ms bx-era-question">
+          <span class="bx-era-date">Today</span>
+          <h4>A running experiment</h4>
+          <p>Sixteen-plus years of uninterrupted operation: tens of thousands
+          of nodes, an industrial mining sector, layered payment networks
+          &mdash; and the same 21 million cap it launched with.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="bx-satoshi" data-bx-reveal>
+      <div class="bx-satoshi-head">
+        <h3 class="bx-subhead">Who is Satoshi Nakamoto?</h3>
+        <span class="bx-chip bx-chip-orange">Unknown, by design</span>
+      </div>
+      <p>
+        Nobody knows. &ldquo;Satoshi Nakamoto&rdquo; is the name on the
+        whitepaper and the forum accounts that shepherded Bitcoin through its
+        first two years &mdash; a person or group who wrote in fluent English,
+        released the code open-source, and never spent the roughly one million
+        BTC that analyses attribute to their early mining. Every claimed
+        unmasking has fallen apart; every prominent candidate has denied it.
+      </p>
+      <p>
+        The deeper point is that it doesn't matter. Bitcoin runs on published
+        code and open mathematics that anyone can inspect. Satoshi holds no
+        admin keys, and the system grants its creator no special powers
+        &mdash; disappearing may have been the final design decision.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       03 - WHAT IS BITCOIN?
+  ================================================================ -->
+  <section class="bx-section" id="what" aria-labelledby="what-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">03</span> Definitions</p>
+      <h2 id="what-h">What is Bitcoin, exactly?</h2>
+      <p class="bx-lede">
+        &ldquo;Bitcoin&rdquo; names three different things that fit together:
+        a rulebook, a network that enforces the rulebook, and the scarce
+        digital unit the rulebook accounts for.
+      </p>
+    </div>
+
+    <div class="bx-triptych" data-bx-reveal>
+      <div class="bx-tri-card">
+        <svg viewBox="0 0 48 48" aria-hidden="true" class="bx-tri-icon">
+          <rect x="10" y="8" width="28" height="32" rx="3"></rect>
+          <path d="M16 16h16M16 22h16M16 28h10"></path>
+        </svg>
+        <h3>A protocol</h3>
+        <p>An open-source rulebook: what a valid transaction looks like, what a
+        valid block looks like, how new coins are issued. Published, versioned,
+        and auditable by anyone &mdash; like email's rules, but for value.</p>
+      </div>
+      <div class="bx-tri-card">
+        <svg viewBox="0 0 48 48" aria-hidden="true" class="bx-tri-icon">
+          <circle cx="24" cy="12" r="4"></circle><circle cx="10" cy="30" r="4"></circle>
+          <circle cx="38" cy="30" r="4"></circle><circle cx="24" cy="40" r="4"></circle>
+          <path d="M21 15l-8 12M27 15l8 12M13 32l8 6M35 32l-8 6"></path>
+        </svg>
+        <h3>A network</h3>
+        <p>Tens of thousands of computers &mdash; <em>nodes</em> &mdash; each
+        holding a full copy of the ledger and independently checking every
+        transaction against the rules. No headquarters, no off switch.</p>
+      </div>
+      <div class="bx-tri-card">
+        <svg viewBox="0 0 48 48" aria-hidden="true" class="bx-tri-icon">
+          <circle cx="24" cy="24" r="16"></circle>
+          <path d="M24 14v20M19 19h7a4 4 0 0 1 0 8h-7M19 27h8"></path>
+        </svg>
+        <h3>An asset</h3>
+        <p>The unit itself: <strong>bitcoin</strong>, ticker BTC, divisible into
+        100 million <strong>satoshis</strong>. Owning bitcoin means controlling
+        ledger entries &mdash; there is no coin file, only the record.</p>
+      </div>
+    </div>
+
+    <div class="bx-ledgerdemo" data-bx-reveal>
+      <h3 class="bx-subhead">One ledger, thousands of copies</h3>
+      <canvas id="bx-ledgers" role="img"
+              aria-label="Animation of many identical ledger copies receiving the same new entry at the same time"></canvas>
+      <p class="bx-caption">
+        A bank keeps <em>the</em> ledger; Bitcoin keeps <em>a</em> ledger
+        everywhere at once. New entries are only accepted if every copy can
+        verify them by the same rules &mdash; which is why no single copy can
+        cheat.
+      </p>
+    </div>
+
+    <ul class="bx-props" data-bx-reveal>
+      <li><strong>Digitally scarce.</strong> The issuance schedule caps supply at
+        21 million; scarcity is enforced by verification, not promises.</li>
+      <li><strong>Decentralized.</strong> No company, foundation, or government
+        operates it. Anyone can run a node, mine, or propose code.</li>
+      <li><strong>Permissionless.</strong> Sending or receiving requires no
+        account approval &mdash; only software and a key pair.</li>
+      <li><strong>Transparent.</strong> Every transaction since 2009 is public
+        and independently verifiable by anyone.</li>
+      <li><strong>Fixed policy.</strong> Issuance follows code, not committee
+        decisions. Changing it would require the whole network to opt in.</li>
+      <li><strong>Peer-to-peer.</strong> Final settlement happens between
+        addresses on the ledger, with no institution required in between.</li>
+    </ul>
+
+    <p class="bx-caption bx-caption-note" data-bx-reveal>
+      A note on names: <strong>Bitcoin</strong> (capital B) usually means the
+      protocol and network; <strong>bitcoin</strong> (lowercase) the asset. And
+      &ldquo;blockchain&rdquo; is Bitcoin's data structure &mdash; not a synonym
+      for Bitcoin, and not magic on its own. A blockchain without decentralized
+      consensus is just a slow database.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       04 - BLOCKCHAIN EXPLAINED
+  ================================================================ -->
+  <section class="bx-section" id="blockchain" aria-labelledby="blockchain-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">04</span> The data structure</p>
+      <h2 id="blockchain-h">The blockchain, hands on</h2>
+      <p class="bx-lede">
+        Bitcoin's ledger is a chain of blocks, and the links are made of
+        mathematics. To understand why history is so hard to rewrite, you first
+        need to meet the hash function.
+      </p>
+    </div>
+
+    <div class="bx-hashbox" data-bx-reveal>
+      <div class="bx-hashbox-head">
+        <h3 class="bx-subhead">Meet SHA-256</h3>
+        <span class="bx-chip bx-chip-teal">Live &mdash; computed in your browser</span>
+      </div>
+      <label class="bx-field-label" for="bx-hash-input">Type anything:</label>
+      <input type="text" id="bx-hash-input" class="bx-input" value="The Times 03/Jan/2009"
+             autocomplete="off" spellcheck="false">
+      <p class="bx-hash-out-label">SHA-256 fingerprint:</p>
+      <p class="bx-hash-out" id="bx-hash-output" aria-live="polite"></p>
+      <p class="bx-hash-diff" id="bx-hash-diff" aria-live="polite"></p>
+      <p class="bx-caption">
+        A hash function turns any input into a fixed 256-bit fingerprint.
+        Same input, same fingerprint, every time &mdash; but change one letter
+        and roughly half of all bits flip. There is no known way to run it
+        backwards, and no shortcut to find an input with a chosen fingerprint.
+        Those three properties power everything below.
+      </p>
+    </div>
+
+    <div class="bx-anatomy" data-bx-reveal>
+      <h3 class="bx-subhead">Anatomy of a block</h3>
+      <div class="bx-anatomy-grid">
+        <div class="bx-anatomy-item"><span class="bx-anatomy-k">Previous hash</span>
+          <p>The fingerprint of the block before it &mdash; the actual
+          &ldquo;chain&rdquo; in blockchain.</p></div>
+        <div class="bx-anatomy-item"><span class="bx-anatomy-k">Merkle root</span>
+          <p>One hash summarizing every transaction in the block, built by
+          hashing pairs into a tree. Alter any transaction and the root
+          changes.</p></div>
+        <div class="bx-anatomy-item"><span class="bx-anatomy-k">Timestamp</span>
+          <p>Roughly when the block was built (consensus tolerates small
+          drift).</p></div>
+        <div class="bx-anatomy-item"><span class="bx-anatomy-k">Difficulty target</span>
+          <p>How small the block's own hash must be to count as valid work.</p></div>
+        <div class="bx-anatomy-item"><span class="bx-anatomy-k">Nonce</span>
+          <p>A free counter miners twiddle to hunt for a valid hash &mdash; the
+          knob of <a href="#mining">chapter 8</a>.</p></div>
+        <div class="bx-anatomy-item"><span class="bx-anatomy-k">Transactions</span>
+          <p>A few thousand of them, on average, headed by the coinbase
+          transaction that pays the miner.</p></div>
+      </div>
+    </div>
+
+    <div class="bx-chaindemo" data-bx-reveal>
+      <div class="bx-hashbox-head">
+        <h3 class="bx-subhead">Tamper with a blockchain</h3>
+        <span class="bx-chip bx-chip-teal">Real SHA-256 &mdash; try to get away with it</span>
+      </div>
+      <p class="bx-prose-p">
+        Below is a tiny four-block chain. Each block's fingerprint covers its
+        contents <em>and</em> the previous block's fingerprint. Edit any
+        transaction and watch every later block break; then use
+        <em>Re-mine</em> to repair them one by one and feel how the work
+        cascades.
+      </p>
+      <div class="bx-chain" id="bx-chain" aria-live="polite"></div>
+      <p class="bx-caption" id="bx-chain-verdict">
+        On this toy chain, re-mining a block takes your browser a moment. On
+        Bitcoin, each block takes the <em>entire global network</em> about ten
+        minutes &mdash; and while you re-mined history, that network added new
+        blocks on top. Immutability isn't a rule; it's a head start you can't
+        close.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       05 - HOW TRANSACTIONS WORK
+  ================================================================ -->
+  <section class="bx-section" id="transactions" aria-labelledby="transactions-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">05</span> Payments</p>
+      <h2 id="transactions-h">A transaction's journey</h2>
+      <p class="bx-lede">
+        Alice wants to send Bob 0.5 BTC. Nothing travels from her computer to
+        his &mdash; instead, she asks the whole world to update the ledger.
+        Step through what actually happens.
+      </p>
+    </div>
+
+    <div class="bx-txflow" data-bx-reveal>
+      <div class="bx-txflow-stage">
+        <svg id="bx-txflow-svg" viewBox="0 0 720 340" role="img"
+             aria-label="Diagram of a transaction traveling from Alice through the peer-to-peer network into a mined block, then confirmations accumulating for Bob"></svg>
+        <div class="bx-txcard" id="bx-txcard" aria-hidden="true">
+          <p class="bx-txcard-title">Transaction</p>
+          <p class="bx-txcard-row"><span>In</span> Alice's unspent output &middot; 0.8 BTC</p>
+          <p class="bx-txcard-row"><span>Out</span> 0.5 BTC &rarr; Bob</p>
+          <p class="bx-txcard-row"><span>Out</span> 0.2995 BTC &rarr; back to Alice (change)</p>
+          <p class="bx-txcard-row"><span>Fee</span> 0.0005 BTC &rarr; the miner</p>
+          <p class="bx-txcard-sig" id="bx-txcard-sig">unsigned</p>
+        </div>
+      </div>
+      <p class="bx-txflow-cap" id="bx-txflow-cap" aria-live="polite"></p>
+      <div class="bx-txflow-controls">
+        <button type="button" id="bx-tx-prev" class="bx-btn bx-btn-ghost">&larr; Back</button>
+        <ol class="bx-txflow-steps" id="bx-tx-steps" aria-label="Transaction steps">
+          <li>Compose</li><li>Sign</li><li>Broadcast</li><li>Verify</li>
+          <li>Mempool</li><li>Mine</li><li>Confirm</li>
+        </ol>
+        <button type="button" id="bx-tx-next" class="bx-btn bx-btn-primary">Next &rarr;</button>
+      </div>
+    </div>
+
+    <div class="bx-factrow" data-bx-reveal>
+      <div class="bx-fact">
+        <h4>No accounts, only outputs</h4>
+        <p>Bitcoin has no balances table. Coins live as <em>unspent transaction
+        outputs</em> (UTXOs) &mdash; like bills in a cash drawer. Alice's 0.8
+        BTC output is consumed whole; 0.5 goes to Bob and 0.2995 returns to her
+        as change.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Fees are a market</h4>
+        <p>The small difference between inputs and outputs is the fee. Block
+        space is limited, so wallets bid &mdash; busier network, higher fees.
+        Miners naturally pick the best-paying waiting transactions.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Bob can be offline</h4>
+        <p>Bob's computer plays no role in receiving. The payment is a ledger
+        update, not a message to him. His wallet simply notices the new output
+        the next time it looks at the chain.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Confirmations deepen</h4>
+        <p>One confirmation means the transaction is in the latest block. Each
+        further block buries it deeper and makes reversal exponentially harder.
+        Six confirmations (&asymp; 1 hour) is the traditional
+        &ldquo;settled&rdquo; benchmark for large sums.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 - PUBLIC & PRIVATE KEYS
+  ================================================================ -->
+  <section class="bx-section" id="keys" aria-labelledby="keys-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">06</span> Ownership</p>
+      <h2 id="keys-h">Keys: how the ledger knows it's you</h2>
+      <p class="bx-lede">
+        There are no usernames or passwords in Bitcoin. Ownership is a
+        mathematical fact: whoever holds a secret number &mdash; the private
+        key &mdash; can produce signatures that the whole network can check
+        against a public address. Generate a real one below.
+      </p>
+    </div>
+
+    <div class="bx-keys" id="bx-keys" data-bx-reveal>
+      <div class="bx-keys-left">
+        <button type="button" id="bx-keys-gen" class="bx-btn bx-btn-primary">Generate a key pair</button>
+        <div class="bx-keys-bits" id="bx-keys-bits" role="img"
+             aria-label="A 16 by 16 grid visualizing the 256 random bits of the generated private key"></div>
+        <p class="bx-caption">256 coin flips. That's the entire secret.</p>
+      </div>
+      <div class="bx-keys-right">
+        <div class="bx-keys-stepwrap">
+          <div class="bx-keys-step">
+            <div class="bx-keys-stephead"><span class="bx-keys-n">1</span><h4>Private key</h4>
+              <span class="bx-chip bx-chip-rose">Never share</span></div>
+            <p class="bx-mono" id="bx-keys-priv">&mdash; press generate &mdash;</p>
+          </div>
+          <div class="bx-keys-arrow" aria-hidden="true"><span>elliptic-curve multiplication</span><b>easy &darr; &middot; reversing: no known way</b></div>
+          <div class="bx-keys-step">
+            <div class="bx-keys-stephead"><span class="bx-keys-n">2</span><h4>Public key</h4>
+              <span class="bx-chip bx-chip-teal">Shareable</span></div>
+            <p class="bx-mono" id="bx-keys-pub">&mdash;</p>
+          </div>
+          <div class="bx-keys-arrow" aria-hidden="true"><span>SHA-256, then RIPEMD-160, then Base58Check</span><b>easy &darr; &middot; one-way</b></div>
+          <div class="bx-keys-step">
+            <div class="bx-keys-stephead"><span class="bx-keys-n">3</span><h4>Address</h4>
+              <span class="bx-chip bx-chip-teal">Give this out</span></div>
+            <p class="bx-mono" id="bx-keys-addr">&mdash;</p>
+          </div>
+        </div>
+        <p class="bx-warn">
+          Real math, real curve (secp256k1), computed locally &mdash; nothing
+          leaves your browser. But treat it as a classroom specimen: never send
+          funds to keys generated by a web page. Shown as a legacy
+          &ldquo;1&hellip;&rdquo; address; modern wallets mostly use
+          &ldquo;bc1&hellip;&rdquo; formats &mdash; same idea, newer encoding.
+        </p>
+      </div>
+    </div>
+
+    <div class="bx-keyspace" data-bx-reveal>
+      <p>How safe is a random 256-bit secret? There are about
+      <strong>1.2 &times; 10<sup>77</sup></strong> possible private keys &mdash;
+      within a few orders of magnitude of the number of <em>atoms in the
+      observable universe</em>. Guessing one is not &ldquo;hard&rdquo;; it is
+      statistically indistinguishable from impossible.</p>
+    </div>
+
+    <div class="bx-signdemo" id="bx-sign" data-bx-reveal>
+      <div class="bx-hashbox-head">
+        <h3 class="bx-subhead">Digital signatures: authorize without revealing</h3>
+        <span class="bx-chip bx-chip-teal">Live ECDSA</span>
+      </div>
+      <p class="bx-prose-p">
+        A signature proves the holder of a private key approved <em>this exact
+        message</em> &mdash; without exposing the key. Sign the message, then
+        try editing it: the signature that was valid a moment ago stops
+        matching.
+      </p>
+      <label class="bx-field-label" for="bx-sign-msg">Message:</label>
+      <input type="text" id="bx-sign-msg" class="bx-input" value="Pay Bob 0.5 BTC" autocomplete="off" spellcheck="false">
+      <div class="bx-sign-row">
+        <button type="button" id="bx-sign-btn" class="bx-btn bx-btn-primary">Sign with the key above</button>
+        <p class="bx-sign-status" id="bx-sign-status" aria-live="polite">No signature yet.</p>
+      </div>
+      <p class="bx-mono bx-sign-sig" id="bx-sign-sig"></p>
+      <p class="bx-caption">
+        This is exactly how spending works: a transaction is a message, and the
+        network accepts it only with a valid signature from the key that owns
+        the coins. Verification needs only the <em>public</em> key &mdash;
+        anyone can check, no one can forge. Bitcoin uses ECDSA and, since the
+        2021 Taproot upgrade, Schnorr signatures.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 - WALLETS
+  ================================================================ -->
+  <section class="bx-section" id="wallets" aria-labelledby="wallets-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">07</span> Custody</p>
+      <h2 id="wallets-h">Wallets hold keys, not coins</h2>
+      <p class="bx-lede">
+        The most common misunderstanding in all of Bitcoin: a wallet does not
+        contain bitcoin. Your coins are rows in the global ledger and never
+        leave it. A wallet holds the <em>keys</em> that can sign those rows
+        away &mdash; lose the keys, lose the coins.
+      </p>
+    </div>
+
+    <div class="bx-xray" id="bx-wallet-xray" data-bx-reveal>
+      <div class="bx-xray-toggle" role="group" aria-label="Wallet view toggle">
+        <button type="button" id="bx-xray-myth" class="bx-btn bx-btn-ghost is-active" aria-pressed="true">What people imagine</button>
+        <button type="button" id="bx-xray-truth" class="bx-btn bx-btn-ghost" aria-pressed="false">What's actually inside</button>
+      </div>
+      <div class="bx-xray-stage">
+        <div class="bx-xray-view" id="bx-xray-view-myth">
+          <svg viewBox="0 0 260 150" aria-hidden="true" class="bx-xray-svg">
+            <rect x="30" y="30" width="200" height="95" rx="10" class="w-body"></rect>
+            <rect x="30" y="30" width="200" height="26" rx="10" class="w-flap"></rect>
+            <g class="w-coins">
+              <circle cx="95" cy="92" r="20"></circle>
+              <circle cx="135" cy="92" r="20"></circle>
+              <circle cx="175" cy="92" r="20"></circle>
+              <path d="M95 82v20M130 87h7a5 5 0 0 1 0 10h-7M170 82v20" class="w-sym"></path>
+            </g>
+          </svg>
+          <p class="bx-caption">&ldquo;My bitcoins are <em>in</em> my wallet.&rdquo;
+          Intuitive &mdash; and wrong. Nothing coin-like is stored on your
+          device.</p>
+        </div>
+        <div class="bx-xray-view is-hidden" id="bx-xray-view-truth" hidden>
+          <svg viewBox="0 0 260 150" aria-hidden="true" class="bx-xray-svg">
+            <rect x="30" y="30" width="200" height="95" rx="10" class="w-body"></rect>
+            <g class="w-key">
+              <circle cx="90" cy="78" r="14"></circle>
+              <path d="M101 87l38 38M122 108l10-9M132 118l10-9"></path>
+            </g>
+            <g class="w-seed">
+              <rect x="150" y="52" width="64" height="12" rx="3"></rect>
+              <rect x="150" y="70" width="64" height="12" rx="3"></rect>
+              <rect x="150" y="88" width="64" height="12" rx="3"></rect>
+            </g>
+          </svg>
+          <p class="bx-caption">Inside a real wallet: private keys (usually
+          derived from one seed phrase) plus software that scans the public
+          ledger and drafts signatures. The coins stay on-chain.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bx-spectrum" data-bx-reveal>
+      <h3 class="bx-subhead">The custody spectrum</h3>
+      <div class="bx-spectrum-axis" aria-hidden="true">
+        <span>Most convenient</span><i></i><span>Most secure</span>
+      </div>
+      <div class="bx-spectrum-grid">
+        <div class="bx-wcard" data-heat="hot">
+          <h4>Custodial account</h4>
+          <p>An exchange or app holds the keys; you hold a claim. Familiar and
+          recoverable &mdash; but it reintroduces the trusted middleman, and
+          history (Mt. Gox and others) shows claims can fail.</p>
+        </div>
+        <div class="bx-wcard" data-heat="hot">
+          <h4>Mobile / hot wallet</h4>
+          <p>Keys live on an internet-connected phone or desktop. You control
+          them; malware or phishing can too. Good for spending money, not
+          savings.</p>
+        </div>
+        <div class="bx-wcard" data-heat="cold">
+          <h4>Hardware wallet</h4>
+          <p>Keys are generated and kept inside a dedicated offline device that
+          signs transactions without ever exposing them. The standard for
+          self-custodied savings &mdash; &ldquo;cold storage&rdquo;.</p>
+        </div>
+        <div class="bx-wcard" data-heat="cold">
+          <h4>Paper / steel backup</h4>
+          <p>A seed phrase engraved or written and locked away: fully offline,
+          immune to hacking, vulnerable to fire, loss, and anyone who reads
+          it. Usually the <em>backup</em> for a hardware wallet.</p>
+        </div>
+        <div class="bx-wcard bx-wcard-wide" data-heat="multi">
+          <h4>Multisignature</h4>
+          <p>Spending requires M of N keys &mdash; say, any 2 of 3 kept in
+          different places. One lost or stolen key is survivable. Used by
+          families, companies, and custodians for serious sums. Try it:</p>
+          <div class="bx-multisig" id="bx-multisig">
+            <div class="bx-multisig-keys" role="group" aria-label="Toggle which of the three keys are present">
+              <button type="button" class="bx-mkey" data-key="0" aria-pressed="false">Key A<span>home safe</span></button>
+              <button type="button" class="bx-mkey" data-key="1" aria-pressed="false">Key B<span>bank box</span></button>
+              <button type="button" class="bx-mkey" data-key="2" aria-pressed="false">Key C<span>with family</span></button>
+            </div>
+            <div class="bx-vault" id="bx-vault" data-open="false">
+              <svg viewBox="0 0 90 90" aria-hidden="true">
+                <rect x="10" y="14" width="70" height="62" rx="8" class="v-body"></rect>
+                <circle cx="45" cy="45" r="16" class="v-dial"></circle>
+                <path d="M45 33v24M33 45h24" class="v-cross"></path>
+              </svg>
+              <p id="bx-vault-label" aria-live="polite">0 of 2 required keys &mdash; locked</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bx-seedpanel">
+        <h4>The seed phrase</h4>
+        <p class="bx-seedwords" aria-label="Example seed phrase layout (not a real seed)">
+          <span>example</span><span>seed</span><span>words</span><span>never</span>
+          <span>use</span><span>these</span><span>twelve</span><span>ordinary</span>
+          <span>words</span><span>guard</span><span>real</span><span>ones</span>
+        </p>
+        <p>Modern wallets compress all of their keys into 12 or 24 dictionary
+        words (the BIP-39 standard). Anyone who learns the words controls the
+        money &mdash; there is no password reset, no fraud department, no undo.
+        Self-custody's freedom and its responsibility are the same fact.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 - MINING & PROOF OF WORK
+  ================================================================ -->
+  <section class="bx-section" id="mining" aria-labelledby="mining-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">08</span> The engine</p>
+      <h2 id="mining-h">Mining: a lottery you enter with electricity</h2>
+      <p class="bx-lede">
+        Someone has to add the next page to the ledger. Bitcoin auctions that
+        right by pure chance: find a block whose fingerprint is improbably
+        small, and the network accepts your page &mdash; plus a reward. The
+        only way to search is brute force. That is <em>proof of work</em>, and
+        you can do it right now.
+      </p>
+    </div>
+
+    <div class="bx-miner" id="bx-miner" data-bx-reveal>
+      <div class="bx-miner-block">
+        <div class="bx-miner-blockhead">
+          <h3>Candidate block</h3>
+          <span class="bx-chip bx-chip-orange" id="bx-miner-height">height 908,251</span>
+        </div>
+        <dl class="bx-miner-fields">
+          <div><dt>Previous hash</dt><dd class="bx-mono" id="bx-miner-prev"></dd></div>
+          <div><dt>Transactions</dt><dd>
+            <ul class="bx-miner-txs">
+              <li>coinbase &rarr; you: <strong>3.125 BTC</strong> + 0.041 BTC fees</li>
+              <li>b3&hellip;1f pays 1e&hellip;9c &middot; 0.500 BTC</li>
+              <li>8a&hellip;77 pays f0&hellip;2b &middot; 0.125 BTC</li>
+              <li>c9&hellip;03 pays 55&hellip;ae &middot; 2.400 BTC</li>
+            </ul>
+          </dd></div>
+          <div><dt>Merkle root</dt><dd class="bx-mono" id="bx-miner-merkle"></dd></div>
+          <div><dt>Nonce</dt><dd class="bx-mono bx-miner-noncev" id="bx-miner-nonce">0</dd></div>
+        </dl>
+        <div class="bx-miner-diffrow">
+          <label for="bx-miner-diff">Difficulty</label>
+          <select id="bx-miner-diff" class="bx-select">
+            <option value="2">Warm-up &mdash; hash must start with 00 (&asymp;256 tries)</option>
+            <option value="3">Easy &mdash; 000 (&asymp;4,100 tries)</option>
+            <option value="4" selected>Serious &mdash; 0000 (&asymp;65,000 tries)</option>
+            <option value="5">Hard &mdash; 00000 (&asymp;1 million tries)</option>
+            <option value="6">Brutal &mdash; 000000 (&asymp;17 million tries, minutes)</option>
+          </select>
+        </div>
+        <div class="bx-miner-btns">
+          <button type="button" id="bx-miner-once" class="bx-btn bx-btn-ghost">Try one nonce</button>
+          <button type="button" id="bx-miner-start" class="bx-btn bx-btn-primary">Start mining</button>
+        </div>
+      </div>
+      <div class="bx-miner-live">
+        <p class="bx-miner-target">target: hash must start with <span class="bx-mono" id="bx-miner-target-str">0000</span></p>
+        <p class="bx-miner-hash bx-mono" id="bx-miner-hash">press start</p>
+        <dl class="bx-miner-stats">
+          <div><dt>Attempts</dt><dd id="bx-miner-tries">0</dd></div>
+          <div><dt>Speed</dt><dd id="bx-miner-rate">&mdash;</dd></div>
+          <div><dt>Elapsed</dt><dd id="bx-miner-elapsed">0.0 s</dd></div>
+          <div><dt>Best so far</dt><dd class="bx-mono" id="bx-miner-best">&mdash;</dd></div>
+        </dl>
+        <p class="bx-miner-verdict" id="bx-miner-verdict" aria-live="polite">
+          Every attempt re-hashes the block header with a new nonce (real
+          double SHA-256, right here in your browser). There is no pattern to
+          exploit &mdash; each try is an independent lottery ticket.
+        </p>
+        <ol class="bx-miner-chain" id="bx-miner-chain" aria-label="Blocks you have mined"></ol>
+      </div>
+    </div>
+
+    <p class="bx-caption" data-bx-reveal>
+      Your browser manages a few hundred thousand hashes per second. The real
+      network performs on the order of 10<sup>21</sup> &mdash; a sextillion
+      &mdash; every second (as of 2026): it gets through a <em>year</em> of
+      your browser's guessing in well under a microsecond. That gap is the
+      security budget.
+    </p>
+
+    <div class="bx-factrow" data-bx-reveal>
+      <div class="bx-fact">
+        <h4>Why burn guesses?</h4>
+        <p>Because guesses are unfakeable. A valid hash proves real computation
+        was spent; there is no shortcut, no forgery, no partial credit.
+        Writing ledger history costs something real &mdash; so rewriting it
+        does too.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>The reward</h4>
+        <p>The winner's block includes a special <em>coinbase</em> transaction
+        paying them newly issued bitcoin &mdash; 3.125 BTC per block since the
+        2024 halving &mdash; plus every fee in the block. This is the only way
+        new bitcoin is ever created.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Winning &ne; ruling</h4>
+        <p>The lottery earns the right to <em>propose</em> a block, not to
+        decree one. A block containing an invalid transaction is rejected by
+        every node no matter how much work it proves. Mining and validation
+        are separate powers.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>A four-byte knob isn't enough</h4>
+        <p>The nonce only counts to about 4 billion; industrial miners exhaust
+        it in a blink, then vary the coinbase and timestamp to open fresh
+        search space. The principle is unchanged: enumerate, hash, hope.</p>
+      </div>
+    </div>
+
+    <div class="bx-retarget" data-bx-reveal>
+      <div class="bx-hashbox-head">
+        <h3 class="bx-subhead">The difficulty thermostat</h3>
+        <span class="bx-chip bx-chip-teal">Simulation</span>
+      </div>
+      <p class="bx-prose-p">
+        More hardware would mean faster blocks &mdash; except every 2,016
+        blocks (&asymp;2 weeks) the network re-tunes the difficulty so blocks
+        keep arriving about every ten minutes no matter how much computing
+        power joins or leaves. Set a hashrate trend and watch the thermostat
+        catch up.
+      </p>
+      <div class="bx-retarget-grid">
+        <div class="bx-slider">
+          <label for="bx-retarget-rate">Hashrate trend</label>
+          <input type="range" id="bx-retarget-rate" min="-40" max="40" step="5" value="20">
+          <output id="bx-retarget-rate-out">+20% per period</output>
+        </div>
+        <canvas id="bx-retarget-canvas" role="img"
+                aria-label="Chart of block interval and mining difficulty across adjustment periods: when hashrate rises, intervals briefly shrink until difficulty steps up and restores ten-minute blocks"></canvas>
+        <p class="bx-caption" id="bx-retarget-read" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div class="bx-energy" data-bx-reveal>
+      <h3 class="bx-subhead">The energy question, plainly</h3>
+      <div class="bx-energy-cols">
+        <div>
+          <h4>What's measurable</h4>
+          <ul>
+            <li>Mining consumes industrial-scale electricity &mdash; independent
+            estimates in recent years land around the low hundreds of
+            terawatt-hours per year, comparable to a mid-sized country.</li>
+            <li>Miners are ruthlessly cost-driven and cluster on the cheapest
+            power available &mdash; increasingly surplus, stranded, or
+            off-peak generation.</li>
+            <li>The energy spent is what makes rewriting history expensive.
+            The cost <em>is</em> the security mechanism, not an accident of
+            inefficiency.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>What's debated</h4>
+          <ul>
+            <li>Whether securing a monetary network justifies the footprint
+            &mdash; a values question that comparisons to banking or gold
+            mining can inform but not settle.</li>
+            <li>How much mining subsidizes renewables, balances grids, or
+            reduces methane flaring versus simply adding demand; studies
+            disagree and the mix varies by region.</li>
+            <li>Hardware turnover and e-waste, and how heavily to weigh
+            them.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="bx-caption">
+        Honest summary: proof of work deliberately converts energy into
+        security. Whether that trade is worth it is a judgment this page
+        leaves to you.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 - CONSENSUS
+  ================================================================ -->
+  <section class="bx-section" id="consensus" aria-labelledby="consensus-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">09</span> Agreement</p>
+      <h2 id="consensus-h">Consensus: one history, no referee</h2>
+      <p class="bx-lede">
+        Thousands of computers that don't know or trust each other end up
+        agreeing, block by block, on a single history. The trick: every node
+        verifies everything itself, and when histories compete, everyone
+        follows the one with the most work behind it.
+      </p>
+    </div>
+
+    <div class="bx-consensus" data-bx-reveal>
+      <canvas id="bx-consensus-canvas" role="img"
+              aria-label="Animation of node clusters across regions relaying blocks to each other; the replay button demonstrates two competing blocks splitting the network until the next block resolves the tie"></canvas>
+      <div class="bx-consensus-foot">
+        <p class="bx-consensus-cap" id="bx-consensus-cap" aria-live="polite">
+          Blocks ripple across the globe in seconds; every node checks each
+          one before passing it on.
+        </p>
+        <button type="button" id="bx-fork-replay" class="bx-btn bx-btn-primary">Replay a fork</button>
+      </div>
+    </div>
+
+    <div class="bx-factrow" data-bx-reveal>
+      <div class="bx-fact">
+        <h4>What every node checks</h4>
+        <p>Signatures valid &middot; no output spent twice &middot; no coins
+        minted beyond schedule &middot; block within the size limit &middot;
+        proof-of-work target met. Fail any test and the block is discarded,
+        whoever mined it.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Forks are routine</h4>
+        <p>When two miners find valid blocks seconds apart, the network briefly
+        splits. Miners build on whichever they saw first; as soon as the next
+        block lands, one branch carries more work and everyone converges on
+        it. The abandoned block is <em>stale</em>; its transactions return to
+        the queue.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>&ldquo;Longest&rdquo; means most work</h4>
+        <p>Nodes actually follow the chain with the greatest <em>total
+        accumulated proof of work</em> &mdash; usually, but not necessarily,
+        the one with the most blocks. A rival chain can't win by being merely
+        longer; it must out-compute the honest network.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Finality is probabilistic</h4>
+        <p>No block is ever &ldquo;officially&rdquo; final &mdash; it just
+        becomes astronomically unlikely to be replaced as blocks pile on top.
+        A handful of confirmations is treated as settled in practice, because
+        reversing them would mean out-working the planet.</p>
+      </div>
+    </div>
+
+    <div class="bx-vs" data-bx-reveal>
+      <div class="bx-vs-col">
+        <h4>Miners</h4>
+        <p>Order transactions into blocks and prove work. Powerful, but only
+        within the rules &mdash; their blocks are worthless unless nodes
+        accept them.</p>
+      </div>
+      <div class="bx-vs-mid" aria-hidden="true">vs</div>
+      <div class="bx-vs-col">
+        <h4>Nodes</h4>
+        <p>Enforce the rules by refusing anything invalid. Running one takes a
+        home computer &mdash; deliberately, so verification stays cheap and
+        authority stays distributed. Rule changes ship only when node
+        operators voluntarily adopt them; 2017's blocksize dispute ended in a
+        split, not a decree, for exactly this reason.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 - SUPPLY SCHEDULE
+  ================================================================ -->
+  <section class="bx-section" id="supply" aria-labelledby="supply-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">10</span> Monetary policy</p>
+      <h2 id="supply-h">Twenty-one million, on a timetable</h2>
+      <p class="bx-lede">
+        Bitcoin's entire monetary policy fits in one sentence: every block
+        mints a fixed reward, and every 210,000 blocks &mdash; roughly four
+        years &mdash; that reward halves. Run the schedule forward and it sums
+        to just under 21 million coins, ever.
+      </p>
+    </div>
+
+    <div class="bx-supply" data-bx-reveal>
+      <div id="bx-supply-chart"></div>
+      <div class="bx-slider bx-supply-scrubrow">
+        <label for="bx-supply-scrub">Scrub the timeline</label>
+        <input type="range" id="bx-supply-scrub" min="2009" max="2050" step="1" value="2026">
+        <output id="bx-supply-year">2026</output>
+      </div>
+      <dl class="bx-supply-read" id="bx-supply-read">
+        <div><dt>Block reward</dt><dd id="bx-supply-subsidy">&mdash;</dd></div>
+        <div><dt>Coins issued</dt><dd id="bx-supply-total">&mdash;</dd></div>
+        <div><dt>Of eventual supply</dt><dd id="bx-supply-pct">&mdash;</dd></div>
+        <div><dt>Annual issuance rate</dt><dd id="bx-supply-infl">&mdash;</dd></div>
+      </dl>
+    </div>
+
+    <div class="bx-factrow" data-bx-reveal>
+      <div class="bx-fact">
+        <h4>The halving</h4>
+        <p>50 &rarr; 25 &rarr; 12.5 &rarr; 6.25 &rarr; 3.125 BTC&hellip; Each
+        halving (2012, 2016, 2020, 2024, next &asymp;2028) cuts new issuance in
+        half, on schedule, regardless of demand, politics, or price. The last
+        fraction of a coin arrives around the year 2140.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Already mostly issued</h4>
+        <p>About 95% of all bitcoin that will ever exist has been mined
+        already (as of 2026). Annual issuance is now below 1% of supply &mdash;
+        lower than gold's typical mine inflation &mdash; and it only falls
+        from here.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Verified, not promised</h4>
+        <p>Every node continuously enforces the schedule: a block claiming
+        even one satoshi too much is rejected outright. The 21 million cap
+        holds not because anyone promises it, but because breaking it would
+        require nearly every participant to voluntarily adopt new rules.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Fees take over</h4>
+        <p>As the subsidy shrinks, transaction fees are designed to become
+        miners' main income. Whether fees alone will fund enough security is
+        one of Bitcoin's genuinely open long-term questions &mdash; the
+        experiment runs for another century.</p>
+      </div>
+    </div>
+
+    <p class="bx-caption bx-caption-note" data-bx-reveal>
+      Two honest footnotes: the true cap is 20,999,999.97 BTC (rounding in the
+      reward formula), and meaningfully less than that will ever circulate
+      &mdash; coins in lost keys, including Satoshi's untouched million, are
+      gone for good. Scarcity, if anything, understates itself.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       11 - SECURITY
+  ================================================================ -->
+  <section class="bx-section" id="security" aria-labelledby="security-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">11</span> Defense in depth</p>
+      <h2 id="security-h">Why sixteen years of attacks haven't worked</h2>
+      <p class="bx-lede">
+        Bitcoin secures hundreds of billions in value with no guards, no
+        vault, and no legal department. Its defense is a stack of independent
+        layers &mdash; break one and the next is waiting.
+      </p>
+    </div>
+
+    <div class="bx-layers" data-bx-reveal>
+      <div class="bx-layer"><span class="bx-layer-n">Layer 1</span>
+        <h4>Cryptography</h4>
+        <p>SHA-256 and elliptic-curve signatures &mdash; the same primitive
+        families that protect global banking and the web. Forging a signature
+        or reversing a hash has no known feasible attack.</p></div>
+      <div class="bx-layer"><span class="bx-layer-n">Layer 2</span>
+        <h4>Independent verification</h4>
+        <p>Tens of thousands of nodes re-check every rule on every
+        transaction. There is no privileged server to hack &mdash; a lie must
+        fool everyone at once.</p></div>
+      <div class="bx-layer"><span class="bx-layer-n">Layer 3</span>
+        <h4>Accumulated work</h4>
+        <p>History is buried under a mountain of energy. Rewriting even
+        yesterday means redoing the whole world's mining while it keeps
+        extending the real chain.</p></div>
+      <div class="bx-layer"><span class="bx-layer-n">Layer 4</span>
+        <h4>Economic incentives</h4>
+        <p>The hardware and power needed to attack earn far more by mining
+        honestly &mdash; and a successful attack would devalue the very prize
+        it targets. Rationality is a security feature.</p></div>
+    </div>
+
+    <div class="bx-attack" id="bx-attack" data-bx-reveal>
+      <div class="bx-hashbox-head">
+        <h3 class="bx-subhead">Race the honest chain</h3>
+        <span class="bx-chip bx-chip-teal">Simulation</span>
+      </div>
+      <p class="bx-prose-p">
+        Suppose you control a slice of the world's mining power and want to
+        rewrite a transaction buried some blocks deep. You must secretly
+        re-mine those blocks <em>and</em> overtake the honest chain, which
+        never stops. Set the dials and race.
+      </p>
+      <div class="bx-attack-controls">
+        <div class="bx-slider">
+          <label for="bx-attack-share">Your share of network hashrate</label>
+          <input type="range" id="bx-attack-share" min="5" max="60" step="5" value="30">
+          <output id="bx-attack-share-out">30%</output>
+        </div>
+        <div class="bx-slider">
+          <label for="bx-attack-depth">Blocks to rewrite</label>
+          <input type="range" id="bx-attack-depth" min="1" max="12" step="1" value="6">
+          <output id="bx-attack-depth-out">6</output>
+        </div>
+        <button type="button" id="bx-attack-run" class="bx-btn bx-btn-primary">Run the race</button>
+      </div>
+      <div class="bx-attack-lanes">
+        <div class="bx-attack-lane">
+          <p><span class="bx-lane-dot bx-lane-honest" aria-hidden="true"></span>Honest chain</p>
+          <div class="bx-lane-track" id="bx-attack-lane-honest"></div>
+        </div>
+        <div class="bx-attack-lane">
+          <p><span class="bx-lane-dot bx-lane-evil" aria-hidden="true"></span>Your secret chain</p>
+          <div class="bx-lane-track" id="bx-attack-lane-evil"></div>
+        </div>
+      </div>
+      <p class="bx-caption" id="bx-attack-verdict" aria-live="polite">
+        Below 50%, you fall behind on average &mdash; every honest block
+        widens a gap you can never expect to close. This is why confirmations
+        deepen trust.
+      </p>
+    </div>
+
+    <div class="bx-cancant" data-bx-reveal>
+      <h3 class="bx-subhead">Even a 51% attacker&hellip;</h3>
+      <div class="bx-cancant-cols">
+        <div class="bx-cancant-col" data-kind="can">
+          <h4>Could</h4>
+          <ul>
+            <li>Reverse their own very recent transactions (double-spend)</li>
+            <li>Delay or exclude specific transactions while dominant</li>
+            <li>Collect an outsized share of new blocks</li>
+          </ul>
+        </div>
+        <div class="bx-cancant-col" data-kind="cant">
+          <h4>Still could not</h4>
+          <ul>
+            <li>Spend anyone else's coins &mdash; signatures don't yield to
+            hashpower</li>
+            <li>Change the 21 million cap or any consensus rule</li>
+            <li>Rewrite deep history against the full network's verification</li>
+            <li>Keep the attack secret &mdash; or profitable &mdash; for long</li>
+          </ul>
+        </div>
+      </div>
+      <p class="bx-caption">
+        Acquiring most of the world's fastest specialized hardware plus
+        gigawatts of power, to briefly disrupt a network whose value your
+        attack undermines: possible in theory, self-defeating in practice.
+        Smaller proof-of-work networks <em>have</em> suffered 51% attacks
+        &mdash; Bitcoin's scale is the moat.
+      </p>
+    </div>
+
+    <div class="bx-incident" data-bx-reveal>
+      <div class="bx-incident-head">
+        <h3 class="bx-subhead">The worst day: August 15, 2010</h3>
+        <span class="bx-chip bx-chip-rose">Case study</span>
+      </div>
+      <p>
+        A bug in early code let someone conjure 184 <em>billion</em> BTC out
+        of an integer overflow &mdash; in one transaction. Within hours,
+        developers shipped a fix, and node operators adopted it; the network
+        reorganized onto a corrected chain, erasing the exploit. Nothing like
+        it has happened since &mdash; but it's the honest reminder that
+        Bitcoin's rules are enforced by people choosing to run software, and
+        its security record is a practice, not a law of nature.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 - LIGHTNING NETWORK
+  ================================================================ -->
+  <section class="bx-section" id="lightning" aria-labelledby="lightning-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">12</span> Layer 2</p>
+      <h2 id="lightning-h">Lightning: settle later, pay now</h2>
+      <p class="bx-lede">
+        Global consensus is Bitcoin's superpower and its bottleneck: every
+        node checks every transaction, so the base chain handles only a
+        handful per second, and a coffee shouldn't wait ten minutes. The
+        Lightning Network moves everyday payments <em>off</em> the chain
+        &mdash; without giving up its guarantees.
+      </p>
+    </div>
+
+    <div class="bx-ln" id="bx-ln" data-bx-reveal>
+      <div class="bx-ln-stage">
+        <svg id="bx-ln-svg" viewBox="0 0 720 300" role="img"
+             aria-label="Diagram of a Lightning payment channel between Alice and Bob: an opening transaction on the Bitcoin chain, many instant balance updates off-chain, then a closing transaction settling the final balances"></svg>
+      </div>
+      <p class="bx-ln-cap" id="bx-ln-cap" aria-live="polite">
+        Alice and Bob each hold 0.05 BTC. Open a channel to begin.
+      </p>
+      <div class="bx-ln-controls">
+        <button type="button" id="bx-ln-open" class="bx-btn bx-btn-primary">1 &middot; Open channel</button>
+        <button type="button" id="bx-ln-pay" class="bx-btn bx-btn-ghost" disabled>2 &middot; Stream payments</button>
+        <button type="button" id="bx-ln-close" class="bx-btn bx-btn-ghost" disabled>3 &middot; Close &amp; settle</button>
+      </div>
+    </div>
+
+    <div class="bx-factrow" data-bx-reveal>
+      <div class="bx-fact">
+        <h4>Payment channels</h4>
+        <p>Two parties lock funds in a shared on-chain address, then exchange
+        signed balance updates directly &mdash; thousands of them, instantly,
+        for fractions of a cent. Only the open and the close ever touch the
+        blockchain.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Routing</h4>
+        <p>No channel to the coffee shop? No problem: payments hop across
+        connected channels &mdash; Alice &rarr; Bob &rarr; Carol &mdash; and
+        cryptographic locks (HTLCs) guarantee every hop settles or none does.
+        Nobody along the path can steal the payment.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>Cheating loses money</h4>
+        <p>Try to close a channel with an old, more favorable balance and the
+        protocol lets your counterparty claim <em>everything</em> in it during
+        a dispute window. Honesty is enforced by penalty, not politeness.</p>
+      </div>
+      <div class="bx-fact">
+        <h4>The layered future</h4>
+        <p>The base chain becomes the settlement court &mdash; slow, global,
+        final; Lightning becomes the checkout lane &mdash; instant, cheap,
+        private-ish. Tradeoffs remain: funds must be locked in advance, and
+        recipients need to be reachable. Layer 2 is engineering, not magic.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 - COMMON MISCONCEPTIONS
+  ================================================================ -->
+  <section class="bx-section" id="myths" aria-labelledby="myths-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">13</span> Straight answers</p>
+      <h2 id="myths-h">Common misconceptions, answered carefully</h2>
+      <p class="bx-lede">
+        Sixteen years in, most Bitcoin arguments still orbit the same six
+        questions. Each deserves a real answer &mdash; not a slogan from
+        either side.
+      </p>
+    </div>
+
+    <div class="bx-myths" data-bx-reveal>
+      <div class="bx-myth">
+        <h3><button type="button" class="bx-myth-btn" aria-expanded="false" id="bx-myth-b1" aria-controls="bx-myth-p1">
+          <span class="bx-myth-q">&ldquo;Bitcoin is anonymous.&rdquo;</span>
+          <span class="bx-myth-tag">Mostly false</span>
+          <span class="bx-myth-x" aria-hidden="true"></span>
+        </button></h3>
+        <div class="bx-myth-body" id="bx-myth-p1" role="region" aria-labelledby="bx-myth-b1" hidden>
+          <p>Bitcoin is <em>pseudonymous</em>: addresses aren't names, but
+          every transaction is public forever, and modern chain analysis is
+          very good at clustering addresses and linking them to identities
+          &mdash; especially once coins touch a regulated exchange. Law
+          enforcement has repeatedly traced bitcoin years after the fact.
+          Privacy techniques exist, but out of the box Bitcoin is more
+          transparent than a bank account, not less.</p>
+        </div>
+      </div>
+      <div class="bx-myth">
+        <h3><button type="button" class="bx-myth-btn" aria-expanded="false" id="bx-myth-b2" aria-controls="bx-myth-p2">
+          <span class="bx-myth-q">&ldquo;Bitcoin gets hacked all the time.&rdquo;</span>
+          <span class="bx-myth-tag">Misdirected</span>
+          <span class="bx-myth-x" aria-hidden="true"></span>
+        </button></h3>
+        <div class="bx-myth-body" id="bx-myth-p2" role="region" aria-labelledby="bx-myth-b2" hidden>
+          <p>The headlines are real, but they describe <em>businesses</em>
+          around Bitcoin &mdash; exchanges breached, passwords phished, keys
+          stolen &mdash; the digital equivalent of bank robberies, not broken
+          currency. The protocol itself &mdash; its cryptography and consensus
+          &mdash; has never been successfully attacked in sixteen years while
+          guarding an ever-larger bounty. Distinguish the vault from the
+          valet.</p>
+        </div>
+      </div>
+      <div class="bx-myth">
+        <h3><button type="button" class="bx-myth-btn" aria-expanded="false" id="bx-myth-b3" aria-controls="bx-myth-p3">
+          <span class="bx-myth-q">&ldquo;It isn't backed by anything.&rdquo;</span>
+          <span class="bx-myth-tag">It's complicated</span>
+          <span class="bx-myth-x" aria-hidden="true"></span>
+        </button></h3>
+        <div class="bx-myth-body" id="bx-myth-p3" role="region" aria-labelledby="bx-myth-b3" hidden>
+          <p>True: no commodity or government stands behind bitcoin. But
+          &ldquo;backing&rdquo; deserves scrutiny &mdash; gold is backed by
+          nothing either; it has <em>properties</em> (scarcity, durability)
+          and believers. Fiat currency is backed by state authority and tax
+          demand. Bitcoin's case rests on enforced scarcity, an unbreakable
+          settlement network, and the network effect of everyone who accepts
+          it. Whether those justify any particular value is a market judgment
+          &mdash; what's objective is that the scarcity, unlike most, is
+          independently verifiable by anyone.</p>
+        </div>
+      </div>
+      <div class="bx-myth">
+        <h3><button type="button" class="bx-myth-btn" aria-expanded="false" id="bx-myth-b4" aria-controls="bx-myth-p4">
+          <span class="bx-myth-q">&ldquo;Bitcoin wastes energy.&rdquo;</span>
+          <span class="bx-myth-tag">Depends on values</span>
+          <span class="bx-myth-x" aria-hidden="true"></span>
+        </button></h3>
+        <div class="bx-myth-body" id="bx-myth-p4" role="region" aria-labelledby="bx-myth-b4" hidden>
+          <p>Bitcoin measurably consumes country-scale electricity &mdash;
+          that part isn't in dispute. &ldquo;Waste&rdquo; is the contested
+          word: it implies the output (a neutral, borderless settlement
+          system) isn't worth the input, which is a values judgment, not a
+          measurement. Compare honestly &mdash; banking infrastructure and
+          gold mining also consume enormously &mdash; and note the real
+          nuances: miners chase cheap, often surplus power, yet demand is
+          demand. Reasonable people land differently; the numbers themselves
+          are in <a href="#mining">chapter 8</a>.</p>
+        </div>
+      </div>
+      <div class="bx-myth">
+        <h3><button type="button" class="bx-myth-btn" aria-expanded="false" id="bx-myth-b5" aria-controls="bx-myth-p5">
+          <span class="bx-myth-q">&ldquo;Governments can just shut it down.&rdquo;</span>
+          <span class="bx-myth-tag">Harder than it sounds</span>
+          <span class="bx-myth-x" aria-hidden="true"></span>
+        </button></h3>
+        <div class="bx-myth-body" id="bx-myth-p5" role="region" aria-labelledby="bx-myth-b5" hidden>
+          <p>Governments regulate Bitcoin's edges effectively &mdash;
+          exchanges, taxes, businesses &mdash; and several have banned it
+          outright. But switching the network off means silencing every node
+          in every jurisdiction at once; when China expelled all bitcoin
+          mining in 2021 &mdash; then roughly half the network &mdash; blocks
+          kept arriving, and the hashrate relocated and recovered within
+          months. Policy shapes adoption and price; the protocol itself has
+          proven very hard to reach.</p>
+        </div>
+      </div>
+      <div class="bx-myth">
+        <h3><button type="button" class="bx-myth-btn" aria-expanded="false" id="bx-myth-b6" aria-controls="bx-myth-p6">
+          <span class="bx-myth-q">&ldquo;Anyone can copy the code, so it can't be scarce.&rdquo;</span>
+          <span class="bx-myth-tag">Misses the point</span>
+          <span class="bx-myth-x" aria-hidden="true"></span>
+        </button></h3>
+        <div class="bx-myth-body" id="bx-myth-p6" role="region" aria-labelledby="bx-myth-b6" hidden>
+          <p>The code has been copied thousands of times &mdash; that's what
+          altcoins and forks like Bitcoin Cash are. What a copy cannot take is
+          the network: the miners securing it, the nodes enforcing it, the
+          users accepting it, and sixteen years of unbroken history. Scarcity
+          lives per-network, and a new network starts from zero on all of it.
+          Copying Bitcoin's code and expecting Bitcoin's properties is copying
+          a map and expecting the territory.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       PLAYGROUND - NETWORK SIMULATOR
+  ================================================================ -->
+  <section class="bx-section" id="playground" aria-labelledby="playground-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker"><span class="bx-kicker-num">14</span> Finale</p>
+      <h2 id="playground-h">Run your own Bitcoin network</h2>
+      <p class="bx-lede">
+        Everything from the last thirteen chapters in one sandbox: nodes
+        gossip transactions, miners race for blocks, forks happen and heal.
+        Stress it until it misbehaves &mdash; that's the fastest way to feel
+        why the real parameters are what they are.
+      </p>
+    </div>
+
+    <div class="bx-pg" data-bx-reveal>
+      <div class="bx-pg-controls">
+        <div class="bx-slider">
+          <label for="bx-pg-nodes">Nodes</label>
+          <input type="range" id="bx-pg-nodes" min="8" max="48" step="4" value="24">
+          <output id="bx-pg-nodes-out">24</output>
+        </div>
+        <div class="bx-slider">
+          <label for="bx-pg-miners">Miners</label>
+          <input type="range" id="bx-pg-miners" min="1" max="8" step="1" value="4">
+          <output id="bx-pg-miners-out">4</output>
+        </div>
+        <div class="bx-slider">
+          <label for="bx-pg-diff">Block time target</label>
+          <input type="range" id="bx-pg-diff" min="4" max="30" step="1" value="12">
+          <output id="bx-pg-diff-out">12 s</output>
+        </div>
+        <div class="bx-slider">
+          <label for="bx-pg-txrate">Transactions / second</label>
+          <input type="range" id="bx-pg-txrate" min="0" max="8" step="0.5" value="2">
+          <output id="bx-pg-txrate-out">2.0</output>
+        </div>
+        <div class="bx-slider">
+          <label for="bx-pg-blocksize">Block capacity (tx)</label>
+          <input type="range" id="bx-pg-blocksize" min="5" max="60" step="5" value="25">
+          <output id="bx-pg-blocksize-out">25</output>
+        </div>
+        <div class="bx-slider">
+          <label for="bx-pg-latency">Network latency</label>
+          <input type="range" id="bx-pg-latency" min="1" max="20" step="1" value="4">
+          <output id="bx-pg-latency-out">fast</output>
+        </div>
+        <div class="bx-pg-btns">
+          <button type="button" id="bx-pg-run" class="bx-btn bx-btn-primary">Run simulation</button>
+          <button type="button" id="bx-pg-reset" class="bx-btn bx-btn-ghost">Reset</button>
+        </div>
+        <div class="bx-pg-tries">
+          <p class="bx-pg-try"><strong>Try:</strong> max latency + 4-second
+          blocks &rarr; watch forks bloom.</p>
+          <p class="bx-pg-try"><strong>Try:</strong> 8 tx/s into 5-tx blocks
+          &rarr; watch the backlog (and fees) grow.</p>
+        </div>
+      </div>
+      <div class="bx-pg-stage">
+        <canvas id="bx-pg-canvas" role="img"
+                aria-label="Live simulation of a peer-to-peer network: transactions spread between nodes, miners find blocks that ripple outward, and occasional competing blocks briefly fork the network"></canvas>
+        <dl class="bx-pg-stats">
+          <div><dt>Height</dt><dd id="bx-pg-height">0</dd></div>
+          <div><dt>Avg block time</dt><dd id="bx-pg-avg">&mdash;</dd></div>
+          <div><dt>Confirmed tx</dt><dd id="bx-pg-confirmed">0</dd></div>
+          <div><dt>Backlog</dt><dd id="bx-pg-mempool">0</dd></div>
+          <div><dt>Stale blocks</dt><dd id="bx-pg-stale">0</dd></div>
+        </dl>
+        <p class="bx-pg-verdict" id="bx-pg-verdict" aria-live="polite">
+          Press run. Teal pulses are transactions gossiping; orange rings are
+          blocks propagating; red flashes are forks resolving.
+        </p>
+      </div>
+    </div>
+
+    <p class="bx-caption" data-bx-reveal>
+      An honest disclaimer: this is a cartoon of Bitcoin, tuned for intuition
+      &mdash; real blocks take minutes, not seconds, and real difficulty
+      adjusts itself. But the dynamics you're seeing (propagation delay causes
+      forks; limited blocks create fee pressure; more work means safer
+      history) are the real thing.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       OUTRO
+  ================================================================ -->
+  <footer class="bx-outro">
+    <p class="bx-outro-line">
+      No coins, no vault, no company &mdash; <span>just mathematics agreeing
+      with itself, every ten minutes, worldwide.</span>
+    </p>
+    <p class="bx-outro-small">
+      You now know how Bitcoin works: why digital scarcity needed solving, how
+      hashes chain history, how keys prove ownership, how work buys security,
+      and how thousands of strangers agree on one ledger. Where you go from
+      here &mdash; skeptic, builder, or simply better informed &mdash; is
+      yours; this page is education, not investment advice. The
+      <a href="https://bitcoin.org/bitcoin.pdf" rel="noopener" target="_blank">nine-page
+      whitepaper</a> is a worthy next read.
+    </p>
+    <p class="bx-outro-small">
+      Built with semantic HTML, modern CSS, and vanilla JavaScript &mdash; the
+      hashes, keys, signatures, and mining on this page run live in your
+      browser; no frameworks, no libraries, nothing leaves the page.
+      <a href="https://github.com/michael-buttitta/michael-buttitta.github.io" rel="noopener" target="_blank">View the source</a>
+      &middot; <a href="#top">Back to top</a>
+    </p>
+  </footer>
+</div>
