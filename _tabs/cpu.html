@@ -1,0 +1,1379 @@
+---
+layout: gpu
+title: CPU
+icon: fas fa-brain
+order: 5
+description: >-
+  An interactive visual guide to how modern CPUs work — the fetch-decode-execute
+  cycle, registers, caches and the memory hierarchy, pipelines, branch
+  prediction, out-of-order execution, multi-core chips, and performance,
+  explained with live simulations.
+extra_css:
+  - /assets/css/cpu.css
+extra_js:
+  - /assets/js/cpu.js
+---
+
+<div id="cpu-experience">
+  <noscript>
+    <p class="cx-noscript">
+      The live simulations on this page need JavaScript. All of the explanations
+      below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="cx-rail" aria-label="Chapters">
+    <a class="cx-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="cx-rail-dot" href="#why" data-label="Why CPUs exist"><span></span></a>
+    <a class="cx-rail-dot" href="#anatomy" data-label="Anatomy of a CPU"><span></span></a>
+    <a class="cx-rail-dot" href="#cycle" data-label="Fetch, decode, execute"><span></span></a>
+    <a class="cx-rail-dot" href="#code" data-label="Code to machine code"><span></span></a>
+    <a class="cx-rail-dot" href="#registers" data-label="Registers"><span></span></a>
+    <a class="cx-rail-dot" href="#memory" data-label="The memory hierarchy"><span></span></a>
+    <a class="cx-rail-dot" href="#pipeline" data-label="Pipelines"><span></span></a>
+    <a class="cx-rail-dot" href="#branch" data-label="Branch prediction"><span></span></a>
+    <a class="cx-rail-dot" href="#ooo" data-label="Out-of-order execution"><span></span></a>
+    <a class="cx-rail-dot" href="#cores" data-label="Multi-core &amp; SMT"><span></span></a>
+    <a class="cx-rail-dot" href="#vsgpu" data-label="CPU vs GPU"><span></span></a>
+    <a class="cx-rail-dot" href="#metrics" data-label="Reading a spec sheet"><span></span></a>
+    <a class="cx-rail-dot" href="#history" data-label="Eighty years of CPUs"><span></span></a>
+    <a class="cx-rail-dot" href="#playground" data-label="Design your own CPU"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="cx-hero" id="top">
+    <canvas id="cx-hero-canvas" aria-hidden="true"></canvas>
+    <div class="cx-hero-inner">
+      <p class="cx-kicker">An interactive exhibit</p>
+      <h1 class="cx-hero-title">Inside a Modern CPU</h1>
+      <p class="cx-hero-sub">
+        Discover how billions of transistors transform software into billions
+        of instructions every second.
+      </p>
+      <div class="cx-hero-cta">
+        <a class="cx-btn cx-btn-primary" id="cx-hero-cta" href="#why">Begin exploring</a>
+        <span class="cx-hero-hint">14 chapters &middot; live simulations &middot; no installs</span>
+      </div>
+    </div>
+    <div class="cx-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       01 - WHY CPUS EXIST
+  ================================================================ -->
+  <section class="cx-section" id="why" aria-labelledby="why-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">01</span> The problem</p>
+      <h2 id="why-h">Why CPUs exist</h2>
+      <p class="cx-lede">
+        Software is just text until something runs it. A computer needs one
+        component whose whole job is to take a program, break it into steps a
+        machine can perform, and perform them &mdash; relentlessly, billions of
+        times per second. That component is the CPU.
+      </p>
+    </div>
+
+    <div class="cx-flow" data-cx-reveal>
+      <div class="cx-flow-stage" data-stage="0">
+        <h3 class="cx-flow-title">Your program</h3>
+        <div class="cx-flow-card cx-flow-code" id="cx-flow-code">
+          <code>score = score + 10</code>
+        </div>
+        <p class="cx-flow-note">One line, written for humans</p>
+      </div>
+      <div class="cx-flow-arrow" aria-hidden="true"><span></span></div>
+      <div class="cx-flow-stage" data-stage="1">
+        <h3 class="cx-flow-title">Instructions</h3>
+        <div class="cx-flow-card cx-flow-instrs" id="cx-flow-instrs">
+          <code data-instr="0">load&nbsp;&nbsp;r1, score</code>
+          <code data-instr="1">add&nbsp;&nbsp;&nbsp;r1, r1, 10</code>
+          <code data-instr="2">store&nbsp;score, r1</code>
+        </div>
+        <p class="cx-flow-note">Three steps, written for machines</p>
+      </div>
+      <div class="cx-flow-arrow" aria-hidden="true"><span></span></div>
+      <div class="cx-flow-stage" data-stage="2">
+        <h3 class="cx-flow-title">The CPU</h3>
+        <div class="cx-flow-card cx-flow-chip" id="cx-flow-chip" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <rect class="cx-flowchip-body" x="22" y="22" width="76" height="76" rx="10"></rect>
+            <rect class="cx-flowchip-core" id="cx-flowchip-core" x="42" y="42" width="36" height="36" rx="5"></rect>
+            <g class="cx-flowchip-pins">
+              <line x1="34" y1="22" x2="34" y2="8"></line><line x1="50" y1="22" x2="50" y2="8"></line>
+              <line x1="66" y1="22" x2="66" y2="8"></line><line x1="82" y1="22" x2="82" y2="8"></line>
+              <line x1="34" y1="98" x2="34" y2="112"></line><line x1="50" y1="98" x2="50" y2="112"></line>
+              <line x1="66" y1="98" x2="66" y2="112"></line><line x1="82" y1="98" x2="82" y2="112"></line>
+              <line x1="22" y1="34" x2="8" y2="34"></line><line x1="22" y1="50" x2="8" y2="50"></line>
+              <line x1="22" y1="66" x2="8" y2="66"></line><line x1="22" y1="82" x2="8" y2="82"></line>
+              <line x1="98" y1="34" x2="112" y2="34"></line><line x1="98" y1="50" x2="112" y2="50"></line>
+              <line x1="98" y1="66" x2="112" y2="66"></line><line x1="98" y1="82" x2="112" y2="82"></line>
+            </g>
+          </svg>
+        </div>
+        <p class="cx-flow-note">Executes <output id="cx-flow-count">0</output> / 3 instructions</p>
+      </div>
+      <div class="cx-flow-arrow" aria-hidden="true"><span></span></div>
+      <div class="cx-flow-stage" data-stage="3">
+        <h3 class="cx-flow-title">The result</h3>
+        <div class="cx-flow-card cx-flow-screen">
+          <span class="cx-flow-screen-label">score</span>
+          <output id="cx-flow-score" class="cx-flow-score">2500</output>
+        </div>
+        <p class="cx-flow-note">Memory updated, pixels follow</p>
+      </div>
+    </div>
+
+    <div class="cx-flow-foot">
+      <p class="cx-flow-status" id="cx-flow-status" aria-live="polite"></p>
+      <button type="button" id="cx-flow-replay" class="cx-btn cx-btn-ghost">Replay</button>
+    </div>
+
+    <p class="cx-caption">
+      The instruction set shown here is simplified for readability &mdash; real
+      machine instructions are raw bytes, and chapter 04 shows the real thing.
+      The idea is exact, though: every program, from a calculator to a game
+      engine, becomes a stream of tiny steps like these.
+    </p>
+
+    <h3 class="cx-subhead">&ldquo;The brain&rdquo; &mdash; and what that metaphor hides</h3>
+    <p class="cx-prose">
+      The CPU is often called the brain of the computer because every decision
+      passes through it. But unlike a brain, it <em>stores almost nothing</em>.
+      Your running programs live in RAM; your files live on the SSD. The CPU is
+      pure verb &mdash; it fetches, computes, and writes back, and it is only as
+      fast as the memory that feeds it.
+    </p>
+
+    <div class="cx-board" data-cx-reveal>
+      <svg viewBox="0 0 900 300" role="img"
+           aria-label="Diagram of a motherboard showing the CPU, RAM modules, and an SSD as three separate components connected by buses.">
+        <rect class="cx-board-bg" x="4" y="4" width="892" height="292" rx="12"></rect>
+        <g class="cx-board-part">
+          <rect class="cx-board-cpu" x="90" y="70" width="160" height="160" rx="10"></rect>
+          <rect class="cx-board-cpu-die" x="130" y="110" width="80" height="80" rx="6"></rect>
+          <text class="cx-board-name" x="170" y="262">CPU</text>
+          <text class="cx-board-desc" x="170" y="281">computes everything</text>
+        </g>
+        <g class="cx-board-part">
+          <rect class="cx-board-ram" x="420" y="60" width="34" height="180" rx="4"></rect>
+          <rect class="cx-board-ram" x="466" y="60" width="34" height="180" rx="4"></rect>
+          <text class="cx-board-name" x="460" y="262">RAM</text>
+          <text class="cx-board-desc" x="460" y="281">running programs live here</text>
+        </g>
+        <g class="cx-board-part">
+          <rect class="cx-board-ssd" x="680" y="105" width="150" height="90" rx="8"></rect>
+          <text class="cx-board-ssd-label" x="755" y="155">NVMe SSD</text>
+          <text class="cx-board-name" x="755" y="262">Storage</text>
+          <text class="cx-board-desc" x="755" y="281">files sleep here</text>
+        </g>
+        <g class="cx-board-bus">
+          <line x1="250" y1="150" x2="420" y2="150"></line>
+          <text class="cx-board-buslabel" x="335" y="138">~100 GB/s</text>
+          <line x1="500" y1="150" x2="680" y2="150"></line>
+          <text class="cx-board-buslabel" x="590" y="138">~7 GB/s</text>
+        </g>
+      </svg>
+    </div>
+    <p class="cx-caption">
+      Three separate physical components. When people say a computer
+      &ldquo;thinks,&rdquo; they mean this trio passing data back and forth
+      &mdash; and most of this page is about what happens inside the leftmost
+      box.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       02 - ANATOMY OF A CPU
+  ================================================================ -->
+  <section class="cx-section" id="anatomy" aria-labelledby="anatomy-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">02</span> The silicon</p>
+      <h2 id="anatomy-h">Anatomy of a CPU</h2>
+      <p class="cx-lede">
+        Under the metal lid is a die smaller than a postage stamp holding tens
+        of billions of transistors, organized into a few dozen specialized
+        machines. Select any component to see what it does, why it exists, and
+        who it talks to &mdash; then zoom into a single core.
+      </p>
+    </div>
+
+    <div class="cx-die-layout" data-cx-reveal>
+      <div class="cx-die-stage">
+        <div class="cx-die-tabs" role="group" aria-label="Diagram zoom level">
+          <button type="button" class="cx-die-tab" id="cx-view-die-btn" aria-pressed="true">The whole die</button>
+          <button type="button" class="cx-die-tab" id="cx-view-core-btn" aria-pressed="false">Inside one core</button>
+        </div>
+        <svg id="cx-die" viewBox="0 0 960 640" role="group"
+             aria-label="Stylized diagram of a CPU die. Components are selectable. A zoom toggle switches between the whole die and the inside of a single core.">
+          <!-- ============ DIE VIEW ============ -->
+          <g id="cx-die-view">
+            <rect class="cx-svg-pkg" x="10" y="10" width="850" height="620" rx="16"></rect>
+            <rect class="cx-svg-die" x="100" y="50" width="680" height="540" rx="8"></rect>
+
+            <!-- top row of cores -->
+            <g class="cx-part" data-part="core" tabindex="0" role="button" aria-label="CPU cores">
+              <rect class="cx-svg-core" x="120" y="70" width="150" height="160" rx="6"></rect>
+              <rect class="cx-svg-core" x="290" y="70" width="150" height="160" rx="6"></rect>
+              <rect class="cx-svg-core" x="460" y="70" width="150" height="160" rx="6"></rect>
+              <rect class="cx-svg-core" x="630" y="70" width="130" height="160" rx="6"></rect>
+              <text class="cx-svg-label" x="195" y="155">Core 0</text>
+              <text class="cx-svg-label" x="365" y="155">Core 1</text>
+              <text class="cx-svg-label" x="535" y="155">Core 2</text>
+              <text class="cx-svg-label" x="695" y="155">Core 3</text>
+            </g>
+
+            <!-- middle band: L3 + uncore -->
+            <g class="cx-part" data-part="l3" tabindex="0" role="button" aria-label="Shared L3 cache">
+              <rect class="cx-svg-l3" x="120" y="250" width="450" height="140" rx="6"></rect>
+              <text class="cx-svg-label" x="345" y="315">Shared L3 cache</text>
+              <text class="cx-svg-sublabel" x="345" y="338">32&ndash;96 MB, all cores</text>
+            </g>
+            <g class="cx-part" data-part="imc" tabindex="0" role="button" aria-label="Memory controller">
+              <rect class="cx-svg-uncore" x="590" y="250" width="170" height="62" rx="6"></rect>
+              <text class="cx-svg-label" x="675" y="286">Memory controller</text>
+            </g>
+            <g class="cx-part" data-part="clock" tabindex="0" role="button" aria-label="Clock generation and distribution">
+              <rect class="cx-svg-uncore" x="590" y="328" width="170" height="62" rx="6"></rect>
+              <text class="cx-svg-label" x="675" y="364">Clock / PLL</text>
+            </g>
+
+            <!-- bottom row of cores -->
+            <g class="cx-part" data-part="core" tabindex="0" role="button" aria-label="CPU cores">
+              <rect class="cx-svg-core" x="120" y="410" width="150" height="160" rx="6"></rect>
+              <rect class="cx-svg-core" x="290" y="410" width="150" height="160" rx="6"></rect>
+              <rect class="cx-svg-core" x="460" y="410" width="150" height="160" rx="6"></rect>
+              <rect class="cx-svg-core" x="630" y="410" width="130" height="160" rx="6"></rect>
+              <text class="cx-svg-label" x="195" y="495">Core 4</text>
+              <text class="cx-svg-label" x="365" y="495">Core 5</text>
+              <text class="cx-svg-label" x="535" y="495">Core 6</text>
+              <text class="cx-svg-label" x="695" y="495">Core 7</text>
+            </g>
+
+            <!-- RAM outside the package -->
+            <g class="cx-svg-dimm-group" aria-hidden="true">
+              <line class="cx-svg-bus" x1="760" y1="281" x2="890" y2="281"></line>
+              <rect class="cx-svg-dimm" x="890" y="150" width="28" height="200" rx="4"></rect>
+              <rect class="cx-svg-dimm" x="926" y="150" width="28" height="200" rx="4"></rect>
+              <text class="cx-svg-sublabel" x="922" y="380">DDR5</text>
+              <text class="cx-svg-sublabel" x="922" y="400">(RAM &mdash; separate chips)</text>
+            </g>
+          </g>
+
+          <!-- ============ CORE VIEW ============ -->
+          <g id="cx-core-view" class="is-hidden">
+            <rect class="cx-svg-die" x="100" y="50" width="760" height="540" rx="8"></rect>
+            <text class="cx-svg-viewtitle" x="480" y="36">One core, exploded</text>
+
+            <!-- row A: front end -->
+            <g class="cx-part" data-part="bpred" tabindex="0" role="button" aria-label="Branch predictor">
+              <rect class="cx-svg-fe" x="120" y="80" width="170" height="90" rx="6"></rect>
+              <text class="cx-svg-label" x="205" y="120">Branch</text>
+              <text class="cx-svg-label" x="205" y="140">predictor</text>
+            </g>
+            <g class="cx-part" data-part="l1i" tabindex="0" role="button" aria-label="L1 instruction cache">
+              <rect class="cx-svg-mem" x="310" y="80" width="160" height="90" rx="6"></rect>
+              <text class="cx-svg-label" x="390" y="120">L1 instruction</text>
+              <text class="cx-svg-label" x="390" y="140">cache</text>
+            </g>
+            <g class="cx-part" data-part="fetch" tabindex="0" role="button" aria-label="Instruction fetch unit">
+              <rect class="cx-svg-fe" x="490" y="80" width="150" height="90" rx="6"></rect>
+              <text class="cx-svg-label" x="565" y="130">Fetch</text>
+            </g>
+            <g class="cx-part" data-part="decode" tabindex="0" role="button" aria-label="Instruction decoder">
+              <rect class="cx-svg-fe" x="660" y="80" width="180" height="90" rx="6"></rect>
+              <text class="cx-svg-label" x="750" y="130">Decoder</text>
+            </g>
+
+            <!-- row B: control -->
+            <g class="cx-part" data-part="control" tabindex="0" role="button" aria-label="Control unit">
+              <rect class="cx-svg-ctl" x="120" y="210" width="170" height="90" rx="6"></rect>
+              <text class="cx-svg-label" x="205" y="260">Control unit</text>
+            </g>
+            <g class="cx-part" data-part="uopq" tabindex="0" role="button" aria-label="Micro-op queue">
+              <rect class="cx-svg-ctl" x="310" y="210" width="160" height="90" rx="6"></rect>
+              <text class="cx-svg-label" x="390" y="250">&micro;op queue</text>
+              <text class="cx-svg-sublabel" x="390" y="272">decoded work, waiting</text>
+            </g>
+            <g class="cx-part" data-part="sched" tabindex="0" role="button" aria-label="Rename and scheduler">
+              <rect class="cx-svg-ctl" x="490" y="210" width="180" height="90" rx="6"></rect>
+              <text class="cx-svg-label" x="580" y="250">Rename +</text>
+              <text class="cx-svg-label" x="580" y="270">scheduler</text>
+            </g>
+            <g class="cx-part" data-part="regs" tabindex="0" role="button" aria-label="Register file">
+              <rect class="cx-svg-regs" x="690" y="210" width="150" height="90" rx="6"></rect>
+              <text class="cx-svg-label" x="765" y="250">Register</text>
+              <text class="cx-svg-label" x="765" y="270">file</text>
+            </g>
+
+            <!-- row C: execution -->
+            <g class="cx-part" data-part="alu" tabindex="0" role="button" aria-label="Integer ALUs">
+              <rect class="cx-svg-exec" x="120" y="340" width="170" height="100" rx="6"></rect>
+              <text class="cx-svg-label" x="205" y="385">Integer</text>
+              <text class="cx-svg-label" x="205" y="405">ALUs &times;4</text>
+            </g>
+            <g class="cx-part" data-part="fpu" tabindex="0" role="button" aria-label="Floating point and vector units">
+              <rect class="cx-svg-exec" x="310" y="340" width="160" height="100" rx="6"></rect>
+              <text class="cx-svg-label" x="390" y="385">FPU /</text>
+              <text class="cx-svg-label" x="390" y="405">vector units</text>
+            </g>
+            <g class="cx-part" data-part="lsu" tabindex="0" role="button" aria-label="Load and store units">
+              <rect class="cx-svg-exec" x="490" y="340" width="180" height="100" rx="6"></rect>
+              <text class="cx-svg-label" x="580" y="385">Load / store</text>
+              <text class="cx-svg-label" x="580" y="405">units</text>
+            </g>
+            <g class="cx-part" data-part="l1d" tabindex="0" role="button" aria-label="L1 data cache">
+              <rect class="cx-svg-mem" x="690" y="340" width="150" height="100" rx="6"></rect>
+              <text class="cx-svg-label" x="765" y="385">L1 data</text>
+              <text class="cx-svg-label" x="765" y="405">cache</text>
+            </g>
+
+            <!-- row D: retirement + private cache -->
+            <g class="cx-part" data-part="rob" tabindex="0" role="button" aria-label="Reorder buffer">
+              <rect class="cx-svg-ctl" x="120" y="480" width="170" height="80" rx="6"></rect>
+              <text class="cx-svg-label" x="205" y="515">Reorder buffer</text>
+              <text class="cx-svg-sublabel" x="205" y="537">retire in order</text>
+            </g>
+            <g class="cx-part" data-part="l2" tabindex="0" role="button" aria-label="L2 cache">
+              <rect class="cx-svg-mem" x="310" y="480" width="330" height="80" rx="6"></rect>
+              <text class="cx-svg-label" x="475" y="515">L2 cache</text>
+              <text class="cx-svg-sublabel" x="475" y="537">private, 1&ndash;3 MB</text>
+            </g>
+            <g class="cx-part" data-part="l3" tabindex="0" role="button" aria-label="Link to shared L3 cache">
+              <rect class="cx-svg-mem" x="660" y="480" width="180" height="80" rx="6"></rect>
+              <text class="cx-svg-label" x="750" y="515">&rarr; shared L3</text>
+              <text class="cx-svg-sublabel" x="750" y="537">with every other core</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <aside class="cx-die-panel" aria-live="polite">
+        <p class="cx-die-panel-kicker" id="cx-part-kicker">Component</p>
+        <h3 id="cx-part-title">Select a component</h3>
+        <div class="cx-die-panel-body">
+          <p class="cx-die-panel-label">What it does</p>
+          <p id="cx-part-what">Click or tab to any block in the diagram. Use the toggle above the diagram to zoom between the full die and a single core.</p>
+          <p class="cx-die-panel-label" id="cx-part-why-label">Why it exists</p>
+          <p id="cx-part-why"></p>
+          <p class="cx-die-panel-label" id="cx-part-links-label">Talks to</p>
+          <p class="cx-die-panel-links" id="cx-part-links"></p>
+        </div>
+      </aside>
+    </div>
+
+    <p class="cx-caption">
+      Layout stylized; real floorplans are messier and vary by vendor. The
+      component inventory is faithful to current AMD, Intel, and Apple cores
+      &mdash; every block here exists on a die you can buy today.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       03 - THE FETCH-DECODE-EXECUTE CYCLE
+  ================================================================ -->
+  <section class="cx-section" id="cycle" aria-labelledby="cycle-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">03</span> The heartbeat</p>
+      <h2 id="cycle-h">Fetch, decode, execute</h2>
+      <p class="cx-lede">
+        Strip away every optimization and a CPU does exactly one thing, forever:
+        fetch the next instruction, figure out what it means, do it, record the
+        result. Follow one real instruction &mdash; <code>add rax, rbx</code>
+        &mdash; through the whole journey.
+      </p>
+    </div>
+
+    <div class="cx-fdx" data-cx-reveal>
+      <svg id="cx-fdx-svg" viewBox="0 0 960 400" role="img"
+           aria-label="Diagram of an instruction traveling from RAM through the caches into the CPU core, where it is fetched, decoded, scheduled, executed, and written back to registers.">
+        <rect class="cx-svg-die" x="16" y="46" width="640" height="330" rx="10"></rect>
+        <text class="cx-svg-viewtitle" x="336" y="32">CPU core</text>
+
+        <g class="cx-fdx-box" data-fdx="fetch">
+          <rect x="36" y="90" width="130" height="80" rx="6"></rect>
+          <text class="cx-svg-label" x="101" y="126">Fetch</text>
+          <text class="cx-svg-sublabel" x="101" y="148">PC: <tspan id="cx-fdx-pc">0x4000</tspan></text>
+        </g>
+        <g class="cx-fdx-box" data-fdx="decode">
+          <rect x="196" y="90" width="130" height="80" rx="6"></rect>
+          <text class="cx-svg-label" x="261" y="135">Decode</text>
+        </g>
+        <g class="cx-fdx-box" data-fdx="sched">
+          <rect x="356" y="90" width="130" height="80" rx="6"></rect>
+          <text class="cx-svg-label" x="421" y="135">Scheduler</text>
+        </g>
+        <g class="cx-fdx-box" data-fdx="alu">
+          <rect x="356" y="240" width="130" height="80" rx="6"></rect>
+          <text class="cx-svg-label" x="421" y="285">ALU</text>
+        </g>
+        <g class="cx-fdx-box" data-fdx="regs">
+          <rect x="196" y="240" width="130" height="80" rx="6"></rect>
+          <text class="cx-svg-label" x="261" y="278">Registers</text>
+          <text class="cx-svg-sublabel" x="261" y="300">rax, rbx, &hellip;</text>
+        </g>
+        <g class="cx-fdx-box" data-fdx="l1i">
+          <rect x="516" y="90" width="120" height="80" rx="6"></rect>
+          <text class="cx-svg-label" x="576" y="126">L1i</text>
+          <text class="cx-svg-sublabel" x="576" y="148">cache</text>
+        </g>
+        <g class="cx-fdx-box" data-fdx="l2">
+          <rect x="516" y="240" width="120" height="80" rx="6"></rect>
+          <text class="cx-svg-label" x="576" y="276">L2 / L3</text>
+          <text class="cx-svg-sublabel" x="576" y="298">cache</text>
+        </g>
+        <g class="cx-fdx-box" data-fdx="ram">
+          <rect x="756" y="90" width="170" height="230" rx="8"></rect>
+          <text class="cx-svg-label" x="841" y="130">RAM</text>
+          <text class="cx-svg-sublabel" x="841" y="152">0x4000:</text>
+          <text class="cx-fdx-bytes" x="841" y="176">48 01 D8</text>
+          <text class="cx-svg-sublabel" x="841" y="200">add rax, rbx</text>
+        </g>
+
+        <g class="cx-fdx-paths" aria-hidden="true">
+          <line x1="756" y1="205" x2="636" y2="240"></line>
+          <line x1="576" y1="240" x2="576" y2="170"></line>
+          <line x1="516" y1="130" x2="166" y2="130"></line>
+          <line x1="166" y1="130" x2="196" y2="130"></line>
+          <line x1="326" y1="130" x2="356" y2="130"></line>
+          <line x1="421" y1="170" x2="421" y2="240"></line>
+          <line x1="356" y1="280" x2="326" y2="280"></line>
+        </g>
+
+        <circle id="cx-fdx-token" class="cx-fdx-token" r="9" cx="841" cy="230" aria-hidden="true"></circle>
+      </svg>
+
+      <div class="cx-fdx-card">
+        <div class="cx-fdx-dots" id="cx-fdx-dots" aria-hidden="true"></div>
+        <h3 id="cx-fdx-stagename">1 &middot; Asleep in RAM</h3>
+        <p id="cx-fdx-stagetext">
+          A program is just bytes in memory. At address 0x4000 sit three of
+          them &mdash; <code>48 01 D8</code> &mdash; which mean
+          <code>add rax, rbx</code>. Nothing happens until the core asks for
+          them.
+        </p>
+        <div class="cx-fdx-controls">
+          <button type="button" id="cx-fdx-prev" class="cx-btn cx-btn-ghost">Back</button>
+          <button type="button" id="cx-fdx-next" class="cx-btn cx-btn-primary">Step</button>
+          <button type="button" id="cx-fdx-play" class="cx-btn cx-btn-ghost" aria-pressed="false">Autoplay</button>
+          <button type="button" id="cx-fdx-reset" class="cx-btn cx-btn-ghost">Reset</button>
+        </div>
+        <p class="cx-fdx-count">Instructions completed: <output id="cx-fdx-count">0</output></p>
+      </div>
+    </div>
+
+    <p class="cx-caption">
+      A modern core does not walk this path one instruction at a time &mdash; it
+      keeps hundreds of instructions at different points along it
+      simultaneously. That trick is called pipelining, and it gets its own
+      chapter below.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       04 - FROM CODE TO MACHINE CODE
+  ================================================================ -->
+  <section class="cx-section" id="code" aria-labelledby="code-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">04</span> The translation</p>
+      <h2 id="code-h">From code to machine code</h2>
+      <p class="cx-lede">
+        A CPU cannot run Python, C, or JavaScript. It runs exactly one
+        language: its <em>instruction set</em>, encoded as raw bytes. Everything
+        you write is translated down to that &mdash; ahead of time by a
+        compiler, or on the fly by an interpreter and JIT. Here is a real
+        translation, byte for byte.
+      </p>
+    </div>
+
+    <div class="cx-xlate" data-cx-reveal>
+      <div class="cx-xlate-grid">
+        <div class="cx-xlate-pane" data-pane="c">
+          <p class="cx-xlate-head">C source</p>
+          <pre><code><span class="cx-xline" data-ln="c0">int add(int a, int b) {</span>
+<span class="cx-xline" data-ln="c1">  return a + b;</span>
+<span class="cx-xline" data-ln="c2">}</span></code></pre>
+        </div>
+        <div class="cx-xlate-pane" data-pane="asm">
+          <p class="cx-xlate-head">x86-64 assembly</p>
+          <pre><code><span class="cx-xline" data-ln="a0">mov  eax, edi</span>
+<span class="cx-xline" data-ln="a1">add  eax, esi</span>
+<span class="cx-xline" data-ln="a2">ret</span></code></pre>
+        </div>
+        <div class="cx-xlate-pane" data-pane="hex">
+          <p class="cx-xlate-head">Machine code (hex)</p>
+          <pre><code><span class="cx-xline" data-ln="h0">89 F8</span>
+<span class="cx-xline" data-ln="h1">01 F0</span>
+<span class="cx-xline" data-ln="h2">C3</span></code></pre>
+        </div>
+        <div class="cx-xlate-pane" data-pane="bin">
+          <p class="cx-xlate-head">What the silicon sees</p>
+          <pre><code><span class="cx-xline" data-ln="b0">10001001 11111000</span>
+<span class="cx-xline" data-ln="b1">00000001 11110000</span>
+<span class="cx-xline" data-ln="b2">11000011</span></code></pre>
+        </div>
+      </div>
+
+      <div class="cx-xlate-foot">
+        <p class="cx-xlate-note" id="cx-xlate-note" aria-live="polite">
+          Step through the translation to see how one line of C becomes five
+          bytes the decoder can read.
+        </p>
+        <div class="cx-xlate-controls">
+          <button type="button" id="cx-xlate-step" class="cx-btn cx-btn-primary">Step</button>
+          <button type="button" id="cx-xlate-play" class="cx-btn cx-btn-ghost" aria-pressed="false">Autoplay</button>
+          <button type="button" id="cx-xlate-reset" class="cx-btn cx-btn-ghost">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="cx-caption">
+      Every byte above is genuine: compile that function with a C compiler at
+      <code>-O1</code> on Linux and you will get these five bytes (arguments
+      arrive in <code>edi</code> and <code>esi</code>, results leave in
+      <code>eax</code> &mdash; that contract is the <em>calling convention</em>).
+      There is no smaller step left: <code>89&nbsp;F8</code> <em>is</em> the
+      program, and the decoder reads it the way you read words.
+    </p>
+
+    <h3 class="cx-subhead">One idea, two dialects: x86 and ARM</h3>
+    <div class="cx-isa" data-cx-reveal>
+      <div class="cx-isa-card">
+        <h4>x86-64 <span class="cx-chip">CISC heritage</span></h4>
+        <ul>
+          <li>Instructions are 1&ndash;15 bytes long &mdash; compact but hard to decode</li>
+          <li>Rich, complex operations; ~40 years of backward compatibility</li>
+          <li>Runs most desktops, laptops, and servers (Intel, AMD)</li>
+        </ul>
+      </div>
+      <div class="cx-isa-card">
+        <h4>ARM (AArch64) <span class="cx-chip">RISC heritage</span></h4>
+        <ul>
+          <li>Every instruction is exactly 4 bytes &mdash; simple, parallel decode</li>
+          <li>Simpler operations; the compiler strings them together</li>
+          <li>Runs phones, Apple Silicon Macs, and a growing share of servers</li>
+        </ul>
+      </div>
+    </div>
+    <p class="cx-caption">
+      The dialects differ; the machine underneath barely does. Both families
+      decode their instructions into internal <em>micro-ops</em> and execute
+      them on remarkably similar out-of-order cores. The instruction set is a
+      contract, not a design &mdash; which is why the same C code runs on both
+      after nothing more than a recompile.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       05 - REGISTERS
+  ================================================================ -->
+  <section class="cx-section" id="registers" aria-labelledby="registers-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">05</span> The workbench</p>
+      <h2 id="registers-h">Registers</h2>
+      <p class="cx-lede">
+        Registers are the CPU&rsquo;s hands: a few dozen slots of storage built
+        from the same transistors as the logic itself, readable in a fraction
+        of a nanosecond. Every computation happens <em>here</em> &mdash; data is
+        loaded from memory into registers, transformed, and written back. Run
+        the little loop below and watch them change.
+      </p>
+    </div>
+
+    <div class="cx-regs-layout" data-cx-reveal>
+      <div class="cx-prog">
+        <p class="cx-panel-head">Program &mdash; sum 3 + 2 + 1</p>
+        <table class="cx-prog-table">
+          <caption class="cx-visually-hidden">A six-instruction program listing with addresses</caption>
+          <tbody>
+            <tr class="cx-prog-row" data-addr="0x00"><td class="cx-prog-addr">0x00</td><td><code>mov rax, 0</code></td><td class="cx-prog-hint">sum = 0</td></tr>
+            <tr class="cx-prog-row" data-addr="0x04"><td class="cx-prog-addr">0x04</td><td><code>mov rcx, 3</code></td><td class="cx-prog-hint">counter = 3</td></tr>
+            <tr class="cx-prog-row" data-addr="0x08"><td class="cx-prog-addr">0x08</td><td><code>add rax, rcx</code></td><td class="cx-prog-hint">sum += counter</td></tr>
+            <tr class="cx-prog-row" data-addr="0x0c"><td class="cx-prog-addr">0x0c</td><td><code>dec rcx</code></td><td class="cx-prog-hint">counter&minus;&minus;</td></tr>
+            <tr class="cx-prog-row" data-addr="0x10"><td class="cx-prog-addr">0x10</td><td><code>jnz 0x08</code></td><td class="cx-prog-hint">loop if not zero</td></tr>
+            <tr class="cx-prog-row" data-addr="0x14"><td class="cx-prog-addr">0x14</td><td><code>done</code></td><td class="cx-prog-hint">rax holds 6</td></tr>
+          </tbody>
+        </table>
+        <div class="cx-regs-controls">
+          <button type="button" id="cx-regs-step" class="cx-btn cx-btn-primary">Step</button>
+          <button type="button" id="cx-regs-run" class="cx-btn cx-btn-ghost" aria-pressed="false">Run</button>
+          <button type="button" id="cx-regs-reset" class="cx-btn cx-btn-ghost">Reset</button>
+        </div>
+        <p class="cx-regs-status" id="cx-regs-status" aria-live="polite">Press Step to execute the first instruction.</p>
+      </div>
+
+      <div class="cx-regfile">
+        <p class="cx-panel-head">Register file</p>
+        <div class="cx-reg cx-reg-special" data-reg="rip">
+          <span class="cx-reg-name">RIP</span>
+          <span class="cx-reg-val">0x00</span>
+          <span class="cx-reg-desc">instruction pointer / program counter</span>
+        </div>
+        <div class="cx-reg" data-reg="rax">
+          <span class="cx-reg-name">RAX</span><span class="cx-reg-val">?</span>
+          <span class="cx-reg-desc">general purpose &mdash; our running sum</span>
+        </div>
+        <div class="cx-reg" data-reg="rcx">
+          <span class="cx-reg-name">RCX</span><span class="cx-reg-val">?</span>
+          <span class="cx-reg-desc">general purpose &mdash; our counter</span>
+        </div>
+        <div class="cx-reg cx-reg-dim" data-reg="rbx">
+          <span class="cx-reg-name">RBX</span><span class="cx-reg-val">&mdash;</span>
+          <span class="cx-reg-desc">general purpose &mdash; unused here</span>
+        </div>
+        <div class="cx-reg cx-reg-dim" data-reg="rsp">
+          <span class="cx-reg-name">RSP</span><span class="cx-reg-val">0x7ffd&hellip;</span>
+          <span class="cx-reg-desc">stack pointer &mdash; top of the call stack</span>
+        </div>
+        <div class="cx-reg cx-reg-flags" data-reg="flags">
+          <span class="cx-reg-name">RFLAGS</span>
+          <span class="cx-reg-val cx-flagchips">
+            <span class="cx-flag" data-flag="zf">ZF</span>
+            <span class="cx-flag" data-flag="sf">SF</span>
+            <span class="cx-flag" data-flag="cf">CF</span>
+          </span>
+          <span class="cx-reg-desc">facts about the last result &mdash; branches read these</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="cx-caption">
+      Note what the jump reads: not a value, but a <em>flag</em>.
+      <code>dec</code> quietly records &ldquo;the result was zero&rdquo; in
+      RFLAGS, and <code>jnz</code> turns that fact into control flow by editing
+      RIP &mdash; the register that decides what runs next. Addresses here are
+      spaced 4 bytes apart for readability; real x86 instructions vary from 1
+      to 15 bytes.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       06 - THE MEMORY HIERARCHY
+  ================================================================ -->
+  <section class="cx-section" id="memory" aria-labelledby="memory-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">06</span> The supply chain</p>
+      <h2 id="memory-h">The memory hierarchy</h2>
+      <p class="cx-lede">
+        A core can execute an instruction in a quarter of a nanosecond, but
+        fetching data from RAM takes around 90 &mdash; roughly 400 clock cycles
+        of waiting. The entire hierarchy of caches exists to hide that gap:
+        small, fast copies of whatever you touched recently, stacked between
+        the registers and RAM.
+      </p>
+    </div>
+
+    <div class="cx-hier" data-cx-reveal>
+      <ol class="cx-hier-levels">
+        <li class="cx-level" data-level="reg">
+          <div class="cx-level-info"><span class="cx-level-name">Registers</span><span class="cx-level-size">~2 KB</span></div>
+          <div class="cx-level-bar"><i style="--w: 4%"></i></div>
+          <span class="cx-level-lat">inside the pipeline &mdash; free</span>
+        </li>
+        <li class="cx-level" data-level="l1">
+          <div class="cx-level-info"><span class="cx-level-name">L1 cache</span><span class="cx-level-size">~96 KB / core</span></div>
+          <div class="cx-level-bar"><i style="--w: 12%"></i></div>
+          <span class="cx-level-lat">~4 cycles &middot; ~1 ns</span>
+        </li>
+        <li class="cx-level" data-level="l2">
+          <div class="cx-level-info"><span class="cx-level-name">L2 cache</span><span class="cx-level-size">1&ndash;3 MB / core</span></div>
+          <div class="cx-level-bar"><i style="--w: 24%"></i></div>
+          <span class="cx-level-lat">~14 cycles &middot; ~3.5 ns</span>
+        </li>
+        <li class="cx-level" data-level="l3">
+          <div class="cx-level-info"><span class="cx-level-name">L3 cache</span><span class="cx-level-size">32&ndash;96 MB shared</span></div>
+          <div class="cx-level-bar"><i style="--w: 42%"></i></div>
+          <span class="cx-level-lat">~50 cycles &middot; ~12 ns</span>
+        </li>
+        <li class="cx-level" data-level="ram">
+          <div class="cx-level-info"><span class="cx-level-name">RAM (DDR5)</span><span class="cx-level-size">16&ndash;192 GB</span></div>
+          <div class="cx-level-bar"><i style="--w: 70%"></i></div>
+          <span class="cx-level-lat">~400 cycles &middot; ~90 ns</span>
+        </li>
+        <li class="cx-level" data-level="ssd">
+          <div class="cx-level-info"><span class="cx-level-name">NVMe SSD</span><span class="cx-level-size">1&ndash;8 TB</span></div>
+          <div class="cx-level-bar"><i style="--w: 100%"></i></div>
+          <span class="cx-level-lat">~400,000 cycles &middot; ~80 &micro;s</span>
+        </li>
+      </ol>
+
+      <div class="cx-hier-demo">
+        <p class="cx-panel-head">Watch eight memory accesses</p>
+        <div class="cx-hier-demo-controls">
+          <button type="button" id="cx-mem-hot" class="cx-btn cx-btn-primary">Tight loop over an array</button>
+          <button type="button" id="cx-mem-cold" class="cx-btn cx-btn-ghost">Pointer-chase across memory</button>
+        </div>
+        <ol class="cx-mem-trace" id="cx-mem-trace" aria-label="Trace of memory accesses and which level served each one"></ol>
+        <p class="cx-mem-verdict" id="cx-mem-verdict" aria-live="polite">
+          Same number of loads &mdash; wildly different cost. Pick a pattern to run it.
+        </p>
+      </div>
+    </div>
+
+    <h3 class="cx-subhead">The gap, at human scale</h3>
+    <div class="cx-timescale" data-cx-reveal>
+      <p class="cx-timescale-lede">If an L1 cache hit took <strong>one second</strong>:</p>
+      <ul>
+        <li><span>L1 cache hit</span><em>1 second</em></li>
+        <li><span>L2 cache hit</span><em>~3.5 seconds</em></li>
+        <li><span>L3 cache hit</span><em>~12 seconds</em></li>
+        <li><span>RAM access</span><em>~1.5 minutes</em></li>
+        <li><span>NVMe SSD read</span><em>~22 hours</em></li>
+      </ul>
+    </div>
+    <p class="cx-caption">
+      Caches work because programs have <em>locality</em>: they reuse the same
+      data (temporal) and march through neighboring data (spatial). Memory
+      moves in 64-byte cache lines, so touching one array element drags its
+      fifteen neighbors into cache with it &mdash; which is exactly why the
+      tight loop above almost never misses.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       07 - PIPELINES
+  ================================================================ -->
+  <section class="cx-section" id="pipeline" aria-labelledby="pipeline-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">07</span> The assembly line</p>
+      <h2 id="pipeline-h">Pipelines</h2>
+      <p class="cx-lede">
+        Fetch, decode, execute, access memory, write back &mdash; five stages,
+        each built from different hardware. If the core ran one instruction
+        start-to-finish before touching the next, four fifths of that hardware
+        would idle at any moment. The fix is a factory&rsquo;s: start the next
+        instruction into stage one while the previous is in stage two.
+      </p>
+    </div>
+
+    <div class="cx-pipe" data-cx-reveal>
+      <div class="cx-pipe-controls">
+        <div class="cx-mode-tabs" role="group" aria-label="Pipeline mode">
+          <button type="button" id="cx-pipe-serial" class="cx-mode-tab" aria-pressed="false">One at a time</button>
+          <button type="button" id="cx-pipe-par" class="cx-mode-tab" aria-pressed="true">Pipelined</button>
+        </div>
+        <button type="button" id="cx-pipe-replay" class="cx-btn cx-btn-ghost">Replay</button>
+      </div>
+      <canvas id="cx-pipe-canvas" class="cx-canvas" height="300" role="img"
+              aria-label="Animation of eight instructions moving through the five pipeline stages, either one at a time or overlapped."></canvas>
+      <div class="cx-statrow">
+        <div class="cx-stat"><span class="cx-stat-label">Cycles elapsed</span><output id="cx-pipe-cycles" class="cx-stat-val">0</output></div>
+        <div class="cx-stat"><span class="cx-stat-label">Instructions finished</span><output id="cx-pipe-done" class="cx-stat-val">0</output></div>
+        <div class="cx-stat"><span class="cx-stat-label">Throughput</span><output id="cx-pipe-ipc" class="cx-stat-val">&mdash;</output></div>
+      </div>
+      <p class="cx-pipe-verdict" id="cx-pipe-verdict" aria-live="polite"></p>
+    </div>
+
+    <p class="cx-caption">
+      Pipelining does not make any single instruction faster &mdash; it makes
+      the <em>stream</em> faster, approaching one finished instruction per
+      cycle. Real cores stretch these five stages into 14&ndash;20 finer ones
+      to hit higher clock speeds. The catch: the longer the line, the more
+      work is in flight on a guess &mdash; which is the next chapter.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       08 - BRANCH PREDICTION
+  ================================================================ -->
+  <section class="cx-section" id="branch" aria-labelledby="branch-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">08</span> The gambler</p>
+      <h2 id="branch-h">Branch prediction</h2>
+      <p class="cx-lede">
+        Roughly one instruction in five is a branch &mdash; an
+        <code>if</code>, a loop test, a function return. The pipeline needs to
+        fetch the <em>next</em> instruction now, but a branch&rsquo;s outcome
+        is not known until it executes, a dozen stages later. So the CPU
+        gambles: a predictor guesses the outcome from past behavior and the
+        core barrels ahead <em>speculatively</em>.
+      </p>
+    </div>
+
+    <div class="cx-branch" data-cx-reveal>
+      <canvas id="cx-branch-canvas" class="cx-canvas" height="280" role="img"
+              aria-label="Animation of a pipeline fetching speculated instructions. Correct predictions flow through; a misprediction flushes the young instructions and restarts fetch."></canvas>
+      <div class="cx-branch-controls">
+        <label class="cx-sliderrow" for="cx-branch-acc">
+          <span class="cx-slider-label">Predictor accuracy</span>
+          <input type="range" id="cx-branch-acc" min="50" max="99" step="1" value="95">
+          <output id="cx-branch-acc-out" class="cx-slider-out">95%</output>
+        </label>
+        <button type="button" id="cx-branch-force" class="cx-btn cx-btn-ghost">Force a misprediction</button>
+      </div>
+      <div class="cx-statrow">
+        <div class="cx-stat"><span class="cx-stat-label">Instructions retired</span><output id="cx-branch-done" class="cx-stat-val">0</output></div>
+        <div class="cx-stat"><span class="cx-stat-label">Cycles lost to flushes</span><output id="cx-branch-wasted" class="cx-stat-val">0</output></div>
+        <div class="cx-stat"><span class="cx-stat-label">Effective IPC</span><output id="cx-branch-ipc" class="cx-stat-val">&mdash;</output></div>
+      </div>
+      <p class="cx-branch-verdict" id="cx-branch-verdict" aria-live="polite"></p>
+    </div>
+
+    <p class="cx-caption">
+      A misprediction throws away every younger instruction in the pipe
+      &mdash; a ~15-cycle hole at modern depths. Predictors earn their silicon:
+      the best hit 95&ndash;99% by tracking patterns and history, and dropping
+      from 99% to 95% accuracy can cost real programs several percent of their
+      speed. Speculation has a dark side, too: in 2018, Spectre and Meltdown
+      showed that a CPU&rsquo;s discarded guesses can leak secrets through the
+      cache &mdash; a reminder that this machinery is anything but cosmetic.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       09 - SUPERSCALAR & OUT-OF-ORDER
+  ================================================================ -->
+  <section class="cx-section" id="ooo" aria-labelledby="ooo-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">09</span> The dispatcher</p>
+      <h2 id="ooo-h">Superscalar &amp; out-of-order</h2>
+      <p class="cx-lede">
+        A modern core is <em>superscalar</em>: it has multiple execution units
+        and can start 4&ndash;8 instructions per cycle. But program order
+        rarely cooperates &mdash; instruction 2 may need instruction 1&rsquo;s
+        result while instruction 3 needs nothing at all. So the core
+        re-orders: any instruction whose inputs are ready may run, and a
+        reorder buffer puts the results back in program order afterward.
+      </p>
+    </div>
+
+    <div class="cx-ooo" data-cx-reveal>
+      <div class="cx-ooo-prog">
+        <p class="cx-panel-head">Six instructions, two dependency chains</p>
+        <ol class="cx-ooo-list">
+          <li data-chain="a"><code>I1&nbsp; load r1 &larr; [list]</code><span class="cx-ooo-dep">L3 miss &mdash; slow</span></li>
+          <li data-chain="a"><code>I2&nbsp; add&nbsp; r2 &larr; r1 + 1</code><span class="cx-ooo-dep">needs I1</span></li>
+          <li data-chain="b"><code>I3&nbsp; mul&nbsp; r3 &larr; r4 &times; r5</code><span class="cx-ooo-dep">independent</span></li>
+          <li data-chain="b"><code>I4&nbsp; sub&nbsp; r6 &larr; r3 &minus; 2</code><span class="cx-ooo-dep">needs I3</span></li>
+          <li data-chain="c"><code>I5&nbsp; load r7 &larr; [table]</code><span class="cx-ooo-dep">independent</span></li>
+          <li data-chain="c"><code>I6&nbsp; add&nbsp; r8 &larr; r7 + r2</code><span class="cx-ooo-dep">needs I5, I2</span></li>
+        </ol>
+      </div>
+      <div class="cx-ooo-stage">
+        <div class="cx-ooo-controls">
+          <div class="cx-mode-tabs" role="group" aria-label="Execution mode">
+            <button type="button" id="cx-ooo-inorder" class="cx-mode-tab" aria-pressed="false">In order</button>
+            <button type="button" id="cx-ooo-outoforder" class="cx-mode-tab" aria-pressed="true">Out of order</button>
+          </div>
+          <button type="button" id="cx-ooo-replay" class="cx-btn cx-btn-ghost">Replay</button>
+        </div>
+        <canvas id="cx-ooo-canvas" class="cx-canvas" height="300" role="img"
+                aria-label="Gantt chart of the six instructions executing on three ports, in program order versus out of order."></canvas>
+        <div class="cx-statrow">
+          <div class="cx-stat"><span class="cx-stat-label">In order</span><output id="cx-ooo-cyc-in" class="cx-stat-val">&mdash;</output></div>
+          <div class="cx-stat"><span class="cx-stat-label">Out of order</span><output id="cx-ooo-cyc-out" class="cx-stat-val">&mdash;</output></div>
+          <div class="cx-stat"><span class="cx-stat-label">Speedup</span><output id="cx-ooo-speedup" class="cx-stat-val">&mdash;</output></div>
+        </div>
+        <p class="cx-ooo-verdict" id="cx-ooo-verdict" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <p class="cx-caption">
+      The machinery behind this &mdash; <em>register renaming</em> to erase
+      false conflicts, a <em>scheduler</em> that watches operands become ready,
+      and a <em>reorder buffer</em> (hundreds of entries deep on current cores)
+      that retires results strictly in program order so the program never
+      notices the shuffle. Exceptions and interrupts stay precise for the same
+      reason: the visible state only ever advances in order.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       10 - MULTI-CORE & SMT
+  ================================================================ -->
+  <section class="cx-section" id="cores" aria-labelledby="cores-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">10</span> The team</p>
+      <h2 id="cores-h">Multi-core &amp; simultaneous multithreading</h2>
+      <p class="cx-lede">
+        Around 2005, clock speeds hit a power wall &mdash; so instead of one
+        faster core, chips grew <em>more</em> cores. Today even phones carry
+        eight. But adding cores only helps work that can be split, and almost
+        every real program has a stubborn serial part. Try it: scale the chip
+        and watch where the speedup stops.
+      </p>
+    </div>
+
+    <div class="cx-cores" data-cx-reveal>
+      <div class="cx-cores-controls">
+        <div class="cx-mode-tabs" role="group" aria-label="Number of cores" id="cx-cores-count">
+          <button type="button" class="cx-mode-tab" data-n="1" aria-pressed="false">1</button>
+          <button type="button" class="cx-mode-tab" data-n="2" aria-pressed="false">2</button>
+          <button type="button" class="cx-mode-tab" data-n="4" aria-pressed="false">4</button>
+          <button type="button" class="cx-mode-tab" data-n="8" aria-pressed="true">8</button>
+          <button type="button" class="cx-mode-tab" data-n="16" aria-pressed="false">16</button>
+        </div>
+        <label class="cx-sliderrow" for="cx-cores-serial">
+          <span class="cx-slider-label">Serial part of the program</span>
+          <input type="range" id="cx-cores-serial" min="0" max="50" step="5" value="10">
+          <output id="cx-cores-serial-out" class="cx-slider-out">10%</output>
+        </label>
+        <button type="button" id="cx-cores-smt" class="cx-btn cx-btn-ghost" aria-pressed="false">SMT: off</button>
+        <button type="button" id="cx-cores-run" class="cx-btn cx-btn-primary">Run workload</button>
+      </div>
+      <canvas id="cx-cores-canvas" class="cx-canvas" height="300" role="img"
+              aria-label="Animation of a workload of many tasks being distributed across the selected number of cores, with a serial phase that only one core can run."></canvas>
+      <div class="cx-statrow">
+        <div class="cx-stat"><span class="cx-stat-label">Wall-clock time</span><output id="cx-cores-time" class="cx-stat-val">&mdash;</output></div>
+        <div class="cx-stat"><span class="cx-stat-label">Speedup vs 1 core</span><output id="cx-cores-speedup" class="cx-stat-val">&mdash;</output></div>
+        <div class="cx-stat"><span class="cx-stat-label">Average core utilization</span><output id="cx-cores-util" class="cx-stat-val">&mdash;</output></div>
+      </div>
+      <p class="cx-cores-verdict" id="cx-cores-verdict" aria-live="polite"></p>
+    </div>
+
+    <p class="cx-caption">
+      That flattening curve is <strong>Amdahl&rsquo;s law</strong>: if 10% of a
+      program is serial, no number of cores can make it more than 10&times;
+      faster. <strong>SMT</strong> (Intel&rsquo;s brand name: Hyper-Threading)
+      is different from adding cores &mdash; it gives one core two instruction
+      streams so that when one stalls on memory, the other fills the idle
+      execution slots. Two threads, one kitchen: typically +15&ndash;30%
+      throughput, not +100%.
+    </p>
+
+    <h3 class="cx-subhead">Threads, processes, and who decides what runs</h3>
+    <p class="cx-prose">
+      A <em>process</em> is a running program with its own private memory; a
+      <em>thread</em> is one instruction stream inside it. Your machine runs
+      hundreds of threads on a handful of cores because the operating system
+      <em>context-switches</em>: a hardware timer <em>interrupt</em> fires
+      about a thousand times a second, the core saves one thread&rsquo;s
+      registers to memory, restores another&rsquo;s, and resumes &mdash; in a
+      few microseconds. Interrupts are also how keyboards, disks, and network
+      cards get the CPU&rsquo;s attention: the illusion of
+      &ldquo;everything at once&rdquo; is scheduling, done fast.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       11 - CPU VS GPU
+  ================================================================ -->
+  <section class="cx-section" id="vsgpu" aria-labelledby="vsgpu-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">11</span> The sibling</p>
+      <h2 id="vsgpu-h">CPU vs GPU</h2>
+      <p class="cx-lede">
+        A CPU spends its transistors making <em>one</em> thread finish sooner:
+        caches, predictors, out-of-order machinery. A GPU spends the same
+        transistors on thousands of simple lanes that each run slowly &mdash;
+        but all at once. Neither is &ldquo;faster&rdquo;; they are built for
+        opposite workloads. Race them both ways.
+      </p>
+    </div>
+
+    <div class="cx-race" data-cx-reveal>
+      <div class="cx-race-controls">
+        <div class="cx-mode-tabs" role="group" aria-label="Workload type">
+          <button type="button" id="cx-race-serialw" class="cx-mode-tab" aria-pressed="true">One long dependent chain</button>
+          <button type="button" id="cx-race-parw" class="cx-mode-tab" aria-pressed="false">16,384 independent pixels</button>
+        </div>
+        <button type="button" id="cx-race-run" class="cx-btn cx-btn-primary">Run the race</button>
+      </div>
+      <div class="cx-race-grid">
+        <div class="cx-race-panel" data-kind="cpu">
+          <div class="cx-race-head">
+            <h3>CPU</h3>
+            <span class="cx-chip cx-chip-cpu">8 fast, clever cores</span>
+          </div>
+          <canvas id="cx-race-cpu" class="cx-race-canvas" role="img"
+                  aria-label="Animation of a CPU working through the selected workload with a few fast lanes"></canvas>
+          <p class="cx-race-meta">Progress: <output id="cx-race-cpu-done">0</output>%
+            &middot; <output id="cx-race-cpu-time">0.0</output> ms</p>
+        </div>
+        <div class="cx-race-panel" data-kind="gpu">
+          <div class="cx-race-head">
+            <h3>GPU</h3>
+            <span class="cx-chip cx-chip-gpu">2,048 slow, simple lanes</span>
+          </div>
+          <canvas id="cx-race-gpu" class="cx-race-canvas" role="img"
+                  aria-label="Animation of a GPU working through the selected workload with thousands of slow lanes"></canvas>
+          <p class="cx-race-meta">Progress: <output id="cx-race-gpu-done">0</output>%
+            &middot; <output id="cx-race-gpu-time">0.0</output> ms</p>
+        </div>
+      </div>
+      <p class="cx-race-verdict" id="cx-race-verdict" aria-live="polite"></p>
+    </div>
+
+    <div class="cx-table-wrap" data-cx-reveal>
+      <table class="cx-compare">
+        <caption class="cx-visually-hidden">How CPUs and GPUs differ</caption>
+        <thead>
+          <tr><th scope="col"></th><th scope="col">CPU</th><th scope="col">GPU</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Cores</th>
+            <td>A few powerful cores (8&ndash;24)</td>
+            <td>Thousands of lightweight lanes</td>
+          </tr>
+          <tr>
+            <th scope="row">Optimized for</th>
+            <td>Latency &mdash; finish <em>this</em> task now</td>
+            <td>Throughput &mdash; finish <em>all</em> tasks soon</td>
+          </tr>
+          <tr>
+            <th scope="row">Branching</th>
+            <td>Predicted, speculated, cheap</td>
+            <td>Divergence stalls whole lane groups</td>
+          </tr>
+          <tr>
+            <th scope="row">Ideal work</th>
+            <td>Operating systems, databases, game logic, compilers</td>
+            <td>Graphics, AI, simulation &mdash; same math on huge arrays</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="cx-caption">
+      In practice they are teammates: the CPU runs the program, makes the
+      decisions, and feeds the GPU its huge homogeneous jobs. This page has a
+      sibling &mdash; <a href="/gpu/">Inside a Modern GPU</a> &mdash; that
+      tells the other half of the story.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       12 - READING A SPEC SHEET
+  ================================================================ -->
+  <section class="cx-section" id="metrics" aria-labelledby="metrics-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">12</span> The numbers</p>
+      <h2 id="metrics-h">Reading a spec sheet</h2>
+      <p class="cx-lede">
+        CPU marketing is a wall of numbers, and the biggest one &mdash;
+        gigahertz &mdash; is the most misleading. Real performance is a
+        product: <strong>clock &times; IPC &times; cores that actually get
+        used</strong>. Expand each metric for what it means, why it matters,
+        and the misconception to avoid.
+      </p>
+    </div>
+
+    <div class="cx-duel" data-cx-reveal>
+      <p class="cx-panel-head">Which chip is faster?</p>
+      <div class="cx-duel-grid">
+        <div class="cx-duel-card">
+          <h4>Chip A</h4>
+          <p class="cx-duel-spec"><strong>4.8 GHz</strong> &middot; IPC 1.6</p>
+          <div class="cx-duel-bar"><i id="cx-duel-bar-a"></i></div>
+          <p class="cx-duel-result" id="cx-duel-res-a">&nbsp;</p>
+        </div>
+        <div class="cx-duel-card">
+          <h4>Chip B</h4>
+          <p class="cx-duel-spec"><strong>3.6 GHz</strong> &middot; IPC 3.2</p>
+          <div class="cx-duel-bar"><i id="cx-duel-bar-b"></i></div>
+          <p class="cx-duel-result" id="cx-duel-res-b">&nbsp;</p>
+        </div>
+      </div>
+      <div class="cx-duel-foot">
+        <button type="button" id="cx-duel-reveal" class="cx-btn cx-btn-primary">Reveal</button>
+        <p class="cx-duel-verdict" id="cx-duel-verdict" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div class="cx-dash" data-cx-reveal>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">Clock speed</span><span class="cx-metric-unit">GHz</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> How many times per second the pipeline advances &mdash; 5 GHz is five billion ticks, 200 picoseconds each.</p>
+          <p><strong>Why it matters.</strong> Every stage of every core moves once per tick, so throughput scales with it &mdash; when nothing stalls.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> &ldquo;More GHz = faster CPU.&rdquo; A 3.6 GHz core retiring 3 instructions per cycle beats a 5 GHz core retiring 1. And RAM does not tick faster because your core does &mdash; higher clocks just wait <em>more cycles</em> per miss.</p>
+        </div>
+      </div>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">IPC</span><span class="cx-metric-unit">instructions / cycle</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> Instructions actually retired per clock tick, averaged over a real program.</p>
+          <p><strong>Why it matters.</strong> It is the other half of performance: clock &times; IPC = instructions per second. Every chapter above &mdash; caches, predictors, out-of-order &mdash; exists to raise it.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> IPC is not a fixed property of a chip. The same core might average 4 IPC on tight numeric code and 0.5 on pointer-chasing code. &ldquo;15% more IPC&rdquo; in marketing means &ldquo;on our benchmark mix.&rdquo;</p>
+        </div>
+      </div>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">Core count</span><span class="cx-metric-unit">cores</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> How many independent execution engines share the die.</p>
+          <p><strong>Why it matters.</strong> Parallel throughput: builds, renders, servers, and heavy multitasking scale with cores.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> Twice the cores is not twice the speed &mdash; Amdahl&rsquo;s law caps the gain at the serial fraction, and plenty of everyday software barely uses four.</p>
+        </div>
+      </div>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">Thread count</span><span class="cx-metric-unit">threads</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> Hardware instruction streams. &ldquo;8 cores / 16 threads&rdquo; means each core juggles two streams via SMT.</p>
+          <p><strong>Why it matters.</strong> The second thread recycles stall bubbles &mdash; a cheap 15&ndash;30% throughput gain on mixed workloads.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> 16 threads &ne; 16 cores. The two streams share one core&rsquo;s execution units, caches, and bandwidth &mdash; they split a kitchen, not staff a second one.</p>
+        </div>
+      </div>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">Cache size</span><span class="cx-metric-unit">MB</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> On-die SRAM &mdash; the L1/L2/L3 hierarchy from chapter 06.</p>
+          <p><strong>Why it matters.</strong> If your working set fits, misses collapse and IPC soars &mdash; it is why gaming chips with stacked extra L3 (96 MB+) win benchmarks at <em>lower</em> clocks.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> Bigger is not automatically better: cache beyond your working set is silicon you paid for and never use, and larger arrays are slower to search.</p>
+        </div>
+      </div>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">Boost frequency</span><span class="cx-metric-unit">GHz</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> The opportunistic clock a core may reach briefly when power, current, and temperature allow &mdash; usually with only one core active.</p>
+          <p><strong>Why it matters.</strong> Snappy single-threaded moments &mdash; app launches, browsing &mdash; live in boost.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> The box number is not a sustained all-core speed. Load every core and clocks settle far lower, set by cooling &mdash; boost is a sprint, not a pace.</p>
+        </div>
+      </div>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">TDP</span><span class="cx-metric-unit">watts</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> Thermal design power &mdash; the heat budget the cooler must dissipate under sustained load.</p>
+          <p><strong>Why it matters.</strong> Power is <em>the</em> modern constraint: the same silicon runs at 15 W in a thin laptop and 125 W in a tower, at very different sustained speeds.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> TDP is not maximum draw &mdash; desktop chips routinely burst well above it for seconds at a time before power limits rein them in.</p>
+        </div>
+      </div>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">Memory bandwidth</span><span class="cx-metric-unit">GB/s</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> How fast the memory controller can stream data from RAM &mdash; channels &times; transfer rate.</p>
+          <p><strong>Why it matters.</strong> Sixteen hungry cores share it; many-core chips and integrated GPUs starve without enough.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> Bandwidth does not fix <em>latency</em>. Streaming a movie fast is not the same as answering a single question quickly &mdash; a pointer chase stalls just as long on a wide bus.</p>
+        </div>
+      </div>
+      <div class="cx-metric">
+        <button type="button" class="cx-metric-toggle" aria-expanded="false">
+          <span class="cx-metric-name">Performance / watt</span><span class="cx-metric-unit">efficiency</span>
+        </button>
+        <div class="cx-metric-body" hidden>
+          <p><strong>What it is.</strong> Work done per joule &mdash; the ratio that now drives CPU design more than raw speed.</p>
+          <p><strong>Why it matters.</strong> Phones, laptops, and datacenters are all thermally limited; under a fixed power cap, the most efficient design <em>is</em> the fastest one.</p>
+          <p class="cx-metric-myth"><strong>Misconception.</strong> Efficiency is not code for slow. Apple&rsquo;s M-series topped laptop benchmarks precisely <em>because</em> it did the most per watt.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 - EIGHTY YEARS OF CPUS
+  ================================================================ -->
+  <section class="cx-section" id="history" aria-labelledby="history-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">13</span> The lineage</p>
+      <h2 id="history-h">Eighty years of CPUs</h2>
+      <p class="cx-lede">
+        From eighteen thousand glowing tubes to tens of billions of
+        transistors: every idea on this page arrived at a specific moment,
+        usually because the previous trick had run out. Scroll the timeline.
+      </p>
+    </div>
+
+    <div class="cx-tl">
+      <div class="cx-tl-nav">
+        <button type="button" id="cx-tl-prev" class="cx-btn cx-btn-ghost" aria-label="Scroll timeline earlier">&larr;</button>
+        <button type="button" id="cx-tl-next" class="cx-btn cx-btn-ghost" aria-label="Scroll timeline later">&rarr;</button>
+      </div>
+      <div class="cx-tl-track" id="cx-tl-track" tabindex="0" aria-label="Timeline of CPU milestones, scrollable">
+        <article class="cx-era">
+          <p class="cx-era-year">1946</p>
+          <h3>ENIAC &amp; vacuum tubes</h3>
+          <p>Eighteen thousand vacuum tubes doing five thousand additions a second, with a tube burning out every other day. &ldquo;Programming&rdquo; meant rewiring it by hand.</p>
+          <span class="cx-era-stat">18,000 tubes</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">1947</p>
+          <h3>The transistor</h3>
+          <p>Bell Labs replaces the fragile tube with a solid-state switch &mdash; smaller, cooler, and, decisively, manufacturable by the billion.</p>
+          <span class="cx-era-stat">1 transistor</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">1958</p>
+          <h3>The integrated circuit</h3>
+          <p>Kilby and Noyce put whole circuits on one sliver of silicon. From here on, progress means shrinking, not assembling.</p>
+          <span class="cx-era-stat">circuits on a chip</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">1971</p>
+          <h3>Intel 4004</h3>
+          <p>The first commercial single-chip CPU, built for a desk calculator. Everything on this page descends from this 2,300-transistor experiment.</p>
+          <span class="cx-era-stat">2,300 transistors &middot; 740 kHz</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">1978</p>
+          <h3>Intel 8086 &mdash; x86 is born</h3>
+          <p>An instruction set so durable that code written for it still runs, unmodified, on chips shipping today &mdash; the longest-lived contract in computing.</p>
+          <span class="cx-era-stat">29,000 transistors</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">1985</p>
+          <h3>Intel 386 &mdash; 32 bits</h3>
+          <p>32-bit registers and protected memory make real multitasking operating systems possible. The PC grows up.</p>
+          <span class="cx-era-stat">275,000 transistors</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">1993</p>
+          <h3>Pentium &mdash; superscalar</h3>
+          <p>Two pipelines side by side: more than one instruction per cycle for the first time in the mainstream. The IPC race begins.</p>
+          <span class="cx-era-stat">3.1M transistors</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">2000</p>
+          <h3>Pentium 4 &mdash; the GHz wall</h3>
+          <p>A pipeline stretched to 31 stages chases raw clock speed &mdash; and slams into the power wall. The industry&rsquo;s most instructive failure.</p>
+          <span class="cx-era-stat">42M transistors</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">2003</p>
+          <h3>Athlon 64 &mdash; x86-64</h3>
+          <p>AMD extends x86 to 64 bits so cleanly, while keeping old software running, that Intel adopts AMD&rsquo;s design. Memory ceilings vanish.</p>
+          <span class="cx-era-stat">106M transistors</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">2005</p>
+          <h3>Dual core</h3>
+          <p>Clocks stall, so cores multiply. The free lunch ends: from now on, software has to go parallel to go faster.</p>
+          <span class="cx-era-stat">2 cores, 1 die</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">2017</p>
+          <h3>AMD Zen &mdash; and chiplets</h3>
+          <p>A 52% IPC leap revives competition; two years later, chiplets replace one giant die with small, cheap, stackable ones.</p>
+          <span class="cx-era-stat">4.8B transistors</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">2020</p>
+          <h3>Apple M1 &mdash; ARM arrives</h3>
+          <p>An ARM chip outruns x86 laptops at a fraction of the power: 8-wide decode, a huge reorder buffer, unified memory. Efficiency becomes the headline.</p>
+          <span class="cx-era-stat">16B transistors</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">2021</p>
+          <h3>Hybrid cores</h3>
+          <p>Performance cores for sprints, efficiency cores for background hum &mdash; phones proved it, desktops adopted it, and the OS scheduler became part of the CPU design.</p>
+          <span class="cx-era-stat">P + E cores</span>
+        </article>
+        <article class="cx-era">
+          <p class="cx-era-year">2024</p>
+          <h3>The AI PC</h3>
+          <p>Neural accelerators join the die next to CPU and GPU. The modern processor is a team of specialists &mdash; and the CPU is the coach.</p>
+          <span class="cx-era-stat">tens of billions</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       14 - PLAYGROUND
+  ================================================================ -->
+  <section class="cx-section" id="playground" aria-labelledby="playground-h">
+    <div class="cx-section-head">
+      <p class="cx-kicker"><span class="cx-kicker-num">14</span> Hands on</p>
+      <h2 id="playground-h">Design your own CPU</h2>
+      <p class="cx-lede">
+        You now know every knob that matters. Configure a chip, give it a
+        workload, and run it: the simulator applies the same ideas you just
+        toured &mdash; pipeline flushes, cache misses, Amdahl&rsquo;s law
+        &mdash; and shows you where the cycles actually go.
+      </p>
+    </div>
+
+    <div class="cx-pg" data-cx-reveal>
+      <div class="cx-pg-controls">
+        <label class="cx-sliderrow" for="cx-pg-clock">
+          <span class="cx-slider-label">Clock speed</span>
+          <input type="range" id="cx-pg-clock" min="10" max="60" step="1" value="40">
+          <output id="cx-pg-clock-out" class="cx-slider-out">4.0 GHz</output>
+        </label>
+        <label class="cx-sliderrow" for="cx-pg-cores">
+          <span class="cx-slider-label">Cores</span>
+          <input type="range" id="cx-pg-cores" min="1" max="16" step="1" value="8">
+          <output id="cx-pg-cores-out" class="cx-slider-out">8</output>
+        </label>
+        <label class="cx-sliderrow" for="cx-pg-cache">
+          <span class="cx-slider-label">L3 cache</span>
+          <input type="range" id="cx-pg-cache" min="0" max="6" step="1" value="4">
+          <output id="cx-pg-cache-out" class="cx-slider-out">16 MB</output>
+        </label>
+        <label class="cx-sliderrow" for="cx-pg-depth">
+          <span class="cx-slider-label">Pipeline depth</span>
+          <input type="range" id="cx-pg-depth" min="5" max="24" step="1" value="14">
+          <output id="cx-pg-depth-out" class="cx-slider-out">14 stages</output>
+        </label>
+        <label class="cx-sliderrow" for="cx-pg-acc">
+          <span class="cx-slider-label">Branch predictor accuracy</span>
+          <input type="range" id="cx-pg-acc" min="70" max="99" step="1" value="95">
+          <output id="cx-pg-acc-out" class="cx-slider-out">95%</output>
+        </label>
+        <label class="cx-sliderrow" for="cx-pg-work">
+          <span class="cx-slider-label">Workload complexity</span>
+          <input type="range" id="cx-pg-work" min="1" max="10" step="1" value="5">
+          <output id="cx-pg-work-out" class="cx-slider-out">5 / 10</output>
+        </label>
+        <button type="button" id="cx-pg-run" class="cx-btn cx-btn-primary cx-pg-runbtn">Run simulation</button>
+      </div>
+
+      <div class="cx-pg-stage">
+        <canvas id="cx-pg-canvas" class="cx-canvas" height="320" role="img"
+                aria-label="Animation of instructions streaming through each core's pipeline, with stalls shown as gaps caused by branch mispredictions and cache misses."></canvas>
+        <div class="cx-pg-metrics">
+          <div class="cx-stat"><span class="cx-stat-label">Instructions completed</span><output id="cx-pg-done" class="cx-stat-val">&mdash;</output></div>
+          <div class="cx-stat"><span class="cx-stat-label">Estimated time</span><output id="cx-pg-time" class="cx-stat-val">&mdash;</output></div>
+          <div class="cx-stat"><span class="cx-stat-label">IPC per core</span><output id="cx-pg-ipc" class="cx-stat-val">&mdash;</output></div>
+          <div class="cx-stat"><span class="cx-stat-label">Cache hit rate</span><output id="cx-pg-hit" class="cx-stat-val">&mdash;</output></div>
+          <div class="cx-stat"><span class="cx-stat-label">Core utilization</span><output id="cx-pg-util" class="cx-stat-val">&mdash;</output></div>
+        </div>
+        <div class="cx-pg-stalls">
+          <p class="cx-panel-head">Where each core&rsquo;s cycles went</p>
+          <div class="cx-pg-bar-row"><span>Useful work</span><div class="cx-pg-bar"><i id="cx-pg-bar-base"></i></div><output id="cx-pg-sbase">&mdash;</output></div>
+          <div class="cx-pg-bar-row"><span>Branch flushes</span><div class="cx-pg-bar is-branch"><i id="cx-pg-bar-branch"></i></div><output id="cx-pg-sbranch">&mdash;</output></div>
+          <div class="cx-pg-bar-row"><span>Waiting on memory</span><div class="cx-pg-bar is-mem"><i id="cx-pg-bar-mem"></i></div><output id="cx-pg-smem">&mdash;</output></div>
+        </div>
+        <p class="cx-pg-verdict" id="cx-pg-verdict" aria-live="polite">
+          Configure the chip and press <strong>Run simulation</strong>.
+        </p>
+      </div>
+    </div>
+
+    <p class="cx-caption">
+      Educational, not cycle-accurate: the model uses honest ratios &mdash;
+      ~90 ns RAM, misprediction cost equal to pipeline depth, Amdahl scaling
+      across cores &mdash; but a real chip is messier in a thousand ways. The
+      lessons it teaches transfer exactly, though: try a 24-stage pipeline
+      with a 70% predictor and relive the Pentium 4.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       OUTRO
+  ================================================================ -->
+  <footer class="cx-outro">
+    <h2>The machine under everything</h2>
+    <p class="cx-outro-lede">
+      Every keystroke of this page, every frame of every game, every model
+      training run starts the same way: fetch, decode, execute, a few billion
+      times a second. Now you know what happens in between.
+    </p>
+    <div class="cx-outro-links">
+      <a class="cx-btn cx-btn-primary" href="/gpu/">Next: Inside a Modern GPU</a>
+      <a class="cx-btn cx-btn-ghost" href="/bitcoin/">Or: Understanding Bitcoin</a>
+    </div>
+    <p class="cx-outro-small">
+      Built by hand with vanilla JavaScript, SVG, and canvas &mdash; no
+      frameworks, no libraries. The simulations are illustrative models with
+      honest ratios, not cycle-accurate emulation.
+    </p>
+  </footer>
+</div>

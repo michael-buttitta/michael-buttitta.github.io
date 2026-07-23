@@ -26,6 +26,7 @@ tabs:
   consulting: Consulting
   gpu: Inside a GPU
   bitcoin: Understanding Bitcoin
+  cpu: Inside a CPU
 
 # the text displayed in the search bar & search results
 search:
