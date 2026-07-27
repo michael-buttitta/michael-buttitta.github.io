@@ -46,28 +46,16 @@ I've long wanted to work in.
 
 ## Focus areas
 
-<!-- OWNER — Fill in: 3–5 specific topic areas you cover on this site.
-     These should match the categories you plan to post in. -->
-
-> **OWNER — Fill in:** List 3–5 focus areas with a one-line description each.
-{: .prompt-warning }
+*Coming soon.*
 
 ---
 
 ## Interests
 
-<!-- OWNER — Fill in: Optional — add color beyond the professional resume.
-     What do you read, follow, or think about outside of work?
-     Keep it brief (2–4 lines). Authenticity > completeness. -->
-
-> **OWNER — Fill in (optional):** A few lines on what you read, follow, or find interesting beyond work.
-{: .prompt-tip }
+*Coming soon.*
 
 ---
 
-## Work with me
-
-> **OWNER — Fill in:** One line on how people can work with you.
-{: .prompt-warning }
+## Get in touch
 
 → Reach me directly at [michaelbuttitta52@gmail.com](mailto:michaelbuttitta52@gmail.com).
