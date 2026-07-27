@@ -1,0 +1,1044 @@
+---
+layout: gpu
+title: Memory
+icon: fas fa-memory
+order: 6
+description: >-
+  An interactive visual guide to how computers remember — registers, caches,
+  RAM, SSDs, virtual memory and paging, flash cells, latency and bandwidth,
+  explained with live simulations.
+extra_css:
+  - /assets/css/memory.css
+extra_js:
+  - /assets/js/memory.js
+---
+
+<div id="memory-experience">
+  <noscript>
+    <p class="mx-noscript">
+      The live simulations on this page need JavaScript. All of the explanations
+      below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="mx-rail" aria-label="Chapters">
+    <a class="mx-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="mx-rail-dot" href="#what" data-label="What is memory?"><span></span></a>
+    <a class="mx-rail-dot" href="#hierarchy" data-label="The memory hierarchy"><span></span></a>
+    <a class="mx-rail-dot" href="#registers" data-label="Registers"><span></span></a>
+    <a class="mx-rail-dot" href="#cache" data-label="CPU cache"><span></span></a>
+    <a class="mx-rail-dot" href="#ram" data-label="RAM"><span></span></a>
+    <a class="mx-rail-dot" href="#virtual" data-label="Virtual memory &amp; paging"><span></span></a>
+    <a class="mx-rail-dot" href="#drives" data-label="SSDs vs hard drives"><span></span></a>
+    <a class="mx-rail-dot" href="#flash" data-label="Flash memory"><span></span></a>
+    <a class="mx-rail-dot" href="#launch" data-label="How a program starts"><span></span></a>
+    <a class="mx-rail-dot" href="#speed" data-label="Latency &amp; bandwidth"><span></span></a>
+    <a class="mx-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
+    <a class="mx-rail-dot" href="#history" data-label="A history of remembering"><span></span></a>
+    <a class="mx-rail-dot" href="#playground" data-label="Memory simulator"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="mx-hero" id="top">
+    <canvas id="mx-hero-canvas" aria-hidden="true"></canvas>
+    <div class="mx-hero-inner">
+      <p class="mx-kicker">An interactive exhibit</p>
+      <h1 class="mx-hero-title">Inside Computer Memory</h1>
+      <p class="mx-hero-sub">
+        Discover how modern computers store, organize, and retrieve billions of
+        pieces of information every second.
+      </p>
+      <div class="mx-hero-cta">
+        <a class="mx-btn mx-btn-primary" id="mx-hero-cta" href="#what">Begin exploring</a>
+        <span class="mx-hero-hint">12 chapters &middot; live simulations &middot; no installs</span>
+      </div>
+    </div>
+    <div class="mx-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       01 - WHAT IS MEMORY?
+  ================================================================ -->
+  <section class="mx-section" id="what" aria-labelledby="what-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">01</span> The idea</p>
+      <h2 id="what-h">What is memory?</h2>
+      <p class="mx-lede">
+        Every photo you view, every tab you open, every unsaved sentence you
+        type exists as electrical charge, magnetic patterns, or trapped
+        electrons &mdash; somewhere. &ldquo;Memory&rdquo; is the machinery that
+        holds those patterns and hands them to the CPU when asked. The catch:
+        no single technology is fast, big, <em>and</em> cheap at once. So your
+        computer uses half a dozen of them, stacked.
+      </p>
+    </div>
+
+    <p class="mx-prose">
+      The stack below is real &mdash; it is in the machine you are reading this
+      on. The layers near the top are tiny and answer in under a nanosecond;
+      the layers near the bottom hold terabytes and take milliseconds. Data is
+      constantly promoted toward the CPU when it is needed and demoted back
+      down when it is not. Watch it move:
+    </p>
+
+    <div class="mx-flow" data-mx-reveal>
+      <div class="mx-flow-controls" role="group" aria-label="Data movement demos">
+        <button type="button" id="mx-flow-open" class="mx-btn mx-btn-ghost" aria-pressed="false">Open a file</button>
+        <button type="button" id="mx-flow-save" class="mx-btn mx-btn-ghost" aria-pressed="false">Save your work</button>
+      </div>
+      <ol class="mx-flow-chain" id="mx-flow-chain">
+        <li class="mx-flow-node" data-node="program">
+          <span class="mx-flow-name">Program</span>
+          <span class="mx-flow-desc">the code that wants data</span>
+        </li>
+        <li class="mx-flow-node" data-node="cpu">
+          <span class="mx-flow-name">CPU</span>
+          <span class="mx-flow-desc">computes on it</span>
+        </li>
+        <li class="mx-flow-node" data-node="reg">
+          <span class="mx-flow-name">Registers</span>
+          <span class="mx-flow-desc">the numbers in hand</span>
+        </li>
+        <li class="mx-flow-node" data-node="cache">
+          <span class="mx-flow-name">Cache</span>
+          <span class="mx-flow-desc">recently used data</span>
+        </li>
+        <li class="mx-flow-node" data-node="ram">
+          <span class="mx-flow-name">RAM</span>
+          <span class="mx-flow-desc">everything running</span>
+        </li>
+        <li class="mx-flow-node" data-node="ssd">
+          <span class="mx-flow-name">SSD</span>
+          <span class="mx-flow-desc">everything installed</span>
+        </li>
+        <li class="mx-flow-node" data-node="cloud">
+          <span class="mx-flow-name">Cloud backup</span>
+          <span class="mx-flow-desc">everything, elsewhere</span>
+        </li>
+      </ol>
+      <p class="mx-flow-status" id="mx-flow-status" aria-live="polite">
+        Choose a demo to watch data travel through the hierarchy.
+      </p>
+    </div>
+
+    <p class="mx-caption">
+      Opening a file pulls it <em>up</em> the stack &mdash; disk to RAM to cache
+      to registers &mdash; and saving pushes it back <em>down</em>. The
+      further a request has to travel, the longer the CPU waits. Most of the
+      engineering in this exhibit exists to make that trip as short and as rare
+      as possible.
+    </p>
+
+    <h3 class="mx-subhead">Two very different jobs: working memory vs. storage</h3>
+    <p class="mx-prose">
+      In everyday speech, &ldquo;memory&rdquo; blurs two ideas that hardware
+      keeps strictly separate. <em>Working memory</em> (registers, cache, RAM)
+      holds what is happening right now, is blisteringly fast, and forgets
+      everything at power-off. <em>Storage</em> (SSDs, hard drives, the cloud)
+      holds what you want to keep, survives power-off, and is thousands to
+      millions of times slower. When your phone says &ldquo;64&nbsp;GB,&rdquo;
+      that is storage. When a game demands &ldquo;16&nbsp;GB,&rdquo; that is
+      RAM. The rest of this page is the story of how the two worlds cooperate.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       02 - THE MEMORY HIERARCHY
+  ================================================================ -->
+  <section class="mx-section" id="hierarchy" aria-labelledby="hierarchy-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">02</span> The pyramid</p>
+      <h2 id="hierarchy-h">The memory hierarchy</h2>
+      <p class="mx-lede">
+        Fast memory is expensive and small; cheap memory is huge and slow.
+        Rather than pick one, computers layer them into a pyramid and keep the
+        <em>hottest</em> data near the top. Select any layer to see its
+        capacity, speed, and cost &mdash; and what it would feel like at human
+        scale.
+      </p>
+    </div>
+
+    <div class="mx-hier-layout" data-mx-reveal>
+      <div class="mx-hier" id="mx-hier" role="group" aria-label="The memory hierarchy pyramid. Each layer is selectable.">
+        <!-- buttons injected by JS get keyboard focus; static markup for no-JS -->
+        <button type="button" class="mx-level" data-level="0" aria-pressed="true">
+          <span class="mx-level-bar" style="--w: 16%"><i></i></span>
+          <span class="mx-level-name">Registers</span>
+          <span class="mx-level-cap">&lt; 1 KB</span>
+        </button>
+        <button type="button" class="mx-level" data-level="1" aria-pressed="false">
+          <span class="mx-level-bar" style="--w: 26%"><i></i></span>
+          <span class="mx-level-name">L1 cache</span>
+          <span class="mx-level-cap">~64 KB / core</span>
+        </button>
+        <button type="button" class="mx-level" data-level="2" aria-pressed="false">
+          <span class="mx-level-bar" style="--w: 36%"><i></i></span>
+          <span class="mx-level-name">L2 cache</span>
+          <span class="mx-level-cap">~1 MB / core</span>
+        </button>
+        <button type="button" class="mx-level" data-level="3" aria-pressed="false">
+          <span class="mx-level-bar" style="--w: 47%"><i></i></span>
+          <span class="mx-level-name">L3 cache</span>
+          <span class="mx-level-cap">8&ndash;96 MB shared</span>
+        </button>
+        <button type="button" class="mx-level" data-level="4" aria-pressed="false">
+          <span class="mx-level-bar" style="--w: 60%"><i></i></span>
+          <span class="mx-level-name">RAM</span>
+          <span class="mx-level-cap">8&ndash;64 GB</span>
+        </button>
+        <button type="button" class="mx-level" data-level="5" aria-pressed="false">
+          <span class="mx-level-bar" style="--w: 74%"><i></i></span>
+          <span class="mx-level-name">SSD</span>
+          <span class="mx-level-cap">0.5&ndash;8 TB</span>
+        </button>
+        <button type="button" class="mx-level" data-level="6" aria-pressed="false">
+          <span class="mx-level-bar" style="--w: 87%"><i></i></span>
+          <span class="mx-level-name">Hard drive</span>
+          <span class="mx-level-cap">1&ndash;20 TB</span>
+        </button>
+        <button type="button" class="mx-level" data-level="7" aria-pressed="false">
+          <span class="mx-level-bar" style="--w: 100%"><i></i></span>
+          <span class="mx-level-name">Cloud storage</span>
+          <span class="mx-level-cap">effectively unlimited</span>
+        </button>
+      </div>
+
+      <aside class="mx-hier-detail" id="mx-hier-detail" aria-live="polite">
+        <h3 class="mx-hier-detail-name" id="mx-hd-name">Registers</h3>
+        <dl class="mx-hier-dl">
+          <div><dt>Capacity</dt><dd id="mx-hd-cap">a few hundred bytes</dd></div>
+          <div><dt>Access time</dt><dd id="mx-hd-lat">~0.3 ns &mdash; one CPU cycle</dd></div>
+          <div><dt>Cost per GB</dt><dd id="mx-hd-cost">n/a &mdash; part of the core itself</dd></div>
+          <div><dt>Used for</dt><dd id="mx-hd-use">the handful of numbers being computed this instant</dd></div>
+          <div><dt>At human scale</dt><dd id="mx-hd-human">if one cycle were one second: instant recall</dd></div>
+        </dl>
+      </aside>
+    </div>
+
+    <h3 class="mx-subhead">How far away is your data, really?</h3>
+    <p class="mx-prose">
+      The gaps between layers are so large that a linear chart is useless
+      &mdash; each layer is roughly 10&ndash;1000&times; slower than the one
+      above it. The chart below uses a logarithmic scale; toggle to
+      <em>human time</em> to feel the distances: if grabbing a register took
+      one second, fetching from a hard drive would take most of a year.
+    </p>
+
+    <div class="mx-latchart-wrap" data-mx-reveal>
+      <div class="mx-mode-tabs" role="group" aria-label="Latency chart units">
+        <button type="button" class="mx-mode-tab" id="mx-lat-ns" aria-pressed="true">Real time</button>
+        <button type="button" class="mx-mode-tab" id="mx-lat-human" aria-pressed="false">Human time</button>
+      </div>
+      <div class="mx-latchart" id="mx-latchart" role="img"
+           aria-label="Bar chart of memory access times on a logarithmic scale: registers about 0.3 nanoseconds, L1 cache 1 nanosecond, L2 cache 3 nanoseconds, L3 cache 12 nanoseconds, RAM 80 nanoseconds, NVMe SSD 60 microseconds, hard drive 8 milliseconds, cloud storage 50 or more milliseconds."></div>
+    </div>
+    <p class="mx-caption">
+      Figures are typical for a current desktop &mdash; exact numbers vary by
+      chip and workload, but the <em>ratios</em> are the point. RAM is ~250
+      cycles away; an SSD is ~200,000; a hard drive is ~25&nbsp;million. This
+      is why the layers above RAM exist at all.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       03 - REGISTERS
+  ================================================================ -->
+  <section class="mx-section" id="registers" aria-labelledby="registers-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">03</span> The summit</p>
+      <h2 id="registers-h">Registers &mdash; the numbers in the CPU&rsquo;s hand</h2>
+      <p class="mx-lede">
+        At the very top of the pyramid sit a few dozen storage slots built
+        directly into each CPU core, each holding one value. Every calculation
+        the machine ever performs happens <em>between registers</em>. They have
+        no addresses and no gigabytes &mdash; just names &mdash; and they
+        respond within a single clock cycle.
+      </p>
+    </div>
+
+    <div class="mx-reg-layout" data-mx-reveal>
+      <div class="mx-reg-file" role="group" aria-label="CPU register file">
+        <h3 class="mx-panel-head">Register file</h3>
+        <div class="mx-reg-grid" id="mx-reg-grid">
+          <div class="mx-reg" data-reg="pc"><span class="mx-reg-name">PC</span><output class="mx-reg-val" id="mx-reg-pc">0</output><span class="mx-reg-role">program counter &mdash; address of the next instruction</span></div>
+          <div class="mx-reg" data-reg="sp"><span class="mx-reg-name">SP</span><output class="mx-reg-val" id="mx-reg-sp">0xFFE0</output><span class="mx-reg-role">stack pointer &mdash; top of the call stack</span></div>
+          <div class="mx-reg" data-reg="flags"><span class="mx-reg-name">FLAGS</span><output class="mx-reg-val" id="mx-reg-flags">&ndash;</output><span class="mx-reg-role">status bits &mdash; was the last result zero? negative?</span></div>
+          <div class="mx-reg" data-reg="r0"><span class="mx-reg-name">R0</span><output class="mx-reg-val" id="mx-reg-r0">0</output><span class="mx-reg-role">general purpose</span></div>
+          <div class="mx-reg" data-reg="r1"><span class="mx-reg-name">R1</span><output class="mx-reg-val" id="mx-reg-r1">0</output><span class="mx-reg-role">general purpose</span></div>
+          <div class="mx-reg" data-reg="r2"><span class="mx-reg-name">R2</span><output class="mx-reg-val" id="mx-reg-r2">0</output><span class="mx-reg-role">general purpose</span></div>
+        </div>
+      </div>
+
+      <div class="mx-reg-prog">
+        <h3 class="mx-panel-head">Program: sum a 3-element list</h3>
+        <ol class="mx-reg-code" id="mx-reg-code">
+          <li><code>load&nbsp;&nbsp;r0, #0</code><span>sum starts at zero</span></li>
+          <li><code>load&nbsp;&nbsp;r2, #3</code><span>three items to go</span></li>
+          <li><code>load&nbsp;&nbsp;r1, [list]</code><span>fetch next value from memory</span></li>
+          <li><code>add&nbsp;&nbsp;&nbsp;r0, r0, r1</code><span>add it to the sum</span></li>
+          <li><code>sub&nbsp;&nbsp;&nbsp;r2, r2, #1</code><span>one fewer to go &mdash; sets FLAGS</span></li>
+          <li><code>jnz&nbsp;&nbsp;&nbsp;line 3</code><span>if R2 isn&rsquo;t zero, loop back</span></li>
+          <li><code>store&nbsp;[total], r0</code><span>write the answer to memory</span></li>
+        </ol>
+        <div class="mx-reg-controls">
+          <button type="button" id="mx-reg-step" class="mx-btn mx-btn-ghost">Step</button>
+          <button type="button" id="mx-reg-play" class="mx-btn mx-btn-primary">Play</button>
+          <button type="button" id="mx-reg-reset" class="mx-btn mx-btn-ghost">Reset</button>
+        </div>
+        <p class="mx-reg-status" id="mx-reg-status" aria-live="polite">Press Step or Play to run the program.</p>
+      </div>
+    </div>
+
+    <p class="mx-caption">
+      Watch the <strong>PC</strong> &mdash; it counts 0, 1, 2&hellip; then
+      <em>jumps back</em> to line&nbsp;3 each time the loop repeats. Reads
+      flash blue, writes flash teal. Real ISAs have 16&ndash;32 general
+      registers (plus vector registers) and the assembly is terser, but this is
+      genuinely how your code runs: values are loaded into registers, combined,
+      and stored back.
+    </p>
+
+    <h3 class="mx-subhead">Why not just make more registers?</h3>
+    <p class="mx-prose">
+      Registers are the fastest storage in the machine <em>because</em> there
+      are so few: every one of them is wired directly into the arithmetic
+      units, and instructions name them in just a few bits. Add thousands and
+      the wiring slows down, the instruction encoding bloats, and you have
+      reinvented a cache &mdash; which is exactly what the next chapter is about.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       04 - CPU CACHE
+  ================================================================ -->
+  <section class="mx-section" id="cache" aria-labelledby="cache-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">04</span> The shortcut</p>
+      <h2 id="cache-h">CPU cache &mdash; a copy of what you&rsquo;ll want next</h2>
+      <p class="mx-lede">
+        RAM is roughly 250 cycles away &mdash; an eternity for a core that can
+        finish several instructions per cycle. So CPUs keep small copies of
+        recently used memory in <strong>SRAM caches</strong> right on the die:
+        a tiny, 4-cycle L1; a bigger, 12-cycle L2; and a large L3 shared by all
+        cores. Run the workloads below and watch how <em>access patterns</em>,
+        not raw speed, decide performance.
+      </p>
+    </div>
+
+    <div class="mx-cache-sim" data-mx-reveal>
+      <div class="mx-cache-controls">
+        <div class="mx-mode-tabs" role="group" aria-label="Workload pattern">
+          <button type="button" class="mx-mode-tab" data-workload="seq" aria-pressed="true">Sequential sweep</button>
+          <button type="button" class="mx-mode-tab" data-workload="loop" aria-pressed="false">Tight loop</button>
+          <button type="button" class="mx-mode-tab" data-workload="rand" aria-pressed="false">Random jumps</button>
+        </div>
+        <button type="button" id="mx-cache-run" class="mx-btn mx-btn-primary">Run workload</button>
+      </div>
+      <canvas id="mx-cache-canvas" class="mx-canvas mx-canvas-tall"
+              aria-label="Live cache simulation: a grid of memory lines at the top, with L1, L2 and L3 caches below. Each access lights up the level that served it."></canvas>
+      <div class="mx-statrow" id="mx-cache-stats">
+        <div class="mx-stat"><span class="mx-stat-label">L1 hits</span><span class="mx-stat-val" id="mx-cs-l1">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">L2 hits</span><span class="mx-stat-val" id="mx-cs-l2">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">L3 hits</span><span class="mx-stat-val" id="mx-cs-l3">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">RAM fetches</span><span class="mx-stat-val" id="mx-cs-ram">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">Hit rate</span><span class="mx-stat-val" id="mx-cs-rate">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">Speed-up vs no cache</span><span class="mx-stat-val" id="mx-cs-speedup">&ndash;</span></div>
+      </div>
+      <p class="mx-cache-verdict" id="mx-cache-verdict" aria-live="polite"></p>
+    </div>
+
+    <div class="mx-duo" data-mx-reveal>
+      <div class="mx-duo-card">
+        <h3>Temporal locality</h3>
+        <p>
+          If you used a value a moment ago, you will probably use it again
+          soon &mdash; loop counters, hot functions, the pixel you keep
+          blending. The <em>tight loop</em> workload wins because its whole
+          working set fits in L1 and stays there.
+        </p>
+      </div>
+      <div class="mx-duo-card">
+        <h3>Spatial locality</h3>
+        <p>
+          If you touched address 1000, you will probably touch 1001 next.
+          Caches exploit this by moving memory in 64-byte <em>lines</em>: one
+          RAM fetch pre-pays for the next fifteen accesses. That is why the
+          <em>sequential sweep</em> still hits ~94% despite never reusing data.
+        </p>
+      </div>
+    </div>
+
+    <p class="mx-caption">
+      The simulator is a deliberately small cartoon &mdash; a handful of
+      cache lines, simplified LRU replacement, no associativity conflicts
+      &mdash; but the hit rates and the ~10&times; performance spread between
+      patterns mirror real hardware. The lesson generalizes: <em>the same
+      computation, ordered differently, can run an order of magnitude faster.</em>
+      Random pointer-chasing is the memory hierarchy&rsquo;s worst case.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       05 - RAM
+  ================================================================ -->
+  <section class="mx-section" id="ram" aria-labelledby="ram-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">05</span> The workbench</p>
+      <h2 id="ram-h">RAM &mdash; where running programs live</h2>
+      <p class="mx-lede">
+        <strong>Random Access Memory</strong> is the computer&rsquo;s workbench:
+        every open app, every browser tab, every unsaved document occupies part
+        of it while active. &ldquo;Random access&rdquo; means any address costs
+        the same to reach &mdash; no fast or slow neighborhoods. Open and close
+        the apps below to see a 16&nbsp;GB module fill and empty.
+      </p>
+    </div>
+
+    <div class="mx-ram-demo" data-mx-reveal>
+      <div class="mx-ram-side">
+        <h3 class="mx-panel-head">Launch apps</h3>
+        <div class="mx-ram-apps" id="mx-ram-apps">
+          <button type="button" class="mx-app" data-app="os" disabled aria-pressed="true">
+            <span class="mx-app-dot" data-c="slate"></span>Operating system <em>2 GB &middot; always resident</em>
+          </button>
+          <button type="button" class="mx-app" data-app="browser" aria-pressed="false">
+            <span class="mx-app-dot" data-c="teal"></span>Browser, 14 tabs <em>4 GB</em>
+          </button>
+          <button type="button" class="mx-app" data-app="game" aria-pressed="false">
+            <span class="mx-app-dot" data-c="violet"></span>Game <em>8 GB</em>
+          </button>
+          <button type="button" class="mx-app" data-app="editor" aria-pressed="false">
+            <span class="mx-app-dot" data-c="amber"></span>Photo editor <em>5 GB</em>
+          </button>
+          <button type="button" class="mx-app" data-app="music" aria-pressed="false">
+            <span class="mx-app-dot" data-c="sky"></span>Music player <em>1 GB</em>
+          </button>
+        </div>
+        <div class="mx-ram-meter" aria-hidden="true"><i id="mx-ram-meter-fill"></i></div>
+        <p class="mx-ram-usage" id="mx-ram-usage" aria-live="polite">2 GB of 16 GB in use</p>
+        <button type="button" id="mx-ram-power" class="mx-btn mx-btn-ghost">Cut the power</button>
+      </div>
+      <div class="mx-ram-module">
+        <h3 class="mx-panel-head">16 GB DRAM module &mdash; each cell is 256 MB</h3>
+        <div class="mx-ram-grid" id="mx-ram-grid" role="img" aria-label="Grid of 64 memory cells that fill with color as applications are opened and empty when they close."></div>
+        <p class="mx-ram-note" id="mx-ram-note" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <p class="mx-caption">
+      Notice the allocations are <em>scattered</em>, not tidy blocks &mdash;
+      memory is handed out in pages wherever free space exists, and the next
+      chapter explains the illusion that hides this mess from every program.
+    </p>
+
+    <h3 class="mx-subhead">Why RAM forgets: a bucket with a hole in it</h3>
+    <p class="mx-prose">
+      A DRAM bit is one microscopic capacitor: charged&nbsp;=&nbsp;1,
+      empty&nbsp;=&nbsp;0. Capacitors leak, so the memory controller must
+      <em>refresh</em> every cell &mdash; read it and write it back &mdash;
+      dozens of times per second, billions of cells at a time. Cut the power
+      and the refresh stops; within moments every charge drains away and the
+      bits are gone. That is what <strong>volatile</strong> means, and it is a
+      trade, not a flaw: a 1-transistor-1-capacitor cell is tiny and cheap,
+      which is exactly how you get gigabytes of it. The SRAM in caches uses six
+      transistors per bit &mdash; faster, no refresh, but ~100&times; the
+      silicon per bit. Your machine pairs kilobytes-to-megabytes of SRAM with
+      gigabytes of DDR&nbsp;DRAM because physics offers no single cell that is
+      both.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       06 - VIRTUAL MEMORY & PAGING
+  ================================================================ -->
+  <section class="mx-section" id="virtual" aria-labelledby="virtual-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">06</span> The illusion</p>
+      <h2 id="virtual-h">Virtual memory &mdash; the illusion that never runs out</h2>
+      <p class="mx-lede">
+        No program sees real RAM addresses. Each one gets a private
+        <strong>virtual address space</strong>, and the operating system maps
+        it onto physical memory in 4&nbsp;KB <strong>pages</strong>, one page
+        table entry at a time. The payoff: programs can&rsquo;t trample each
+        other, and when RAM fills up, the OS can quietly park idle pages on
+        disk. Step through what happens when you open one app too many.
+      </p>
+    </div>
+
+    <div class="mx-vm-demo" data-mx-reveal>
+      <div class="mx-vm-stage">
+        <h3 class="mx-panel-head">Physical RAM &mdash; 32 page frames</h3>
+        <div class="mx-vm-ram" id="mx-vm-ram" role="img" aria-label="Grid of RAM page frames, colored by owning application."></div>
+        <h3 class="mx-panel-head mx-vm-swaphead">Swap space on SSD (page file)</h3>
+        <div class="mx-vm-swap" id="mx-vm-swap" role="img" aria-label="Grid of swap slots on disk that receive pages evicted from RAM."></div>
+      </div>
+      <div class="mx-vm-side">
+        <ol class="mx-vm-steps" id="mx-vm-steps">
+          <li>Three apps fill nearly all of RAM</li>
+          <li>You open a video call anyway</li>
+          <li>The OS pages the idle game out to disk</li>
+          <li>The call gets real RAM &mdash; nothing crashed</li>
+          <li>You click back to the game&hellip; <em>page faults!</em></li>
+          <li>Its pages stream back in; something else pages out</li>
+        </ol>
+        <div class="mx-vm-controls">
+          <button type="button" id="mx-vm-next" class="mx-btn mx-btn-primary">Next step</button>
+          <button type="button" id="mx-vm-reset" class="mx-btn mx-btn-ghost">Reset</button>
+        </div>
+        <p class="mx-vm-status" id="mx-vm-status" aria-live="polite"></p>
+        <div class="mx-vm-costs">
+          <h3 class="mx-panel-head">The cost of a page fault</h3>
+          <div class="mx-cost"><span>Page already in RAM</span><span class="mx-cost-bar"><i style="--w: 0.4%"></i></span><span class="mx-cost-val">~80 ns</span></div>
+          <div class="mx-cost"><span>Major fault &mdash; fetch from SSD</span><span class="mx-cost-bar"><i style="--w: 100%"></i></span><span class="mx-cost-val">~80 &micro;s &mdash; 1000&times; slower</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="mx-caption">
+      A <strong>page fault</strong> is not an error &mdash; it is the CPU
+      telling the OS &ldquo;this page isn&rsquo;t mapped, go get it.&rdquo;
+      Touching a page that&rsquo;s parked on disk (a <em>major</em> fault)
+      suspends the program for the entire disk round trip. A little paging is
+      normal and healthy. But when RAM is so oversubscribed that pages bounce
+      in and out continuously, the machine spends more time moving pages than
+      working &mdash; that grinding slowdown is <strong>thrashing</strong>, and
+      it is exactly what you feel when everything freezes but the disk light
+      blazes. The fix is boring and real: more RAM, or fewer open apps.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       07 - SSD VS HDD
+  ================================================================ -->
+  <section class="mx-section" id="drives" aria-labelledby="drives-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">07</span> The vault</p>
+      <h2 id="drives-h">SSDs vs hard drives &mdash; electrons against machinery</h2>
+      <p class="mx-lede">
+        Below RAM sits permanent storage, and here two technologies compete. A
+        <strong>hard drive</strong> stores bits magnetically on spinning
+        platters and must physically move an arm to reach them. An
+        <strong>SSD</strong> stores bits as trapped charge in NAND flash and
+        reaches any of them electronically. Race them.
+      </p>
+    </div>
+
+    <div class="mx-drive-race" data-mx-reveal>
+      <div class="mx-drive-controls">
+        <div class="mx-mode-tabs" role="group" aria-label="Workload to race">
+          <button type="button" class="mx-mode-tab" data-race="big" aria-pressed="true">One big file &mdash; 1 GB video</button>
+          <button type="button" class="mx-mode-tab" data-race="small" aria-pressed="false">200 scattered small files</button>
+        </div>
+        <button type="button" id="mx-drive-run" class="mx-btn mx-btn-primary">Start the race</button>
+      </div>
+      <canvas id="mx-drive-canvas" class="mx-canvas mx-canvas-tall"
+              aria-label="Split-screen race: on the left a hard drive platter spins while its arm seeks to each file; on the right an SSD lights up flash blocks with no motion. Elapsed time counters run for each."></canvas>
+      <div class="mx-statrow">
+        <div class="mx-stat"><span class="mx-stat-label">HDD time</span><span class="mx-stat-val" id="mx-dr-hdd">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">SSD time</span><span class="mx-stat-val" id="mx-dr-ssd">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">SSD advantage</span><span class="mx-stat-val" id="mx-dr-adv">&ndash;</span></div>
+      </div>
+      <p class="mx-drive-verdict" id="mx-drive-verdict" aria-live="polite"></p>
+    </div>
+
+    <div class="mx-table-wrap" data-mx-reveal>
+      <table class="mx-compare">
+        <thead>
+          <tr><th scope="col"></th><th scope="col">SSD (NVMe)</th><th scope="col">Hard drive (7200 rpm)</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">How bits are kept</th><td>charge trapped in NAND flash cells</td><td>magnetized regions on spinning platters</td></tr>
+          <tr><th scope="row">Moving parts</th><td>none &mdash; silent, shock-tolerant</td><td>platters at 120 rev/s + a seeking arm</td></tr>
+          <tr><th scope="row">Random access</th><td>~60 &micro;s &mdash; electronics only</td><td>~8 ms &mdash; seek time + rotational latency</td></tr>
+          <tr><th scope="row">Sequential speed</th><td>3&ndash;12 GB/s over PCIe/NVMe</td><td>~0.2 GB/s at the platter</td></tr>
+          <tr><th scope="row">Cost per TB</th><td>~$60&ndash;100</td><td>~$15&ndash;25</td></tr>
+          <tr><th scope="row">Best at</th><td><em>everything interactive</em> &mdash; boot, apps, games</td><td>bulk archives, backups, surveillance, cold data</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="mx-caption">
+      The mechanical numbers compound: to read a scattered 4&nbsp;KB block, a
+      hard drive pays a <em>seek</em> (the arm swings to the right track,
+      ~4&ndash;9&nbsp;ms) plus <em>rotational latency</em> (waiting for the
+      sector to spin under the head, ~4&nbsp;ms average at 7200&nbsp;rpm).
+      An SSD pays neither &mdash; which is why the small-file race isn&rsquo;t
+      close, and why swapping an old laptop&rsquo;s HDD for an SSD feels like a
+      new computer. NVMe drives push further by speaking PCIe directly to the
+      CPU instead of the older SATA protocol, with deep command queues that
+      keep dozens of requests in flight at once.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       08 - FLASH MEMORY
+  ================================================================ -->
+  <section class="mx-section" id="flash" aria-labelledby="flash-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">08</span> The cell</p>
+      <h2 id="flash-h">Flash memory &mdash; bottling electrons</h2>
+      <p class="mx-lede">
+        The same NAND flash inside an SSD also powers USB sticks, SD cards,
+        and the storage in every phone. Each cell is a transistor with an
+        insulated <strong>charge trap</strong>: force electrons in and they
+        stay for years with no power at all &mdash; that is why flash, unlike
+        RAM, remembers. Try programming a cell yourself.
+      </p>
+    </div>
+
+    <div class="mx-flash-layout" data-mx-reveal>
+      <div class="mx-flash-cell">
+        <h3 class="mx-panel-head">One NAND cell</h3>
+        <svg id="mx-nand-svg" viewBox="0 0 340 260" role="img"
+             aria-label="Cross-section of a NAND flash cell: a control gate above a charge trap layer, separated from the silicon channel by a thin oxide. Programming tunnels electrons into the trap; erasing pulls them out.">
+          <rect class="mx-nand-sub" x="20" y="200" width="300" height="40" rx="6"></rect>
+          <text class="mx-nand-label" x="170" y="226">silicon channel</text>
+          <rect class="mx-nand-oxide" x="70" y="180" width="200" height="18" rx="4"></rect>
+          <rect class="mx-nand-trap" id="mx-nand-trap" x="70" y="140" width="200" height="36" rx="6"></rect>
+          <text class="mx-nand-label" x="170" y="163">charge trap</text>
+          <rect class="mx-nand-oxide" x="70" y="120" width="200" height="16" rx="4"></rect>
+          <rect class="mx-nand-gate" x="70" y="70" width="200" height="46" rx="6"></rect>
+          <text class="mx-nand-label mx-nand-label-gate" x="170" y="98">control gate</text>
+          <g id="mx-nand-electrons"></g>
+        </svg>
+        <div class="mx-flash-controls">
+          <button type="button" id="mx-nand-program" class="mx-btn mx-btn-primary">Program (write 0)</button>
+          <button type="button" id="mx-nand-erase" class="mx-btn mx-btn-ghost">Erase (back to 1)</button>
+        </div>
+        <p class="mx-flash-status" id="mx-nand-status" aria-live="polite">
+          Cell is erased &mdash; reads as <strong>1</strong>. No electrons in the trap.
+        </p>
+      </div>
+
+      <div class="mx-flash-wear">
+        <h3 class="mx-panel-head">A drive&rsquo;s lifetime: wear leveling</h3>
+        <div class="mx-wear-grid" id="mx-wear-grid" role="img"
+             aria-label="Grid of flash blocks that darken with wear as writes accumulate. With wear leveling off, a few hot blocks fail early; with it on, wear spreads evenly."></div>
+        <div class="mx-wear-controls">
+          <button type="button" id="mx-wear-toggle" class="mx-btn mx-btn-ghost" aria-pressed="true">Wear leveling: on</button>
+          <button type="button" id="mx-wear-run" class="mx-btn mx-btn-primary">Fast-forward 5 years</button>
+        </div>
+        <p class="mx-wear-status" id="mx-wear-status" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <p class="mx-caption">
+      Forcing electrons through the oxide wears it out &mdash; each block
+      survives a few thousand program/erase cycles (fewer as cells store more
+      bits: SLC&nbsp;&rarr;&nbsp;TLC&nbsp;&rarr;&nbsp;QLC trade endurance and
+      speed for capacity). The SSD&rsquo;s controller runs a <em>flash
+      translation layer</em> that constantly remaps writes so no block wears
+      out before its siblings &mdash; the drive that &ldquo;just works&rdquo;
+      for a decade is quietly playing musical chairs with your data the whole
+      time. It also can&rsquo;t overwrite in place: it erases in large blocks
+      and writes in pages, which is why the <code>TRIM</code> command and spare
+      area exist.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       09 - HOW A PROGRAM STARTS
+  ================================================================ -->
+  <section class="mx-section" id="launch" aria-labelledby="launch-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">09</span> The journey</p>
+      <h2 id="launch-h">How a program starts &mdash; the whole story</h2>
+      <p class="mx-lede">
+        Everything so far comes together in the two seconds between a
+        double-click and a window appearing. Play the journey, or step through
+        it &mdash; the diagram lights up each part of the machine as it joins in.
+      </p>
+    </div>
+
+    <div class="mx-launch" data-mx-reveal>
+      <svg id="mx-launch-svg" viewBox="0 0 900 240" role="img"
+           aria-label="System diagram used by the launch animation: SSD, RAM, CPU with cache and registers, and a display, connected left to right.">
+        <g class="mx-ln-part" data-part="click">
+          <circle class="mx-ln-icon" cx="70" cy="110" r="34"></circle>
+          <text class="mx-ln-glyph" x="70" y="118">&#x1F5B1;</text>
+          <text class="mx-ln-name" x="70" y="180">double-click</text>
+        </g>
+        <g class="mx-ln-part" data-part="ssd">
+          <rect class="mx-ln-box" x="170" y="70" width="130" height="80" rx="10"></rect>
+          <text class="mx-ln-label" x="235" y="105">SSD</text>
+          <text class="mx-ln-sub" x="235" y="128">app.exe</text>
+          <text class="mx-ln-name" x="235" y="180">storage</text>
+        </g>
+        <g class="mx-ln-part" data-part="ram">
+          <rect class="mx-ln-box" x="370" y="55" width="120" height="110" rx="10"></rect>
+          <text class="mx-ln-label" x="430" y="100">RAM</text>
+          <text class="mx-ln-sub" x="430" y="128">code + data</text>
+          <text class="mx-ln-name" x="430" y="192">working memory</text>
+        </g>
+        <g class="mx-ln-part" data-part="cpu">
+          <rect class="mx-ln-box" x="560" y="55" width="120" height="110" rx="10"></rect>
+          <rect class="mx-ln-inner" x="580" y="75" width="80" height="38" rx="6"></rect>
+          <text class="mx-ln-sub" x="620" y="98">cache</text>
+          <rect class="mx-ln-inner" x="580" y="120" width="80" height="30" rx="6"></rect>
+          <text class="mx-ln-sub" x="620" y="140">registers</text>
+          <text class="mx-ln-name" x="620" y="192">CPU</text>
+        </g>
+        <g class="mx-ln-part" data-part="screen">
+          <rect class="mx-ln-box" x="750" y="62" width="120" height="80" rx="10"></rect>
+          <rect class="mx-ln-screen" x="762" y="74" width="96" height="56" rx="4"></rect>
+          <text class="mx-ln-name" x="810" y="180">your screen</text>
+        </g>
+        <g class="mx-ln-wires" aria-hidden="true">
+          <line x1="104" y1="110" x2="170" y2="110"></line>
+          <line x1="300" y1="110" x2="370" y2="110"></line>
+          <line x1="490" y1="110" x2="560" y2="110"></line>
+          <line x1="680" y1="110" x2="750" y2="110"></line>
+        </g>
+        <circle id="mx-ln-pulse" class="mx-ln-pulse" cx="104" cy="110" r="6"></circle>
+      </svg>
+
+      <div class="mx-launch-panel">
+        <p class="mx-launch-step" id="mx-launch-title">1 &middot; You double-click an icon</p>
+        <p class="mx-launch-text" id="mx-launch-text">
+          The OS looks up the application&rsquo;s executable file in the file
+          system &mdash; it is sitting on the SSD, inert, like a recipe in a
+          closed book.
+        </p>
+        <div class="mx-launch-controls">
+          <button type="button" id="mx-launch-prev" class="mx-btn mx-btn-ghost">Back</button>
+          <button type="button" id="mx-launch-play" class="mx-btn mx-btn-primary">Play the journey</button>
+          <button type="button" id="mx-launch-next" class="mx-btn mx-btn-ghost">Next</button>
+        </div>
+        <div class="mx-launch-dots" id="mx-launch-dots" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <p class="mx-caption">
+      Step 4 hides a wonderful trick: the loader doesn&rsquo;t actually copy
+      the whole program into RAM up front. It <em>maps</em> the executable into
+      the process&rsquo;s virtual address space and lets page faults pull in
+      only the pieces that run &mdash; chapter&nbsp;06 in action. And once the
+      CPU starts executing, everything in
+      <a href="/cpu/">Inside a Modern CPU</a> takes over: fetch, decode,
+      execute, with registers and caches warming as it goes.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       10 - LATENCY & BANDWIDTH
+  ================================================================ -->
+  <section class="mx-section" id="speed" aria-labelledby="speed-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">10</span> The physics</p>
+      <h2 id="speed-h">Latency vs bandwidth &mdash; two kinds of fast</h2>
+      <p class="mx-lede">
+        <strong>Latency</strong> is how long the <em>first</em> byte takes to
+        arrive. <strong>Bandwidth</strong> is how many bytes arrive <em>per
+        second</em> once flowing. A narrow pipe with a short hose beats a wide
+        highway across the country for a sip of water &mdash; and loses badly
+        for a flood. Drag the sliders and switch workloads to feel which one
+        dominates when.
+      </p>
+    </div>
+
+    <div class="mx-bw-demo" data-mx-reveal>
+      <div class="mx-bw-controls">
+        <div class="mx-sliderrow">
+          <label class="mx-slider-label" for="mx-bw-lat">Latency per request</label>
+          <input type="range" id="mx-bw-lat" min="0" max="100" value="35" step="1">
+          <output class="mx-slider-out" id="mx-bw-lat-out">1 &micro;s</output>
+        </div>
+        <div class="mx-sliderrow">
+          <label class="mx-slider-label" for="mx-bw-bw">Bandwidth</label>
+          <input type="range" id="mx-bw-bw" min="0" max="100" value="55" step="1">
+          <output class="mx-slider-out" id="mx-bw-bw-out">5 GB/s</output>
+        </div>
+        <div class="mx-mode-tabs" role="group" aria-label="Workload type">
+          <button type="button" class="mx-mode-tab" data-bw="stream" aria-pressed="true">Stream one 4 GB file</button>
+          <button type="button" class="mx-mode-tab" data-bw="random" aria-pressed="false">100,000 tiny reads</button>
+        </div>
+      </div>
+      <canvas id="mx-bw-canvas" class="mx-canvas"
+              aria-label="Animated pipe between memory and CPU. Pipe width shows bandwidth; the travel time of each packet shows latency."></canvas>
+      <div class="mx-statrow">
+        <div class="mx-stat"><span class="mx-stat-label">First byte arrives</span><span class="mx-stat-val" id="mx-bw-first">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">Total time</span><span class="mx-stat-val" id="mx-bw-total">&ndash;</span></div>
+        <div class="mx-stat"><span class="mx-stat-label">Dominated by</span><span class="mx-stat-val" id="mx-bw-dom">&ndash;</span></div>
+      </div>
+    </div>
+
+    <p class="mx-caption">
+      This is why hardware specs quote both numbers, and why neither alone
+      predicts feel. DDR5 RAM moves ~50&ndash;100&nbsp;GB/s with ~80&nbsp;ns
+      latency; an NVMe SSD can stream 7&nbsp;GB/s yet still takes ~60&nbsp;&micro;s
+      to answer. Big sequential jobs &mdash; video export, game level loads
+      &mdash; ride on bandwidth. Snappy UI, databases, and program launches
+      live and die by latency, because they issue thousands of tiny dependent
+      reads where each one waits for the last. Deep queues and prefetching are
+      the industry&rsquo;s tricks for hiding latency under bandwidth &mdash;
+      and dedicated <strong>DMA</strong> engines let devices pour data into RAM
+      directly, without making the CPU carry every byte.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       11 - MISCONCEPTIONS
+  ================================================================ -->
+  <section class="mx-section" id="myths" aria-labelledby="myths-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">11</span> The FAQ</p>
+      <h2 id="myths-h">Common misconceptions</h2>
+      <p class="mx-lede">
+        Seven questions that trip up nearly everyone &mdash; each with the
+        short honest answer.
+      </p>
+    </div>
+
+    <div class="mx-faq-list" data-mx-reveal>
+      <details class="mx-faq">
+        <summary>Is RAM the same thing as storage?</summary>
+        <p>
+          No &mdash; and this is the single most common mix-up. RAM is the
+          volatile workbench for <em>running</em> programs; storage (SSD/HDD)
+          is the permanent shelf for files. &ldquo;My phone has 128&nbsp;GB&rdquo;
+          describes the shelf. A full shelf doesn&rsquo;t slow the workbench,
+          and a full workbench doesn&rsquo;t shrink the shelf.
+        </p>
+      </details>
+      <details class="mx-faq">
+        <summary>Does more RAM make everything faster?</summary>
+        <p>
+          Only if you were running out. RAM is a capacity, not a speed: 32&nbsp;GB
+          idle is no faster than 16&nbsp;GB idle. But the moment your working
+          set exceeds RAM, the OS starts paging to disk at a ~1000&times;
+          penalty &mdash; so going from <em>not enough</em> to <em>enough</em>
+          is transformative, and beyond that the OS just uses the spare as a
+          file cache (nice, not dramatic).
+        </p>
+      </details>
+      <details class="mx-faq">
+        <summary>Is cache just a small amount of RAM?</summary>
+        <p>
+          Different technology, different place. Cache is SRAM (six transistors
+          per bit, no refresh) built <em>into the CPU die itself</em>, tens of
+          times faster than the DRAM sticks plugged into the motherboard. It is
+          also invisible: you can&rsquo;t buy more, and programs can&rsquo;t
+          address it &mdash; the hardware manages it automatically.
+        </p>
+      </details>
+      <details class="mx-faq">
+        <summary>SSDs are fast now &mdash; why not use one as RAM?</summary>
+        <p>
+          The gap is still enormous: ~80&nbsp;ns vs ~60,000&nbsp;ns per random
+          access &mdash; roughly a thousand-fold. A CPU waiting on an SSD for
+          every variable would run slower than a 1990s machine. Flash also
+          wears out with writes, and RAM traffic is a firehose of them. SSDs
+          make a fine <em>overflow</em> for RAM (that&rsquo;s paging) but a
+          hopeless replacement.
+        </p>
+      </details>
+      <details class="mx-faq">
+        <summary>Does deleting files free up RAM?</summary>
+        <p>
+          No &mdash; deleting files frees <em>storage</em>. RAM is freed by
+          closing programs (or by the OS reclaiming it automatically). The
+          confusion is the workbench/shelf mix-up in action.
+        </p>
+      </details>
+      <details class="mx-faq">
+        <summary>Why does restarting my computer fix things?</summary>
+        <p>
+          Because RAM is volatile, a restart is a true blank slate: leaked
+          memory from buggy apps, fragmented allocations, bloated caches, and
+          wedged driver state all vanish, and everything reloads fresh from
+          disk. Rebooting doesn&rsquo;t &ldquo;clean&rdquo; your storage &mdash;
+          it empties the workbench.
+        </p>
+      </details>
+      <details class="mx-faq">
+        <summary>Is my data &ldquo;in the cloud&rdquo; somewhere special?</summary>
+        <p>
+          The cloud is the same hierarchy, continued: your file sits in RAM and
+          on SSDs/HDDs in someone else&rsquo;s data center, with network
+          latency (tens of milliseconds) stacked on top. It is the slowest,
+          largest, most durable layer &mdash; the bottom of the pyramid, reached
+          through a wire.
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 - HISTORY
+  ================================================================ -->
+  <section class="mx-section" id="history" aria-labelledby="history-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker"><span class="mx-kicker-num">12</span> The lineage</p>
+      <h2 id="history-h">Seventy years of remembering</h2>
+      <p class="mx-lede">
+        From hand-woven magnetic donuts to terabytes on a fingernail &mdash;
+        every layer of today&rsquo;s hierarchy was once a breakthrough. Scroll
+        the timeline.
+      </p>
+    </div>
+
+    <div class="mx-timeline" id="mx-timeline" tabindex="0" role="region" aria-label="Horizontal timeline of memory technology milestones. Scroll sideways to explore.">
+      <ol class="mx-timeline-track">
+        <li class="mx-era">
+          <span class="mx-era-year">1951</span>
+          <h3>Magnetic-core memory</h3>
+          <p>Tiny ferrite rings, threaded by hand onto wire grids, store one bit each by magnetization direction. Reliable, non-volatile &mdash; and woven by workers with needles.</p>
+          <span class="mx-era-stat">~1 &micro;s access &middot; dollars per bit</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">1956</span>
+          <h3>The first hard drive</h3>
+          <p>IBM&rsquo;s RAMAC 305 stores 5 MB on fifty 24-inch spinning platters. It weighs about a ton and ships by forklift &mdash; but data is finally <em>online</em>, not on punched cards.</p>
+          <span class="mx-era-stat">5 MB &middot; ~1 ton</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">1966&ndash;68</span>
+          <h3>DRAM is invented</h3>
+          <p>Robert Dennard at IBM realizes one transistor plus one capacitor can hold a bit &mdash; leaky, needing refresh, but tiny. The design still powers every RAM stick made today.</p>
+          <span class="mx-era-stat">1 transistor + 1 capacitor</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">1970</span>
+          <h3>Intel 1103 ships</h3>
+          <p>The first commercial DRAM chip &mdash; 1024 bits &mdash; undercuts core memory on price within two years and kills it. Semiconductor memory takes over the world.</p>
+          <span class="mx-era-stat">1 Kb per chip</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">1980s</span>
+          <h3>Flash memory</h3>
+          <p>Fujio Masuoka at Toshiba invents flash &mdash; EEPROM erased in whole blocks in a &ldquo;flash.&rdquo; NOR (1984) and NAND (1987) variants set up the next four decades of storage.</p>
+          <span class="mx-era-stat">non-volatile, no moving parts</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">1989</span>
+          <h3>Cache moves on-die</h3>
+          <p>Intel&rsquo;s 486 integrates 8 KB of L1 SRAM directly on the CPU die. The memory hierarchy as this page describes it &mdash; registers, on-chip cache, DRAM &mdash; clicks into place.</p>
+          <span class="mx-era-stat">8 KB on-die L1</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">1991</span>
+          <h3>The first SSDs</h3>
+          <p>SanDisk ships a 20 MB flash SSD for laptops at ~$1,000. Absurdly expensive per megabyte &mdash; and the beginning of the end for boot-drive spindles.</p>
+          <span class="mx-era-stat">20 MB &middot; ~$50/MB</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">2000s</span>
+          <h3>The DDR era</h3>
+          <p>DDR SDRAM transfers on both clock edges; DDR2 through DDR5 keep doubling transfer rates while multi-channel controllers move to the CPU package itself.</p>
+          <span class="mx-era-stat">DDR5: &gt;50 GB/s per module</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">2011</span>
+          <h3>NVMe</h3>
+          <p>Flash outgrows disk-era SATA plumbing, so the industry writes a new protocol that speaks PCIe directly, with tens of thousands of parallel command queues built for silicon, not spindles.</p>
+          <span class="mx-era-stat">&mu;s-class storage latency</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">2015</span>
+          <h3>High Bandwidth Memory</h3>
+          <p>DRAM dies are stacked vertically and wired to the processor through thousands of connections across a silicon interposer. GPUs and AI accelerators feast on terabytes per second.</p>
+          <span class="mx-era-stat">&gt;1 TB/s on modern stacks</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">2020</span>
+          <h3>Unified memory goes mainstream</h3>
+          <p>Apple&rsquo;s M1 puts CPU and GPU on one die sharing one pool of on-package DRAM &mdash; no copying between &ldquo;system&rdquo; and &ldquo;video&rdquo; memory. Consoles and AI chips converge on the same idea.</p>
+          <span class="mx-era-stat">one pool, every processor</span>
+        </li>
+        <li class="mx-era">
+          <span class="mx-era-year">Today</span>
+          <h3>The hierarchy deepens</h3>
+          <p>CXL-attached memory, 3D-stacked cache (V-Cache), QLC flash, and HBM4 keep adding rungs. Seventy years in, the ladder from register to archive only grows taller &mdash; and the ideas on this page still describe every rung.</p>
+          <span class="mx-era-stat">same pyramid, more layers</span>
+        </li>
+      </ol>
+    </div>
+
+    <!-- ==============================================================
+         PLAYGROUND
+    =============================================================== -->
+    <div class="mx-playground" id="playground" aria-labelledby="playground-h">
+      <div class="mx-section-head">
+        <p class="mx-kicker"><span class="mx-kicker-num">&#9733;</span> Playground</p>
+        <h2 id="playground-h">Build a memory system</h2>
+        <p class="mx-lede">
+          You are the architect. Choose the hardware, pile on the workload, and
+          run it &mdash; the machine below shows where every access lands and
+          the meters tell you what your users would feel. Try starving it of
+          RAM, then fix it three different ways.
+        </p>
+      </div>
+
+      <div class="mx-pg" data-mx-reveal>
+        <div class="mx-pg-controls">
+          <div class="mx-sliderrow">
+            <label class="mx-slider-label" for="mx-pg-cache">Total CPU cache</label>
+            <input type="range" id="mx-pg-cache" min="0" max="5" value="2" step="1">
+            <output class="mx-slider-out" id="mx-pg-cache-out">16 MB</output>
+          </div>
+          <div class="mx-sliderrow">
+            <label class="mx-slider-label" for="mx-pg-ram">RAM capacity</label>
+            <input type="range" id="mx-pg-ram" min="0" max="5" value="2" step="1">
+            <output class="mx-slider-out" id="mx-pg-ram-out">16 GB</output>
+          </div>
+          <div class="mx-sliderrow">
+            <label class="mx-slider-label" for="mx-pg-bw">Memory bandwidth</label>
+            <input type="range" id="mx-pg-bw" min="0" max="4" value="2" step="1">
+            <output class="mx-slider-out" id="mx-pg-bw-out">50 GB/s</output>
+          </div>
+          <div class="mx-sliderrow">
+            <label class="mx-slider-label" for="mx-pg-store">Storage</label>
+            <input type="range" id="mx-pg-store" min="0" max="2" value="1" step="1">
+            <output class="mx-slider-out" id="mx-pg-store-out">SATA SSD</output>
+          </div>
+          <div class="mx-sliderrow">
+            <label class="mx-slider-label" for="mx-pg-apps">Running applications</label>
+            <input type="range" id="mx-pg-apps" min="1" max="12" value="4" step="1">
+            <output class="mx-slider-out" id="mx-pg-apps-out">4</output>
+          </div>
+          <div class="mx-sliderrow">
+            <label class="mx-slider-label" for="mx-pg-set">Data per application</label>
+            <input type="range" id="mx-pg-set" min="0" max="4" value="1" step="1">
+            <output class="mx-slider-out" id="mx-pg-set-out">2 GB</output>
+          </div>
+          <button type="button" id="mx-pg-run" class="mx-btn mx-btn-primary mx-pg-runbtn">Run simulation</button>
+        </div>
+
+        <div class="mx-pg-stage">
+          <canvas id="mx-pg-canvas" class="mx-canvas mx-canvas-tall"
+                  aria-label="Animated memory system: accesses stream from the CPU and land in cache, RAM, or storage according to the configuration, while meters fill."></canvas>
+          <div class="mx-statrow mx-pg-stats">
+            <div class="mx-stat"><span class="mx-stat-label">Cache hit rate</span><span class="mx-stat-val" id="mx-pg-hit">&ndash;</span></div>
+            <div class="mx-stat"><span class="mx-stat-label">RAM utilization</span><span class="mx-stat-val" id="mx-pg-util">&ndash;</span></div>
+            <div class="mx-stat"><span class="mx-stat-label">Page faults</span><span class="mx-stat-val" id="mx-pg-faults">&ndash;</span></div>
+            <div class="mx-stat"><span class="mx-stat-label">Avg. access latency</span><span class="mx-stat-val" id="mx-pg-lat">&ndash;</span></div>
+            <div class="mx-stat"><span class="mx-stat-label">Storage traffic</span><span class="mx-stat-val" id="mx-pg-io">&ndash;</span></div>
+            <div class="mx-stat"><span class="mx-stat-label">Responsiveness</span><span class="mx-stat-val" id="mx-pg-score">&ndash;</span></div>
+          </div>
+          <p class="mx-pg-verdict" id="mx-pg-verdict" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <p class="mx-caption">
+        The model is conceptual &mdash; honest ratios between layers rather
+        than cycle-accurate hardware &mdash; but the behaviors are the real
+        ones: cache hit rates collapse when working sets outgrow cache, paging
+        begins the moment applications outgrow RAM, and an NVMe drive softens
+        thrashing that a hard drive turns into molasses. If you leave with one
+        instinct, make it this: <em>performance is where your data lives.</em>
+      </p>
+    </div>
+  </section>
+
+  <footer class="mx-foot">
+    <p>
+      Part of an interactive series &mdash; explore
+      <a href="/cpu/">Inside a Modern CPU</a>,
+      <a href="/gpu/">Inside a Modern GPU</a>, and
+      <a href="/bitcoin/">Understanding Bitcoin</a>.
+    </p>
+  </footer>
+</div>
