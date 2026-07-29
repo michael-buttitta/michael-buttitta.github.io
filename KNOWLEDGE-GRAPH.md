@@ -79,11 +79,15 @@ the localStorage progress store).
   (internet + cloud + memory + OS) — follow the chatgpt mechanism above.
 - **Knowledge checkpoints** — optional predict-what-happens-next micro
   interactions inside exhibits, feeding the same progress store.
-- **Next topics** — Large Language Models, Databases, Algorithms, Quantum
-  Computing already exist as ghost nodes; each new page should follow the
-  established mechanism (layout `gpu`, scoped CSS, `extra_js`, locale key,
-  graph entry). Machine Learning graduated from ghost node to a live
-  exhibit (`/machine-learning/`) in July 2026.
+- **Next topics** — Databases, Algorithms, Quantum Computing still exist as
+  ghost nodes; each new page should follow the established mechanism
+  (layout `gpu`, scoped CSS, `extra_js`, locale key, graph entry).
+  Machine Learning graduated from ghost node to a live exhibit
+  (`/machine-learning/`) in July 2026; Large Language Models followed
+  (`/llm/`, July 2026) — its `assets/js/llm.js` carries a Node-testable
+  educational core (BPE tokenizer, n-gram LM, PPMI embeddings, real
+  transformer forward pass, sampling) in the bitcoin.js export-and-stop
+  style.
 - **Component extraction** — the exhibits share patterns (chapter rail, hero
   canvas, sim controls) that were built per-page; extract shared CSS/JS only
   when a third consumer appears, to avoid premature abstraction.

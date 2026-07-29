@@ -1,0 +1,1687 @@
+/* =============================================================================
+   Large Language Models — page styles
+   Loaded only on /llm/ via `extra_css` front matter
+   (see _includes/metadata-hook.html).
+
+   Scoping: every rule lives under #llm-experience (or targets .llm-* classes)
+   so nothing leaks into the Chirpy theme. Colors extend the site's
+   "modern fintech" skin: slate surfaces, teal accent (#2DD4BF / #14B8A6),
+   Inter type.
+
+   Data-series palette (same validated set as the other exhibits):
+   teal #0D9488, amber #D97706, sky #0284C7, rose #E11D48, violet #8B5CF6,
+   lime #65A30D. Semantic assignments used consistently here:
+     positive values / kept candidates / attention = teal ·
+     negative values / cut candidates / loss = rose ·
+     user-side / markers = amber · illustrative panels = violet
+   ========================================================================== */
+
+/* Smooth in-page scrolling, only on this page and only if motion is OK */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(#llm-experience) {
+    scroll-behavior: smooth;
+  }
+}
+
+#llm-experience {
+  /* surfaces & lines */
+  --llm-bg: #0f172a;
+  --llm-deep: #0b1120;
+  --llm-panel: rgba(30, 41, 59, 0.45);
+  --llm-panel-solid: #151f36;
+  --llm-line: #1e293b;
+  --llm-line-strong: #334155;
+
+  /* text */
+  --llm-text: #cbd5e1;
+  --llm-text-strong: #f1f5f9;
+  --llm-muted: #94a3b8;
+  --llm-faint: #64748b;
+
+  /* brand accents (UI only) */
+  --llm-teal: #2dd4bf;
+  --llm-teal-deep: #14b8a6;
+
+  /* data series (validated) */
+  --llm-c-teal: #0d9488;
+  --llm-c-amber: #d97706;
+  --llm-c-sky: #0284c7;
+  --llm-c-rose: #e11d48;
+  --llm-c-violet: #8b5cf6;
+  --llm-c-lime: #65a30d;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--llm-text);
+  overflow-wrap: break-word;
+}
+
+/* ---------- primitives ------------------------------------------------- */
+
+#llm-experience :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--llm-teal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+#llm-experience canvas {
+  display: block;
+  width: 100%;
+}
+
+#llm-experience .llm-canvas {
+  height: 320px;
+  border: 1px solid var(--llm-line);
+  border-radius: 12px;
+  background: var(--llm-deep);
+}
+
+#llm-experience .llm-canvas-tall {
+  height: 460px;
+}
+
+#llm-experience .llm-canvas-short {
+  height: 170px;
+}
+
+#llm-experience .llm-canvas-heat {
+  height: 250px;
+}
+
+#llm-experience .llm-canvas-arcs {
+  height: 240px;
+}
+
+#llm-experience .llm-noscript {
+  margin: 1rem 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--llm-line-strong);
+  border-left: 3px solid var(--llm-teal);
+  border-radius: 8px;
+  background: var(--llm-panel);
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-kicker-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+#llm-experience h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: var(--llm-text-strong);
+}
+
+#llm-experience h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--llm-text-strong);
+}
+
+#llm-experience .llm-panel-h {
+  margin: 0 0 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-panel-h small {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-lede {
+  max-width: 62ch;
+  margin: 0;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-lede :is(em, strong, code, a) {
+  color: var(--llm-text);
+}
+
+#llm-experience .llm-prose {
+  max-width: 68ch;
+  margin: 1.4rem 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-prose :is(strong, em, code) {
+  color: var(--llm-text);
+}
+
+#llm-experience .llm-prose p + p {
+  margin-top: 0.9rem;
+}
+
+#llm-experience .llm-prose-wide {
+  max-width: 74ch;
+  margin: 0 0 1rem;
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-prose-wide :is(strong, em, a) {
+  color: var(--llm-text);
+}
+
+#llm-experience a {
+  color: var(--llm-teal);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(45, 212, 191, 0.35);
+}
+
+#llm-experience a:hover {
+  color: var(--llm-text-strong);
+  border-bottom-color: var(--llm-teal);
+}
+
+#llm-experience code {
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--llm-line);
+  border-radius: 5px;
+  background: var(--llm-deep);
+  font-size: 0.88em;
+  color: var(--llm-text);
+}
+
+#llm-experience .llm-mark {
+  color: var(--llm-teal);
+  font-weight: 700;
+}
+
+/* ---------- buttons & controls ----------------------------------------- */
+
+#llm-experience .llm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.05rem;
+  border: 1px solid var(--llm-line-strong);
+  border-radius: 8px;
+  background: var(--llm-panel-solid);
+  color: var(--llm-text);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+#llm-experience .llm-btn:hover {
+  border-color: var(--llm-teal);
+  color: var(--llm-text-strong);
+}
+
+#llm-experience .llm-btn-primary {
+  border-color: var(--llm-teal-deep);
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.16), rgba(20, 184, 166, 0.1));
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.26), rgba(20, 184, 166, 0.16));
+  color: var(--llm-text-strong);
+}
+
+#llm-experience .llm-btn-ghost {
+  background: transparent;
+  border-color: var(--llm-line);
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-btn-ghost:hover {
+  border-color: var(--llm-line-strong);
+  color: var(--llm-text);
+}
+
+#llm-experience .llm-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#llm-experience .llm-ctrl-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.8rem;
+  margin: 1rem 0;
+}
+
+#llm-experience .llm-status {
+  font-size: 0.85rem;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--llm-line-strong);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+#llm-experience .llm-seg-btn {
+  padding: 0.5rem 0.95rem;
+  border: 0;
+  background: transparent;
+  color: var(--llm-muted);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#llm-experience .llm-seg-btn + .llm-seg-btn {
+  border-left: 1px solid var(--llm-line-strong);
+}
+
+#llm-experience .llm-seg-btn.is-active {
+  background: rgba(45, 212, 191, 0.14);
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-slider-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+  white-space: nowrap;
+}
+
+#llm-experience .llm-slider-label output {
+  min-width: 2.6em;
+  color: var(--llm-teal);
+  font-variant-numeric: tabular-nums;
+}
+
+#llm-experience input[type='range'] {
+  width: 130px;
+  accent-color: var(--llm-teal);
+}
+
+#llm-experience .llm-slider-wide input[type='range'] {
+  width: min(300px, 50vw);
+}
+
+#llm-experience .llm-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+  cursor: pointer;
+}
+
+#llm-experience .llm-check-label input {
+  accent-color: var(--llm-teal);
+  width: 1rem;
+  height: 1rem;
+}
+
+#llm-experience .llm-select-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+}
+
+#llm-experience select {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--llm-line-strong);
+  border-radius: 8px;
+  background: var(--llm-panel-solid);
+  color: var(--llm-text);
+  font: inherit;
+  font-size: 0.86rem;
+}
+
+#llm-experience .llm-text-input {
+  min-width: min(260px, 70vw);
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--llm-line-strong);
+  border-radius: 8px;
+  background: var(--llm-deep);
+  color: var(--llm-text-strong);
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+#llm-experience .llm-text-input-wide {
+  min-width: min(340px, 78vw);
+}
+
+#llm-experience .llm-text-input:focus {
+  border-color: var(--llm-teal);
+}
+
+#llm-experience .llm-chip-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+#llm-experience .llm-chip {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--llm-line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--llm-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+#llm-experience .llm-chip:hover {
+  border-color: var(--llm-teal);
+  color: var(--llm-text-strong);
+}
+
+#llm-experience .llm-chip.is-active {
+  border-color: var(--llm-teal);
+  background: rgba(45, 212, 191, 0.12);
+  color: var(--llm-teal);
+}
+
+/* ---------- stats ------------------------------------------------------- */
+
+#llm-experience .llm-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.6rem;
+  margin: 0.9rem 0 0;
+}
+
+#llm-experience .llm-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-stat output {
+  font-size: 1rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--llm-text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- layout ------------------------------------------------------ */
+
+#llm-experience .llm-section {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: clamp(3.2rem, 7vw, 5.5rem) clamp(1rem, 4vw, 2.5rem);
+}
+
+#llm-experience .llm-section-head {
+  margin-bottom: 1.6rem;
+}
+
+#llm-experience .llm-widget {
+  margin: 1.8rem 0;
+  padding: clamp(1rem, 2.5vw, 1.6rem);
+  border: 1px solid var(--llm-line);
+  border-radius: 16px;
+  background: var(--llm-panel);
+}
+
+#llm-experience .llm-widget-note {
+  max-width: 76ch;
+  margin: 0 0 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-widget-note :is(strong, em, a, code) {
+  color: var(--llm-text);
+}
+
+#llm-experience .llm-widget-note-after {
+  margin: 1rem 0 0;
+}
+
+#llm-experience .llm-duo {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+#llm-experience .llm-duo-emb {
+  grid-template-columns: 5fr 2fr;
+}
+
+@media (max-width: 760px) {
+  #llm-experience .llm-duo,
+  #llm-experience .llm-duo-emb {
+    grid-template-columns: 1fr;
+  }
+}
+
+#llm-experience .llm-side-panel {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 12px;
+  background: var(--llm-panel-solid);
+}
+
+#llm-experience .llm-fold {
+  margin-top: 1rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 10px;
+  background: var(--llm-deep);
+}
+
+#llm-experience .llm-fold summary {
+  padding: 0.7rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+  cursor: pointer;
+}
+
+#llm-experience .llm-fold summary:hover {
+  color: var(--llm-text-strong);
+}
+
+#llm-experience .llm-fold[open] summary {
+  border-bottom: 1px solid var(--llm-line);
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-fold > :not(summary) {
+  margin: 0.8rem;
+}
+
+/* ---------- reveal on scroll -------------------------------------------- */
+
+.llm-js #llm-experience [data-llm-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.llm-js #llm-experience [data-llm-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .llm-js #llm-experience [data-llm-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- chapter rail ------------------------------------------------ */
+
+#llm-experience .llm-rail {
+  position: fixed;
+  top: 50%;
+  right: 14px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  transform: translateY(-50%);
+}
+
+#llm-experience .llm-rail-dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 0;
+}
+
+#llm-experience .llm-rail-dot span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--llm-line-strong);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#llm-experience .llm-rail-dot:hover span,
+#llm-experience .llm-rail-dot.is-active span {
+  background: var(--llm-teal);
+  transform: scale(1.35);
+}
+
+#llm-experience .llm-rail-dot::after {
+  content: attr(data-label);
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 6px;
+  background: var(--llm-panel-solid);
+  color: var(--llm-text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+#llm-experience .llm-rail-dot:hover::after,
+#llm-experience .llm-rail-dot:focus-visible::after {
+  opacity: 1;
+}
+
+@media (max-width: 1150px) {
+  #llm-experience .llm-rail {
+    display: none;
+  }
+}
+
+/* ---------- hero -------------------------------------------------------- */
+
+#llm-experience .llm-hero {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(520px, 86vh, 820px);
+  overflow: hidden;
+  border-bottom: 1px solid var(--llm-line);
+  background: radial-gradient(120% 90% at 50% 0%, #12203e 0%, var(--llm-bg) 55%, var(--llm-deep) 100%);
+}
+
+#llm-experience #llm-hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.85;
+}
+
+#llm-experience .llm-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 3rem clamp(1rem, 4vw, 2.5rem);
+  text-align: center;
+}
+
+#llm-experience .llm-hero-inner .llm-kicker {
+  justify-content: center;
+}
+
+#llm-experience .llm-hero-title {
+  margin: 0 0 1rem;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--llm-text-strong);
+  text-shadow: 0 2px 30px rgba(11, 17, 32, 0.8);
+}
+
+#llm-experience .llm-hero-sub {
+  max-width: 58ch;
+  margin: 0 auto 1.8rem;
+  font-size: clamp(1rem, 2vw, 1.18rem);
+  line-height: 1.65;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-hero-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+#llm-experience .llm-hero-cta .llm-btn-primary {
+  padding: 0.8rem 1.9rem;
+  border-bottom-width: 1px;
+  font-size: 1rem;
+}
+
+#llm-experience .llm-hero-hint {
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-hero-scrollhint {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  z-index: 2;
+  width: 22px;
+  height: 34px;
+  border: 2px solid var(--llm-line-strong);
+  border-radius: 12px;
+  transform: translateX(-50%);
+}
+
+#llm-experience .llm-hero-scrollhint span {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 4px;
+  height: 7px;
+  border-radius: 3px;
+  background: var(--llm-teal);
+  transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #llm-experience .llm-hero-scrollhint span {
+    animation: llm-scrollhint 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes llm-scrollhint {
+  0%, 100% { transform: translate(-50%, 0); opacity: 1; }
+  60% { transform: translate(-50%, 11px); opacity: 0.2; }
+}
+
+/* ---------- the motivating question ------------------------------------- */
+
+#llm-experience .llm-section-question {
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: 0;
+}
+
+#llm-experience .llm-question {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(1.4rem, 3vw, 2.2rem) clamp(1.2rem, 3vw, 2.4rem);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(45, 212, 191, 0.07), rgba(30, 41, 59, 0.4));
+  text-align: center;
+}
+
+#llm-experience .llm-question-mark {
+  margin: 0 0 0.4rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-question-text {
+  margin: 0 0 0.7rem;
+  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--llm-text-strong);
+}
+
+#llm-experience .llm-question-text strong {
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-question-sub {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--llm-muted);
+}
+
+/* ---------- probability bars -------------------------------------------- */
+
+#llm-experience .llm-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#llm-experience .llm-bar {
+  display: grid;
+  grid-template-columns: minmax(64px, auto) 1fr 52px;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.28rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: var(--llm-text);
+}
+
+#llm-experience .llm-bar[disabled] {
+  cursor: default;
+}
+
+#llm-experience .llm-bar:not([disabled]):hover {
+  border-color: var(--llm-line-strong);
+  background: rgba(30, 41, 59, 0.5);
+}
+
+#llm-experience .llm-bar.is-hot {
+  border-color: rgba(45, 212, 191, 0.5);
+  background: rgba(45, 212, 191, 0.07);
+}
+
+#llm-experience .llm-bar.is-killed {
+  opacity: 0.35;
+}
+
+#llm-experience .llm-bar.is-killed .llm-bar-label {
+  text-decoration: line-through;
+}
+
+#llm-experience .llm-bar-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--llm-text-strong);
+  font-variant-ligatures: none;
+  white-space: nowrap;
+}
+
+#llm-experience .llm-bar-track {
+  position: relative;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--llm-deep);
+  overflow: hidden;
+}
+
+#llm-experience .llm-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--llm-teal-deep), var(--llm-teal));
+  transition: width 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #llm-experience .llm-bar-fill {
+    transition: none;
+  }
+}
+
+#llm-experience .llm-bar-pct {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+#llm-experience .llm-bars-mini .llm-bar {
+  padding: 0.16rem 0.35rem;
+  gap: 0.45rem;
+}
+
+#llm-experience .llm-bars-mini .llm-bar-label {
+  font-size: 0.78rem;
+}
+
+#llm-experience .llm-bars-mini .llm-bar-track {
+  height: 9px;
+}
+
+#llm-experience .llm-bar-foot {
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  color: var(--llm-faint);
+}
+
+/* ---------- "why" explainer panels -------------------------------------- */
+
+#llm-experience .llm-why {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-why-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-why-tok {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--llm-teal);
+  font-variant-ligatures: none;
+}
+
+#llm-experience .llm-why-line {
+  margin: 0 0 0.5rem;
+}
+
+#llm-experience .llm-why-line strong {
+  color: var(--llm-text);
+}
+
+#llm-experience .llm-why-note {
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--llm-line);
+  font-size: 0.8rem;
+  color: var(--llm-faint);
+}
+
+/* ---------- 01 corpus fold ---------------------------------------------- */
+
+#llm-experience .llm-corpus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+#llm-experience .llm-corpus-sent {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 6px;
+  background: var(--llm-panel-solid);
+  font-size: 0.8rem;
+  color: var(--llm-muted);
+}
+
+/* ---------- 02 tokenizer ------------------------------------------------- */
+
+#llm-experience .llm-tok-flow {
+  margin: 1rem 0 0.4rem;
+}
+
+#llm-experience .llm-tok-stage-label {
+  margin: 0.9rem 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-tok-chips,
+#llm-experience .llm-tok-ids {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  min-height: 2.1rem;
+}
+
+#llm-experience .llm-tok-chip {
+  padding: 0.3rem 0.55rem;
+  border: 1.5px solid var(--llm-line-strong);
+  border-radius: 7px;
+  background: var(--llm-deep);
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--llm-text-strong);
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+
+#llm-experience .llm-tok-chip.is-unk {
+  border-style: dashed;
+  color: var(--llm-c-rose);
+}
+
+#llm-experience .llm-tok-id {
+  min-width: 2.2rem;
+  padding: 0.22rem 0.45rem;
+  border: 1.5px solid var(--llm-line-strong);
+  border-radius: 7px;
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--llm-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+#llm-experience .llm-vocab-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+#llm-experience .llm-vocab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.18rem 0.5rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 6px;
+  background: var(--llm-panel-solid);
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--llm-text);
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+
+#llm-experience .llm-vocab-item small {
+  color: var(--llm-faint);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+#llm-experience .llm-vocab-item.is-merge {
+  border-color: rgba(45, 212, 191, 0.35);
+}
+
+/* ---------- 04 positional ------------------------------------------------ */
+
+#llm-experience .llm-pos-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 820px) {
+  #llm-experience .llm-pos-pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+#llm-experience .llm-pos-sent {
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 12px;
+  background: var(--llm-panel-solid);
+}
+
+#llm-experience .llm-pos-toks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+#llm-experience .llm-pos-tok {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 8px;
+  background: var(--llm-deep);
+}
+
+#llm-experience .llm-pos-tok-word {
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--llm-text-strong);
+  font-variant-ligatures: none;
+}
+
+#llm-experience .llm-pos-tok small {
+  font-size: 0.65rem;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-pos-strip {
+  display: inline-flex;
+  gap: 1px;
+}
+
+#llm-experience .llm-pos-cell {
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+#llm-experience .llm-pos-verdict {
+  margin: 0.4rem 0 1.2rem;
+  padding: 0.7rem 0.95rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+#llm-experience .llm-pos-verdict.is-same {
+  border: 1px solid rgba(225, 29, 72, 0.4);
+  background: rgba(225, 29, 72, 0.07);
+  color: #fda4af;
+}
+
+#llm-experience .llm-pos-verdict.is-diff {
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  background: rgba(45, 212, 191, 0.07);
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-pos-heat {
+  margin-top: 1.2rem;
+}
+
+/* ---------- matrices ----------------------------------------------------- */
+
+#llm-experience .llm-matrix-scroll {
+  overflow-x: auto;
+  margin-top: 0.8rem;
+  border-radius: 10px;
+}
+
+#llm-experience .llm-matrix {
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+#llm-experience .llm-matrix th {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--llm-line);
+  background: var(--llm-panel-solid);
+  color: var(--llm-muted);
+  font-weight: 600;
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-variant-ligatures: none;
+  white-space: pre;
+  text-align: left;
+}
+
+#llm-experience .llm-matrix td {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--llm-line);
+  color: var(--llm-text-strong);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------- 05 attention ------------------------------------------------- */
+
+#llm-experience .llm-att-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0.8rem;
+}
+
+#llm-experience .llm-att-tok {
+  padding: 0.4rem 0.7rem;
+  border: 1.5px solid var(--llm-line-strong);
+  border-radius: 8px;
+  background: var(--llm-deep);
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--llm-text);
+  cursor: pointer;
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+
+#llm-experience .llm-att-tok:hover {
+  border-color: var(--llm-teal);
+}
+
+#llm-experience .llm-att-tok.is-active {
+  border-color: var(--llm-teal);
+  background: rgba(45, 212, 191, 0.12);
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-att-readout {
+  margin: 0.6rem 0;
+}
+
+#llm-experience .llm-att-tabs {
+  margin: 0.8rem 0 0;
+}
+
+/* ---------- 06 heads ------------------------------------------------------ */
+
+#llm-experience .llm-heads-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.7rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 820px) {
+  #llm-experience .llm-heads-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+#llm-experience .llm-head-cell {
+  text-align: center;
+}
+
+#llm-experience .llm-head-canvas {
+  aspect-ratio: 1;
+  height: auto;
+  border: 1px solid var(--llm-line);
+  border-radius: 10px;
+  background: var(--llm-deep);
+}
+
+#llm-experience .llm-head-cap {
+  margin: 0.4rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+}
+
+/* ---------- 07 block stepper --------------------------------------------- */
+
+#llm-experience .llm-block-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+
+#llm-experience .llm-block-stages li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 9px;
+  background: var(--llm-panel-solid);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+#llm-experience .llm-block-stages li:hover {
+  border-color: var(--llm-line-strong);
+}
+
+#llm-experience .llm-block-stages li.is-active {
+  border-color: var(--llm-teal);
+  background: rgba(45, 212, 191, 0.1);
+}
+
+#llm-experience .llm-block-stages li span {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--llm-text-strong);
+}
+
+#llm-experience .llm-block-stages li.is-active span {
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-block-stages li small {
+  font-size: 0.68rem;
+  color: var(--llm-faint);
+}
+
+/* ---------- 08 context window --------------------------------------------- */
+
+#llm-experience .llm-ctx-viz {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 300px;
+  padding: 0.7rem;
+  overflow-y: auto;
+  border: 1px solid var(--llm-line);
+  border-radius: 12px;
+  background: var(--llm-deep);
+}
+
+#llm-experience .llm-ctx-msg {
+  display: grid;
+  grid-template-columns: 120px auto 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.16rem 0.3rem;
+  border-radius: 6px;
+}
+
+#llm-experience .llm-ctx-who {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+  white-space: nowrap;
+}
+
+#llm-experience .llm-ctx-msg.is-you .llm-ctx-who {
+  color: #fcd34d;
+}
+
+#llm-experience .llm-ctx-bar {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--llm-teal-deep), var(--llm-teal));
+}
+
+#llm-experience .llm-ctx-msg.is-you .llm-ctx-bar {
+  background: linear-gradient(90deg, #b45309, var(--llm-c-amber));
+}
+
+#llm-experience .llm-ctx-n {
+  font-size: 0.7rem;
+  color: var(--llm-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+#llm-experience .llm-ctx-msg.is-lost {
+  opacity: 0.32;
+}
+
+#llm-experience .llm-ctx-msg.is-lost .llm-ctx-bar {
+  background: var(--llm-line-strong);
+}
+
+#llm-experience .llm-ctx-msg.is-lost .llm-ctx-n {
+  color: var(--llm-c-rose);
+}
+
+#llm-experience #llm-ctx-scale {
+  margin-top: 1rem;
+}
+
+/* ---------- 09 training vs inference -------------------------------------- */
+
+#llm-experience .llm-tvi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 820px) {
+  #llm-experience .llm-tvi {
+    grid-template-columns: 1fr;
+  }
+}
+
+#llm-experience .llm-tvi-pane {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 14px;
+  background: var(--llm-panel-solid);
+}
+
+#llm-experience #llm-tvi-infer {
+  border-color: rgba(45, 212, 191, 0.35);
+}
+
+#llm-experience .llm-tvi-steps {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  margin: 0.6rem 0 1rem;
+}
+
+#llm-experience .llm-tvi-chip {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--llm-line-strong);
+  border-radius: 8px;
+  background: var(--llm-deep);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--llm-text);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+#llm-experience .llm-tvi-chip small {
+  display: block;
+  font-weight: 500;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-tvi-chip.is-lit {
+  border-color: var(--llm-teal);
+  box-shadow: 0 0 14px rgba(45, 212, 191, 0.35);
+}
+
+#llm-experience .llm-tvi-arrow {
+  padding-left: 0.9rem;
+  font-size: 0.85rem;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-tvi-loop {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-infer-out {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 3.4rem;
+  padding: 0.6rem;
+  margin: 0.4rem 0;
+  border: 1px solid var(--llm-line);
+  border-radius: 10px;
+  background: var(--llm-deep);
+}
+
+#llm-experience .llm-infer-prompt {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--llm-muted);
+}
+
+#llm-experience .llm-infer-tok {
+  padding: 0.2rem 0.45rem;
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  border-radius: 6px;
+  background: rgba(45, 212, 191, 0.07);
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.82rem;
+  color: var(--llm-teal);
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+
+/* ---------- 10 sampling ---------------------------------------------------- */
+
+#llm-experience .llm-samp-stages {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 1000px) {
+  #llm-experience .llm-samp-stages {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  #llm-experience .llm-samp-stages {
+    grid-template-columns: 1fr;
+  }
+}
+
+#llm-experience .llm-samp-stage {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 12px;
+  background: var(--llm-panel-solid);
+}
+
+#llm-experience .llm-samp-out {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 3rem;
+  padding: 0.6rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 10px;
+  background: var(--llm-deep);
+}
+
+#llm-experience .llm-samp-log {
+  margin-top: 0.6rem;
+}
+
+#llm-experience .llm-samp-logline {
+  margin: 0 0 0.25rem;
+  font-size: 0.78rem;
+  color: var(--llm-faint);
+  font-variant-ligatures: none;
+}
+
+#llm-experience .llm-samp-logline:first-child {
+  color: var(--llm-muted);
+}
+
+/* ---------- 11 hallucinations ---------------------------------------------- */
+
+#llm-experience .llm-hall-out {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 3rem;
+  padding: 0.6rem;
+  margin-bottom: 0.8rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 10px;
+  background: var(--llm-deep);
+}
+
+#llm-experience .llm-hall-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+#llm-experience .llm-hall-step {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--llm-line-strong);
+  border-radius: 8px;
+  background: var(--llm-panel-solid);
+}
+
+#llm-experience .llm-hall-step strong {
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--llm-text-strong);
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+
+#llm-experience .llm-hall-step small {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--llm-c-amber);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 12 scaling ------------------------------------------------------ */
+
+#llm-experience .llm-scale-facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+  #llm-experience .llm-scale-facts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+#llm-experience .llm-scale-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 12px;
+  background: var(--llm-panel-solid);
+}
+
+#llm-experience .llm-scale-fact span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--llm-faint);
+}
+
+#llm-experience .llm-scale-fact output {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--llm-text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 13 beyond -------------------------------------------------------- */
+
+#llm-experience .llm-beyond-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.8rem 0;
+}
+
+@media (max-width: 820px) {
+  #llm-experience .llm-beyond-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+#llm-experience .llm-beyond-card {
+  padding: 1.2rem 1.3rem;
+  border: 1px solid var(--llm-line);
+  border-radius: 14px;
+  background: var(--llm-panel);
+}
+
+#llm-experience .llm-beyond-card h3 {
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-beyond-card p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--llm-muted);
+}
+
+/* ---------- the lab ----------------------------------------------------------- */
+
+#llm-experience .llm-lab-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.2rem;
+}
+
+@media (max-width: 900px) {
+  #llm-experience .llm-lab-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+#llm-experience .llm-lab-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+#llm-experience .llm-lab-controls .llm-panel-h {
+  margin: 0.4rem 0 0.1rem;
+}
+
+#llm-experience .llm-lab-controls .llm-panel-h:first-child {
+  margin-top: 0;
+}
+
+#llm-experience .llm-lab-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+#llm-experience .llm-lab-tok {
+  padding: 0.3rem 0.55rem;
+  border: 1.5px solid var(--llm-line-strong);
+  border-radius: 7px;
+  background: var(--llm-deep);
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.82rem;
+  color: var(--llm-text-strong);
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+
+#llm-experience .llm-lab-tok.is-gen {
+  border-color: rgba(45, 212, 191, 0.5);
+  color: var(--llm-teal);
+}
+
+#llm-experience .llm-lab-attn {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+#llm-experience .llm-head-cell-sm {
+  width: 92px;
+}
+
+#llm-experience .llm-head-canvas-sm {
+  border-radius: 8px;
+}
+
+#llm-experience .llm-lab .llm-duo {
+  margin: 0.4rem 0 1rem;
+}
+
+/* ---------- close -------------------------------------------------------------- */
+
+#llm-experience .llm-section-close {
+  padding-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+#llm-experience .llm-close {
+  padding: clamp(1.6rem, 4vw, 2.6rem);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba(45, 212, 191, 0.06), rgba(30, 41, 59, 0.4));
+}
+
+#llm-experience .llm-close .llm-hero-cta {
+  align-items: flex-start;
+  margin-top: 1.2rem;
+}

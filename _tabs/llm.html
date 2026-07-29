@@ -1,0 +1,1148 @@
+---
+layout: gpu
+title: LLM
+icon: fas fa-language
+order: 15
+description: >-
+  An interactive visual guide to large language models — how a trained neural
+  network becomes a system that generates coherent language. Tokenize text,
+  explore real embeddings, click through genuine self-attention mathematics,
+  run a transformer forward pass, and tune temperature, top-k, and top-p on a
+  live sampling playground.
+extra_css:
+  - /assets/css/llm.css
+  - /assets/css/knowledge-nav.css
+extra_js:
+  - /assets/js/llm.js
+  - /assets/js/knowledge-graph.js
+  - /assets/js/knowledge-nav.js
+---
+
+<div id="llm-experience">
+  <noscript>
+    <p class="llm-noscript">
+      The live laboratories on this page &mdash; the tokenizer, the embedding
+      map, the self-attention explorer, the sampling playground, the
+      Transformer Lab &mdash; need JavaScript. All of the explanations below
+      still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="llm-rail" aria-label="Chapters">
+    <a class="llm-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="llm-rail-dot" href="#what" data-label="What is a language model?"><span></span></a>
+    <a class="llm-rail-dot" href="#tokens" data-label="Tokens"><span></span></a>
+    <a class="llm-rail-dot" href="#embeddings" data-label="Embeddings"><span></span></a>
+    <a class="llm-rail-dot" href="#position" data-label="Positional encoding"><span></span></a>
+    <a class="llm-rail-dot" href="#attention" data-label="Self-attention"><span></span></a>
+    <a class="llm-rail-dot" href="#heads" data-label="Multi-head attention"><span></span></a>
+    <a class="llm-rail-dot" href="#blocks" data-label="Transformer blocks"><span></span></a>
+    <a class="llm-rail-dot" href="#context" data-label="Context windows"><span></span></a>
+    <a class="llm-rail-dot" href="#training" data-label="Training vs. inference"><span></span></a>
+    <a class="llm-rail-dot" href="#sampling" data-label="Sampling"><span></span></a>
+    <a class="llm-rail-dot" href="#hallucinations" data-label="Hallucinations"><span></span></a>
+    <a class="llm-rail-dot" href="#scale" data-label="Scaling"><span></span></a>
+    <a class="llm-rail-dot" href="#beyond" data-label="Beyond the transformer"><span></span></a>
+    <a class="llm-rail-dot" href="#lab" data-label="Transformer Lab"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="llm-hero" id="top">
+    <canvas id="llm-hero-canvas" aria-hidden="true"></canvas>
+    <div class="llm-hero-inner">
+      <p class="llm-kicker">An interactive exhibit</p>
+      <h1 class="llm-hero-title">Large Language Models</h1>
+      <p class="llm-hero-sub">
+        The missing chapter between <a href="/machine-learning/">machine
+        learning</a> and <a href="/chatgpt/">ChatGPT</a> &mdash; how a trained
+        neural network becomes a system that generates coherent language, one
+        token at a time.
+      </p>
+      <div class="llm-hero-cta">
+        <a class="llm-btn llm-btn-primary" id="llm-hero-cta" href="#what">Start learning</a>
+        <span class="llm-hero-hint">13 chapters &middot; a real transformer you can open up &middot; every matrix inspectable</span>
+      </div>
+    </div>
+    <div class="llm-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       THE MOTIVATING QUESTION
+  ================================================================ -->
+  <section class="llm-section llm-section-question" aria-label="The motivating question">
+    <div class="llm-question" data-llm-reveal>
+      <p class="llm-question-mark" aria-hidden="true">?</p>
+      <p class="llm-question-text">
+        How can a computer generate <strong>the next word</strong> in a
+        sentence?
+      </p>
+      <p class="llm-question-sub">
+        That one question is the whole subject. Every chapter on this page is
+        a piece of its answer &mdash; and every paragraph an LLM has ever
+        produced is that answer, repeated thousands of times.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       01 — WHAT IS A LANGUAGE MODEL?
+  ================================================================ -->
+  <section class="llm-section" id="what" aria-labelledby="what-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">01</span> The original goal</p>
+      <h2 id="what-h">What is a language model?</h2>
+      <p class="llm-lede">
+        Strip away everything else and a language model does exactly one job:
+        <strong>given the text so far, assign a probability to every possible
+        next token.</strong> Not &ldquo;understand the sentence,&rdquo; not
+        &ldquo;answer the question&rdquo; &mdash; just predict what comes
+        next. Everything an LLM appears to do emerges from doing that one job
+        extremely well, over and over.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">Watch the prediction happen</p>
+      <p class="llm-widget-note">
+        Type a few words (or pick a prompt) and watch a real language model
+        rank what should come next. This one is deliberately transparent: it
+        is an <strong>n-gram model</strong> &mdash; real counted statistics
+        over the tiny 45-sentence corpus shown below &mdash; so you can audit
+        every probability. A production LLM computes the same kind of
+        distribution with a transformer instead; chapters 3&ndash;7 build
+        that machine.
+      </p>
+      <div class="llm-ctrl-row">
+        <input type="text" id="llm-predict-input" class="llm-text-input" value="the cat"
+               maxlength="80" aria-label="Prompt text">
+        <span class="llm-chip-row" id="llm-predict-presets" role="group" aria-label="Example prompts">
+          <button class="llm-chip" type="button" data-text="the cat">the cat</button>
+          <button class="llm-chip" type="button" data-text="the sun rose over">the sun rose over</button>
+          <button class="llm-chip" type="button" data-text="she wrote a">she wrote a</button>
+          <button class="llm-chip" type="button" data-text="the model predicts the">the model predicts the</button>
+        </span>
+      </div>
+      <div class="llm-duo">
+        <div>
+          <p class="llm-panel-h">P(next token | your text)</p>
+          <div class="llm-bars" id="llm-predict-bars" aria-live="polite"></div>
+        </div>
+        <div class="llm-side-panel" id="llm-predict-why-wrap">
+          <p class="llm-panel-h">Why that probability?</p>
+          <div id="llm-predict-why" class="llm-why" aria-live="polite">
+            <p class="llm-why-hint">Click any bar to see the raw counts behind
+            its probability &mdash; no hidden state, just arithmetic.</p>
+          </div>
+        </div>
+      </div>
+      <div class="llm-ctrl-row">
+        <button class="llm-btn llm-btn-primary" id="llm-predict-step" type="button">Append most likely token</button>
+        <button class="llm-btn" id="llm-predict-sample" type="button">Sample a token</button>
+        <button class="llm-btn llm-btn-ghost" id="llm-predict-reset" type="button">Reset</button>
+        <span class="llm-status" id="llm-predict-status" aria-live="polite"></span>
+      </div>
+      <p class="llm-widget-note llm-widget-note-after">
+        Keep clicking <em>append</em>. That loop &mdash; predict a
+        distribution, pick one token, feed it back in, predict again &mdash;
+        is <strong>autoregressive generation</strong>, and it is the entire
+        mechanism behind every paragraph ChatGPT has ever written. There is
+        no second mechanism.
+      </p>
+      <details class="llm-fold">
+        <summary>Show the entire training corpus (45 sentences)</summary>
+        <div id="llm-corpus-list" class="llm-corpus"></div>
+      </details>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <h3>Why would prediction produce intelligence-shaped behavior?</h3>
+      <p>
+        Because predicting the next token <em>well</em> quietly requires
+        almost everything else. To continue &ldquo;the capital of France
+        is&rdquo; you need geography; to continue &ldquo;she handed the
+        scalpel to the&rdquo; you need to track who is in the room; to
+        continue a half-finished Python function you need syntax and intent.
+        A model pushed hard enough on next-token prediction is forced to
+        compress real structure about language and the world into its
+        parameters. That is the bet behind the entire field &mdash; and
+        <a href="/ai/">it paid off</a> in a way few predicted.
+      </p>
+      <p>
+        Our little counting model above can only memorize short patterns from
+        45 sentences. The rest of this page is about the architecture that
+        made prediction <em>scale</em>: the <strong>transformer</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       02 — TOKENS
+  ================================================================ -->
+  <section class="llm-section" id="tokens" aria-labelledby="tokens-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">02</span> The unit of language</p>
+      <h2 id="tokens-h">Tokens: what the model actually reads</h2>
+      <p class="llm-lede">
+        A model never sees words or letters &mdash; it sees
+        <strong>tokens</strong>: chunks of text drawn from a fixed
+        <strong>vocabulary</strong>, each identified by a number. Common words
+        become single tokens; rare words get split into reusable pieces.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">A real tokenizer, trained in your browser</p>
+      <p class="llm-widget-note">
+        This is genuine <strong>byte-pair encoding</strong> (BPE) &mdash; the
+        same algorithm family behind GPT-style tokenizers &mdash; trained live
+        on the exhibit&rsquo;s corpus when this page loaded. It started from
+        single characters and repeatedly merged the most frequent adjacent
+        pair. Type anything; the <span class="llm-mark">▁</span> mark means
+        &ldquo;this token starts a new word.&rdquo;
+      </p>
+      <div class="llm-ctrl-row">
+        <input type="text" id="llm-tok-input" class="llm-text-input llm-text-input-wide"
+               value="the cat watched the transformer" maxlength="120"
+               aria-label="Text to tokenize">
+        <span class="llm-chip-row" role="group" aria-label="Example inputs" id="llm-tok-presets">
+          <button class="llm-chip" type="button" data-text="the cat sat on the mat">familiar words</button>
+          <button class="llm-chip" type="button" data-text="catastrophe">rare word</button>
+          <button class="llm-chip" type="button" data-text="run, running, runner">word family</button>
+          <button class="llm-chip" type="button" data-text="x&eacute;&#128640;">unknown symbols</button>
+        </span>
+      </div>
+      <div class="llm-tok-flow">
+        <p class="llm-tok-stage-label">Text &rarr; tokens</p>
+        <div class="llm-tok-chips" id="llm-tok-chips" aria-live="polite"></div>
+        <p class="llm-tok-stage-label">Tokens &rarr; token IDs</p>
+        <div class="llm-tok-ids" id="llm-tok-ids" aria-live="polite"></div>
+      </div>
+      <div class="llm-stat-row" aria-live="polite">
+        <span class="llm-stat">Characters <output id="llm-tok-chars">0</output></span>
+        <span class="llm-stat">Tokens <output id="llm-tok-count">0</output></span>
+        <span class="llm-stat">Vocabulary size <output id="llm-tok-vocab">&mdash;</output></span>
+      </div>
+      <details class="llm-fold">
+        <summary>Open the full vocabulary (every token this model can ever use)</summary>
+        <p class="llm-widget-note">
+          Specials first, then single characters, then learned merges in the
+          order BPE discovered them &mdash; watch whole common words assemble
+          near the end. <strong>Nothing outside this list can ever go into or
+          come out of the model.</strong>
+        </p>
+        <div id="llm-tok-vocablist" class="llm-vocab-grid"></div>
+      </details>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <h3>Why tokens, and not characters or dictionary words?</h3>
+      <p>
+        Characters make sequences brutally long &mdash; every extra position
+        costs attention computation (chapter 5 shows why that cost grows
+        quadratically). Whole dictionary words can&rsquo;t handle
+        &ldquo;transformerify&rdquo;, typos, code, or Finnish. Subword tokens
+        are the engineering compromise: <strong>frequent strings get their own
+        token, everything else decomposes into pieces</strong>, and no input
+        is ever truly out of vocabulary. You saw it above &mdash; this
+        tokenizer has never seen &ldquo;catastrophe&rdquo;, yet it still
+        encodes it from pieces like <code>▁cat</code> it learned elsewhere.
+      </p>
+      <p>
+        Two consequences worth remembering: models are billed and limited in
+        tokens (a &ldquo;128K context&rdquo; means 128K <em>tokens</em>, not
+        words), and anything the tokenizer chops awkwardly &mdash; unusual
+        names, arithmetic digits, other alphabets &mdash; starts at a
+        disadvantage before the model even begins.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       03 — EMBEDDINGS
+  ================================================================ -->
+  <section class="llm-section" id="embeddings" aria-labelledby="embeddings-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">03</span> From symbols to geometry</p>
+      <h2 id="embeddings-h">Embeddings: every token becomes a vector</h2>
+      <p class="llm-lede">
+        Token ID 57 means nothing to a neural network &mdash; you can&rsquo;t
+        do calculus on a dictionary index. So the first layer of every LLM is
+        a giant lookup table that turns each token into a
+        <strong>vector</strong>: a list of numbers the network can add,
+        compare, and transform. The magic is that after training,
+        <strong>distance in that space means similarity in usage</strong>.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">A real embedding space, learned from the corpus</p>
+      <p class="llm-widget-note">
+        Nothing here is hand-placed. When the page loaded, every word&rsquo;s
+        co-occurrence statistics were computed from the corpus, weighted by
+        pointwise mutual information, and projected to 2D with a real spectral
+        method (power iteration). Words used in similar contexts genuinely
+        drift together &mdash; <strong>cat</strong> lands near
+        <strong>dog</strong> because the corpus <em>uses</em> them alike, not
+        because anyone told it they are both pets.
+        <em>Click a word</em> to see its nearest neighbors in the full space;
+        <em>click a second word</em> to compare the pair; <em>drag</em> a word
+        to measure distances from anywhere.
+      </p>
+      <div class="llm-duo llm-duo-emb">
+        <canvas id="llm-emb-canvas" class="llm-canvas llm-canvas-tall" aria-label="2D map of word embeddings; interactive"></canvas>
+        <div class="llm-side-panel">
+          <p class="llm-panel-h">Inspector</p>
+          <div id="llm-emb-panel" aria-live="polite">
+            <p class="llm-why-hint">Click any word on the map.</p>
+          </div>
+          <div class="llm-ctrl-row">
+            <button class="llm-btn llm-btn-ghost" id="llm-emb-clear" type="button">Clear selection</button>
+          </div>
+          <p class="llm-widget-note llm-widget-note-after">
+            Neighbor similarity is <strong>cosine similarity in the full
+            92-dimensional space</strong>; the 2D picture is a projection and
+            slightly distorts distances &mdash; exactly the caveat that
+            applies to every published embedding visualization.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <p>
+        Production models do this with <em>learned</em> embeddings &mdash;
+        the lookup table is trained by gradient descent along with everything
+        else (the loop you built on the
+        <a href="/machine-learning/">machine learning</a> exhibit), and each
+        token gets thousands of dimensions rather than two. But the principle
+        is identical to what you just touched: <strong>embeddings encode
+        learned relationships between usages, not dictionary
+        definitions</strong>. &ldquo;Bank&rdquo; sits near both
+        &ldquo;river&rdquo; and &ldquo;loan&rdquo; because text uses it both
+        ways &mdash; ambiguity the next chapters resolve using context.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       04 — POSITIONAL ENCODING
+  ================================================================ -->
+  <section class="llm-section" id="position" aria-labelledby="position-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">04</span> Order matters</p>
+      <h2 id="position-h">Positional encoding: telling the model where words are</h2>
+      <p class="llm-lede">
+        Attention (next chapter) looks at all tokens <em>at once</em>, with no
+        built-in notion of order. Without help,
+        <strong>&ldquo;the cat chased the dog&rdquo;</strong> and
+        <strong>&ldquo;the dog chased the cat&rdquo;</strong> contain exactly
+        the same set of vectors &mdash; the model literally could not tell
+        who chased whom. The fix: add a <strong>position signature</strong>
+        to every token&rsquo;s embedding.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">Prove it to yourself</p>
+      <p class="llm-widget-note">
+        Below, both sentences are embedded with the real educational model
+        from the next chapters. With positional encoding <strong>off</strong>,
+        the two sentences&rsquo; token vectors are the same multiset &mdash;
+        the check runs live on the actual numbers. Toggle it <strong>on</strong>
+        and watch each position&rsquo;s sinusoidal signature split them apart.
+      </p>
+      <div class="llm-ctrl-row">
+        <label class="llm-check-label" for="llm-pos-toggle">
+          <input type="checkbox" id="llm-pos-toggle" checked>
+          Add positional encoding
+        </label>
+      </div>
+      <div class="llm-pos-pair" id="llm-pos-pair" aria-live="polite">
+        <div class="llm-pos-sent" id="llm-pos-sent-a"></div>
+        <div class="llm-pos-sent" id="llm-pos-sent-b"></div>
+      </div>
+      <p class="llm-pos-verdict" id="llm-pos-verdict" aria-live="polite"></p>
+      <div class="llm-pos-heat">
+        <p class="llm-panel-h">The position signatures themselves</p>
+        <p class="llm-widget-note">
+          Each row is one position, each column one embedding dimension; color
+          is the sinusoidal value that gets <em>added</em> to whatever token
+          sits there. Every row is unique, nearby rows are similar &mdash;
+          which is exactly what lets the model judge both order and distance.
+          Click a row to see its raw numbers.
+        </p>
+        <canvas id="llm-pos-canvas" class="llm-canvas llm-canvas-heat" aria-label="Heatmap of sinusoidal positional encodings; click a row to inspect"></canvas>
+        <div class="llm-matrix-scroll"><table class="llm-matrix" id="llm-pos-table"></table></div>
+      </div>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <p>
+        This exhibit uses the original sinusoidal recipe from the 2017
+        transformer paper because every value is a formula you can check.
+        Modern models mostly use variants learned during training or rotary
+        embeddings &mdash; different mathematics, same job:
+        <strong>make position part of the vector</strong>, so that everything
+        downstream can care about word order without any component ever
+        processing tokens one-by-one in sequence.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       05 — SELF-ATTENTION
+  ================================================================ -->
+  <section class="llm-section" id="attention" aria-labelledby="attention-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">05</span> The signature mechanism</p>
+      <h2 id="attention-h">Self-attention: every token looks at every other token</h2>
+      <p class="llm-lede">
+        This is the idea the whole architecture is named for. Each token asks
+        a question (its <strong>query</strong>), every token advertises what
+        it holds (its <strong>key</strong>), and the match between them
+        decides how much of each token&rsquo;s <strong>value</strong> flows
+        into the new representation. Three small matrix multiplications, a
+        scale, a softmax &mdash; that is the entire trick.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">The real computation, end to end</p>
+      <p class="llm-widget-note">
+        Everything below is <strong>genuine attention mathematics</strong>
+        running in your browser on intentionally tiny matrices
+        (8-dimensional embeddings, one 4-dimensional head) so every
+        intermediate value fits on screen. The weights are seeded random
+        &mdash; untrained, and labeled so &mdash; because the point here is
+        the <em>machinery</em>. Click any token to make it the query.
+      </p>
+      <div class="llm-ctrl-row">
+        <label class="llm-select-label" for="llm-att-sentence">Sentence
+          <select id="llm-att-sentence">
+            <option value="the cat chased the dog">the cat chased the dog</option>
+            <option value="the bird sang in the tree">the bird sang in the tree</option>
+            <option value="the model predicts the next word">the model predicts the next word</option>
+            <option value="the storm rolled over the sea">the storm rolled over the sea</option>
+          </select>
+        </label>
+        <label class="llm-check-label" for="llm-att-causal">
+          <input type="checkbox" id="llm-att-causal" checked>
+          Causal mask (GPT-style: no peeking at the future)
+        </label>
+      </div>
+      <div class="llm-att-tokens" id="llm-att-tokens" role="group" aria-label="Tokens; click one to select the query"></div>
+      <canvas id="llm-att-canvas" class="llm-canvas llm-canvas-arcs" aria-label="Attention weights from the selected token, drawn as arcs"></canvas>
+      <div class="llm-att-readout" id="llm-att-readout" aria-live="polite"></div>
+      <div class="llm-seg llm-att-tabs" role="group" aria-label="Choose a matrix to inspect">
+        <button class="llm-seg-btn is-active" type="button" data-mat="Q">Q</button>
+        <button class="llm-seg-btn" type="button" data-mat="K">K</button>
+        <button class="llm-seg-btn" type="button" data-mat="V">V</button>
+        <button class="llm-seg-btn" type="button" data-mat="scores">QK&#7488;/&radic;d&#8342;</button>
+        <button class="llm-seg-btn" type="button" data-mat="weights">softmax</button>
+        <button class="llm-seg-btn" type="button" data-mat="output">output</button>
+      </div>
+      <div class="llm-matrix-scroll"><table class="llm-matrix" id="llm-att-matrix"></table></div>
+      <p class="llm-widget-note llm-widget-note-after" id="llm-att-matnote"></p>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <h3>Why this mechanism won</h3>
+      <p>
+        Older sequence models passed information along word by word, so
+        distant words faded. Attention gives every token a <strong>direct
+        connection to every other token</strong> &mdash; &ldquo;it&rdquo; can
+        reach back to &ldquo;the cat&rdquo; in one hop, whether that is 3 or
+        3,000 tokens away. And because each row&rsquo;s computation is
+        independent, the whole thing is one big matrix multiplication &mdash;
+        <a href="/gpu/">precisely the shape of work GPUs devour</a>. The cost:
+        every-token-to-every-token is <em>n&sup2;</em> pairs, which is why
+        context length is expensive (chapter 8).
+      </p>
+      <p>
+        Notice the causal mask in the demo: for generation, a token may only
+        attend to what came <em>before</em> it. During training this lets one
+        sentence teach the model at every position simultaneously &mdash;
+        each token predicts its successor using only its past.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 — MULTI-HEAD ATTENTION
+  ================================================================ -->
+  <section class="llm-section" id="heads" aria-labelledby="heads-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">06</span> Many relationships at once</p>
+      <h2 id="heads-h">Multi-head attention</h2>
+      <p class="llm-lede">
+        One attention pattern can only encode one kind of relationship at a
+        time. So transformers run <strong>several attention heads in
+        parallel</strong> &mdash; each with its own Q, K, V projections, each
+        free to specialize &mdash; then concatenate the results. One head may
+        track grammar, another nearby words, another a pronoun&rsquo;s
+        far-away referent.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">Four heads, four patterns</p>
+      <p class="llm-widget-note">
+        Each grid shows one head&rsquo;s full attention matrix for the
+        sentence &mdash; row = the token doing the looking, column = the token
+        being looked at, brightness = weight.
+      </p>
+      <div class="llm-ctrl-row">
+        <div class="llm-seg" role="group" aria-label="Head display mode">
+          <button class="llm-seg-btn is-active" id="llm-heads-real" type="button">Real (untrained)</button>
+          <button class="llm-seg-btn" id="llm-heads-story" type="button">What training produces</button>
+        </div>
+      </div>
+      <div class="llm-heads-grid" id="llm-heads-grid"></div>
+      <p class="llm-widget-note llm-widget-note-after" id="llm-heads-note">
+        <strong>Real (untrained):</strong> these four heatmaps are genuinely
+        computed by four attention heads with seeded random weights &mdash;
+        the real mathematics, before training has given the heads any roles.
+        Switch modes to see the kind of division of labor training tends to
+        produce.
+      </p>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <p>
+        The second mode is an <strong>illustrative sketch</strong>, not a
+        rendering of any production model &mdash; but the phenomenon is real:
+        researchers routinely find trained heads that track syntax, previous
+        occurrences of the current word, or which earlier name a pronoun
+        refers to. The deeper lesson is architectural: nobody assigns these
+        roles. Training pressure alone pushes heads to divide the labor,
+        the same way <a href="/machine-learning/">gradient descent</a>
+        shapes every other parameter.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 — TRANSFORMER BLOCKS
+  ================================================================ -->
+  <section class="llm-section" id="blocks" aria-labelledby="blocks-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">07</span> The repeating unit</p>
+      <h2 id="blocks-h">Transformer blocks: the assembly line</h2>
+      <p class="llm-lede">
+        Attention alone is not a network. It lives inside a
+        <strong>block</strong>: normalize &rarr; attend &rarr; add the result
+        back to the input (a <strong>residual connection</strong>) &rarr;
+        normalize &rarr; feed-forward network &rarr; add back again. Stack
+        that block dozens of times and you have a GPT. The residual
+        &ldquo;add back&rdquo; is why very deep stacks stay trainable: each
+        block only has to learn a <em>refinement</em>, never rebuild the
+        signal from scratch.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">Step through a real forward pass</p>
+      <p class="llm-widget-note">
+        The heat strips below are the <strong>actual activations</strong> of
+        the educational transformer (8 dims, 2 heads, seeded weights)
+        processing <em>&ldquo;the cat chased the dog&rdquo;</em> &mdash; one
+        row per token, one cell per dimension. Walk the stages and watch the
+        numbers transform; open the table to read any value.
+      </p>
+      <div class="llm-ctrl-row">
+        <button class="llm-btn" id="llm-block-prev" type="button">&larr; Back</button>
+        <button class="llm-btn llm-btn-primary" id="llm-block-next" type="button">Next stage &rarr;</button>
+        <button class="llm-btn llm-btn-ghost" id="llm-block-play" type="button">Autoplay</button>
+      </div>
+      <ol class="llm-block-stages" id="llm-block-stages">
+        <li data-stage="0"><span>Input</span><small>embeddings + position</small></li>
+        <li data-stage="1"><span>LayerNorm</span><small>steady the scale</small></li>
+        <li data-stage="2"><span>Attention</span><small>tokens exchange info</small></li>
+        <li data-stage="3"><span>+ Residual</span><small>add back the input</small></li>
+        <li data-stage="4"><span>LayerNorm</span><small>steady again</small></li>
+        <li data-stage="5"><span>Feed-forward</span><small>per-token processing</small></li>
+        <li data-stage="6"><span>+ Residual</span><small>add back again</small></li>
+        <li data-stage="7"><span>Output</span><small>into the next block</small></li>
+      </ol>
+      <canvas id="llm-block-canvas" class="llm-canvas llm-canvas-heat" aria-label="Activation heatmap at the selected stage"></canvas>
+      <p class="llm-widget-note" id="llm-block-note" aria-live="polite"></p>
+      <details class="llm-fold">
+        <summary>Inspect this stage's exact numbers</summary>
+        <div class="llm-matrix-scroll"><table class="llm-matrix" id="llm-block-table"></table></div>
+      </details>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <p>
+        Two roles, cleanly split: <strong>attention moves information
+        between positions</strong>; the <strong>feed-forward network
+        processes each position on its own</strong> (and holds roughly two
+        thirds of the parameters &mdash; much of the model&rsquo;s factual
+        knowledge is believed to live there). Layer normalization keeps
+        activations in a healthy range so 96-layer stacks train without
+        exploding &mdash; the same numerical-stability engineering you saw
+        matter for <a href="/machine-learning/">gradient descent</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 — CONTEXT WINDOWS
+  ================================================================ -->
+  <section class="llm-section" id="context" aria-labelledby="context-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">08</span> The model's working memory</p>
+      <h2 id="context-h">Context windows: what the model can see</h2>
+      <p class="llm-lede">
+        A transformer predicts from a <strong>fixed-size window</strong> of
+        recent tokens &mdash; its context. Anything outside the window does
+        not exist for the model. Not &ldquo;vaguely remembered&rdquo; &mdash;
+        <em>gone</em>, unless it is re-sent with the next request.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">Watch a conversation outgrow its window</p>
+      <p class="llm-widget-note">
+        A simulated chat grows message by message (token counts are
+        illustrative). Pick a window size and watch which turns remain
+        visible to the model when it writes its next reply.
+      </p>
+      <div class="llm-ctrl-row">
+        <div class="llm-seg" role="group" aria-label="Context window size" id="llm-ctx-seg">
+          <button class="llm-seg-btn" type="button" data-ctx="128">128</button>
+          <button class="llm-seg-btn" type="button" data-ctx="512">512</button>
+          <button class="llm-seg-btn is-active" type="button" data-ctx="4096">4K</button>
+          <button class="llm-seg-btn" type="button" data-ctx="32768">32K</button>
+          <button class="llm-seg-btn" type="button" data-ctx="131072">128K</button>
+        </div>
+        <label class="llm-slider-label" for="llm-ctx-turns">Conversation length
+          <input type="range" id="llm-ctx-turns" min="2" max="60" value="14" step="1">
+          <output id="llm-ctx-turns-out">14 turns</output>
+        </label>
+      </div>
+      <div class="llm-ctx-viz" id="llm-ctx-viz" aria-live="polite"></div>
+      <div class="llm-stat-row" aria-live="polite">
+        <span class="llm-stat">Tokens in conversation <output id="llm-ctx-used">&mdash;</output></span>
+        <span class="llm-stat">Visible to the model <output id="llm-ctx-vis">&mdash;</output></span>
+        <span class="llm-stat">Fallen out of context <output id="llm-ctx-lost">&mdash;</output></span>
+      </div>
+      <canvas id="llm-ctx-scale" class="llm-canvas llm-canvas-short" aria-label="Relative sizes of common context windows on a log scale"></canvas>
+      <p class="llm-widget-note llm-widget-note-after">
+        Why not make the window infinite? Chapter 5&rsquo;s mathematics:
+        attention compares every token with every other token, so doubling
+        the window roughly quadruples attention compute and grows the
+        key/value cache that must sit in <a href="/gpu/">GPU</a> and
+        <a href="/memory/">high-bandwidth memory</a> during generation.
+        Long context is a genuine engineering trade-off &mdash; compute,
+        memory, and cost against recall &mdash; for every provider,
+        which is why &ldquo;the assistant forgot the start of our
+        chat&rdquo; is an architecture fact, not a bug.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 — TRAINING VS INFERENCE
+  ================================================================ -->
+  <section class="llm-section" id="training" aria-labelledby="training-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">09</span> Two different lives</p>
+      <h2 id="training-h">Training vs. inference</h2>
+      <p class="llm-lede">
+        Every model lives twice. <strong>Training</strong> happens once, on
+        <a href="/cloud/">cloud</a>-scale <a href="/gpu/">GPU</a> clusters
+        over weeks: predict, measure the miss, push every weight slightly
+        downhill, repeat trillions of times.
+        <strong>Inference</strong> happens every time you chat: the same
+        forward pass &mdash; but <em>nothing is learned</em>. The weights
+        are frozen.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <div class="llm-tvi">
+        <div class="llm-tvi-pane" id="llm-tvi-train">
+          <p class="llm-panel-h">Training &mdash; once, at the factory</p>
+          <div class="llm-tvi-steps" aria-hidden="true">
+            <span class="llm-tvi-chip" data-step="0">Forward pass</span>
+            <span class="llm-tvi-arrow">&darr;</span>
+            <span class="llm-tvi-chip" data-step="1">Loss <small>how wrong was the prediction?</small></span>
+            <span class="llm-tvi-arrow">&darr;</span>
+            <span class="llm-tvi-chip" data-step="2">Backpropagation</span>
+            <span class="llm-tvi-arrow">&darr;</span>
+            <span class="llm-tvi-chip" data-step="3">Update every weight</span>
+            <span class="llm-tvi-arrow llm-tvi-loop">&#8635; repeat, trillions of times</span>
+          </div>
+          <canvas id="llm-train-canvas" class="llm-canvas llm-canvas-short" aria-label="Illustrative training loss curve"></canvas>
+          <div class="llm-ctrl-row">
+            <button class="llm-btn" id="llm-train-run" type="button">Run the loop</button>
+            <span class="llm-status" id="llm-train-status" aria-live="polite"></span>
+          </div>
+          <p class="llm-widget-note">Illustrative animation &mdash; the real
+          loop is exactly the gradient-descent story from the
+          <a href="/machine-learning/">machine learning exhibit</a>, at
+          billion-parameter scale.</p>
+        </div>
+        <div class="llm-tvi-pane" id="llm-tvi-infer">
+          <p class="llm-panel-h">Inference &mdash; every time you chat</p>
+          <div class="llm-tvi-steps" aria-hidden="true">
+            <span class="llm-tvi-chip" data-step="0">Forward pass</span>
+            <span class="llm-tvi-arrow">&darr;</span>
+            <span class="llm-tvi-chip" data-step="1">Distribution over next tokens</span>
+            <span class="llm-tvi-arrow">&darr;</span>
+            <span class="llm-tvi-chip" data-step="2">Sample one token</span>
+            <span class="llm-tvi-arrow">&darr;</span>
+            <span class="llm-tvi-chip" data-step="3">Append &amp; repeat</span>
+            <span class="llm-tvi-arrow llm-tvi-loop">&#10005; no loss, no learning</span>
+          </div>
+          <div class="llm-infer-out" id="llm-infer-out" aria-live="polite"></div>
+          <div class="llm-ctrl-row">
+            <button class="llm-btn" id="llm-infer-run" type="button">Generate (real n-gram model)</button>
+            <span class="llm-status" id="llm-infer-status" aria-live="polite"></span>
+          </div>
+          <p class="llm-widget-note">This side is real: the corpus-trained
+          model from chapter 1, generating token by token through the
+          sampling pipeline from chapter 10.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <p>
+        This split answers a common confusion: <strong>ChatGPT does not learn
+        from your conversation.</strong> During a chat it only runs forward
+        passes; your messages shape the context window, never the weights.
+        When an assistant seems to &ldquo;remember,&rdquo; that is
+        engineering around the model &mdash; conversation history or notes
+        re-sent inside the context &mdash; not the network changing. Weights
+        change only when the provider trains a new model version at the
+        factory. The <a href="/chatgpt/">capstone</a> shows where fine-tuning
+        and human feedback fit into that factory pipeline.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 — SAMPLING
+  ================================================================ -->
+  <section class="llm-section" id="sampling" aria-labelledby="sampling-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">10</span> Choosing the next token</p>
+      <h2 id="sampling-h">Sampling: temperature, top-k, top-p</h2>
+      <p class="llm-lede">
+        The model hands you a probability distribution &mdash; it never picks
+        the token. <strong>Decoding</strong> does, and three dials control
+        it: <strong>temperature</strong> reshapes the distribution,
+        <strong>top-k</strong> keeps only the k most likely candidates,
+        <strong>top-p</strong> keeps the smallest set whose probabilities
+        add up to p. Same model, wildly different text.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">The decoding pipeline, live</p>
+      <p class="llm-widget-note">
+        Real distributions from the corpus-trained model, flowing through the
+        <strong>real production algorithms</strong> &mdash; the exact
+        temperature, top-k, and nucleus-sampling code paths, on inspectable
+        numbers. Move a dial and watch which candidates survive each stage.
+      </p>
+      <div class="llm-ctrl-row">
+        <input type="text" id="llm-samp-input" class="llm-text-input" value="the storm" maxlength="80"
+               aria-label="Prompt for generation">
+        <label class="llm-slider-label" for="llm-samp-t">Temperature
+          <input type="range" id="llm-samp-t" min="10" max="200" value="100" step="5">
+          <output id="llm-samp-t-out">1.00</output>
+        </label>
+        <label class="llm-slider-label" for="llm-samp-k">Top-k
+          <input type="range" id="llm-samp-k" min="0" max="40" value="0" step="1">
+          <output id="llm-samp-k-out">off</output>
+        </label>
+        <label class="llm-slider-label" for="llm-samp-p">Top-p
+          <input type="range" id="llm-samp-p" min="5" max="100" value="100" step="5">
+          <output id="llm-samp-p-out">off</output>
+        </label>
+      </div>
+      <div class="llm-samp-stages">
+        <div class="llm-samp-stage">
+          <p class="llm-panel-h">1 &middot; Model output</p>
+          <div class="llm-bars llm-bars-mini" id="llm-samp-raw"></div>
+        </div>
+        <div class="llm-samp-stage">
+          <p class="llm-panel-h">2 &middot; After temperature</p>
+          <div class="llm-bars llm-bars-mini" id="llm-samp-temp"></div>
+        </div>
+        <div class="llm-samp-stage">
+          <p class="llm-panel-h">3 &middot; After top-k</p>
+          <div class="llm-bars llm-bars-mini" id="llm-samp-topk"></div>
+        </div>
+        <div class="llm-samp-stage">
+          <p class="llm-panel-h">4 &middot; After top-p</p>
+          <div class="llm-bars llm-bars-mini" id="llm-samp-topp"></div>
+        </div>
+      </div>
+      <div class="llm-ctrl-row">
+        <button class="llm-btn llm-btn-primary" id="llm-samp-step" type="button">Sample one token</button>
+        <button class="llm-btn" id="llm-samp-auto" type="button">Generate a sentence</button>
+        <button class="llm-btn llm-btn-ghost" id="llm-samp-reset" type="button">Reset</button>
+      </div>
+      <div class="llm-samp-out" id="llm-samp-out" aria-live="polite"></div>
+      <div class="llm-samp-log" id="llm-samp-log" aria-live="polite"></div>
+      <p class="llm-widget-note llm-widget-note-after">
+        Rules of thumb that fall straight out of the mathematics: temperature
+        &rarr; 0 approaches <em>greedy decoding</em> (always the argmax
+        &mdash; deterministic, repetitive); high temperature flattens the
+        distribution toward noise; top-p adapts to confidence (a sure
+        distribution keeps few candidates, an uncertain one keeps many),
+        which is why it usually beats a fixed top-k.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       11 — HALLUCINATIONS
+  ================================================================ -->
+  <section class="llm-section" id="hallucinations" aria-labelledby="hallucinations-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">11</span> Fluent &ne; true</p>
+      <h2 id="hallucinations-h">Hallucinations: why fluent output can be false</h2>
+      <p class="llm-lede">
+        Everything on this page so far generates <strong>statistically
+        likely continuations</strong>. Nothing anywhere checks whether a
+        continuation is <em>true</em> &mdash; by default there is no lookup
+        step, no database, no fact-checker in the loop. When likely and true
+        coincide (they usually do &mdash; the training text was mostly
+        written by people describing reality), the model looks
+        knowledgeable. When they diverge, it produces confident fiction.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">Manufacture a hallucination</p>
+      <p class="llm-widget-note">
+        Our corpus contains &ldquo;the cheese was made of milk&rdquo;,
+        &ldquo;the bread was made of wheat&rdquo;, and &ldquo;the house was
+        made of stone&rdquo; &mdash; and says nothing about what the moon is
+        made of. Ask anyway. The model does what every language model does:
+        continues with what usually follows <em>&ldquo;made of&rdquo;</em>,
+        with real confidence numbers attached.
+      </p>
+      <div class="llm-ctrl-row">
+        <span class="llm-chip-row" id="llm-hall-presets" role="group" aria-label="Prompts to try">
+          <button class="llm-chip" type="button" data-text="the moon is made of">the moon is made of&hellip;</button>
+          <button class="llm-chip" type="button" data-text="the cat was made of">the cat was made of&hellip;</button>
+          <button class="llm-chip" type="button" data-text="the storm read the">the storm read the&hellip;</button>
+        </span>
+        <button class="llm-btn llm-btn-primary" id="llm-hall-go" type="button">Complete it</button>
+      </div>
+      <div class="llm-hall-out" id="llm-hall-out" aria-live="polite"></div>
+      <div class="llm-hall-conf" id="llm-hall-conf" aria-live="polite"></div>
+      <p class="llm-widget-note llm-widget-note-after">
+        Note what did <em>not</em> happen: the model did not lie, and it did
+        not malfunction. It answered the only question it is built to
+        answer &mdash; <em>&ldquo;what text is likely here?&rdquo;</em> &mdash;
+        flawlessly. The mismatch is between that question and the one you
+        actually asked.
+      </p>
+    </div>
+
+    <div class="llm-prose" data-llm-reveal>
+      <p>
+        Scale changes the odds, not the mechanism: a frontier model&rsquo;s
+        &ldquo;corpus&rdquo; covered so much ground that likely continuations
+        are usually correct &mdash; which makes the failures <em>more</em>
+        dangerous, because fluency reads as authority. The pattern to watch
+        for is unsupported specificity: exact citations, dates, statistics,
+        or API names in areas where the training data was thin. Probability
+        of the <em>form</em> is high; evidence for the <em>content</em> may
+        be nonexistent.
+      </p>
+      <p>
+        Mitigations exist at the system level &mdash; retrieval that pastes
+        real documents into the context window (chapter 13), tool calls that
+        check sources, models trained to express uncertainty and decline
+        &mdash; and modern assistants hallucinate far less than raw base
+        models. But <strong>none of it changes the default</strong>: a
+        language model&rsquo;s output is a claim about language, and treating
+        it as a claim about the world is a decision that deserves
+        verification when it matters.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 — SCALING
+  ================================================================ -->
+  <section class="llm-section" id="scale" aria-labelledby="scale-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">12</span> Why &ldquo;large&rdquo;</p>
+      <h2 id="scale-h">Scaling: from our toy to the frontier</h2>
+      <p class="llm-lede">
+        Everything you have inspected on this page &mdash; the same
+        mathematics, the same blocks &mdash; becomes a frontier model chiefly
+        by <strong>scaling up</strong>: more dimensions, more heads, more
+        layers, more data, more compute. The discovery that made the industry:
+        prediction quality improves <em>smoothly and predictably</em> as all
+        three grow together.
+      </p>
+    </div>
+
+    <div class="llm-widget" data-llm-reveal>
+      <p class="llm-panel-h">Slide from millions to a trillion parameters</p>
+      <p class="llm-widget-note">
+        The readouts are computed live from the parameter count using
+        standard engineering rules of thumb (2 bytes per weight at fp16;
+        &asymp;20 training tokens per parameter, the &ldquo;Chinchilla&rdquo;
+        heuristic; &asymp;6 &times; parameters &times; tokens floating-point
+        operations for training) &mdash; conceptual estimates for intuition,
+        not any specific model&rsquo;s specs.
+      </p>
+      <div class="llm-ctrl-row">
+        <label class="llm-slider-label llm-slider-wide" for="llm-scale-slider">Parameters
+          <input type="range" id="llm-scale-slider" min="34" max="120" value="90" step="1">
+          <output id="llm-scale-params">&mdash;</output>
+        </label>
+        <span class="llm-chip-row" id="llm-scale-chips" role="group" aria-label="Jump to a scale">
+          <button class="llm-chip" type="button" data-exp="34">this page&rsquo;s model</button>
+          <button class="llm-chip" type="button" data-exp="80">100M (2018-class)</button>
+          <button class="llm-chip" type="button" data-exp="90">1B</button>
+          <button class="llm-chip" type="button" data-exp="110">100B</button>
+          <button class="llm-chip" type="button" data-exp="120">1T</button>
+        </span>
+      </div>
+      <canvas id="llm-scale-canvas" class="llm-canvas" aria-label="Area comparison of model sizes"></canvas>
+      <div class="llm-scale-facts">
+        <div class="llm-scale-fact"><span>Weights at fp16</span><output id="llm-scale-mem">&mdash;</output></div>
+        <div class="llm-scale-fact"><span>80&thinsp;GB GPUs just to hold them</span><output id="llm-scale-gpus">&mdash;</output></div>
+        <div class="llm-scale-fact"><span>Training tokens (&asymp;20/param)</span><output id="llm-scale-tokens">&mdash;</output></div>
+        <div class="llm-scale-fact"><span>Training compute (&asymp;6&middot;N&middot;D)</span><output id="llm-scale-flops">&mdash;</output></div>
+      </div>
+      <p class="llm-widget-note llm-widget-note-after">
+        Past a few billion parameters, one computer stops being enough:
+        weights shard across <a href="/gpu/">GPU</a> fleets, training runs on
+        <a href="/cloud/">distributed clusters</a> where
+        <a href="/operating-systems/">schedulers</a> and interconnects matter
+        as much as math, checkpoints stream to
+        <a href="/memory/">storage</a> in terabytes, and serving a single
+        reply becomes a <a href="/internet/">networked</a> systems problem.
+        Scale is why LLMs are as much an infrastructure story as an
+        algorithms story &mdash; and energy use scales with the compute,
+        which is why efficiency research is now a first-class concern.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 — BEYOND THE TRANSFORMER
+  ================================================================ -->
+  <section class="llm-section" id="beyond" aria-labelledby="beyond-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">13</span> The model becomes a system</p>
+      <h2 id="beyond-h">Beyond the transformer</h2>
+      <p class="llm-lede">
+        A bare model predicts tokens. Products wrap it in systems. Four ideas
+        you will meet everywhere &mdash; presented here as
+        <strong>conceptual overviews</strong> (none of them is an intrinsic
+        part of every LLM, and none is implemented live on this page).
+      </p>
+    </div>
+
+    <div class="llm-beyond-grid" data-llm-reveal>
+      <article class="llm-beyond-card">
+        <h3>Retrieval-Augmented Generation (RAG)</h3>
+        <p>
+          Before the model answers, a search system fetches relevant
+          documents and pastes them into the context window. The model still
+          only predicts tokens &mdash; but now the likely continuation is
+          grounded in text that was retrieved seconds ago, which slashes
+          hallucinations about private or recent information. It is
+          engineering around chapter 8, not a change to the model.
+        </p>
+      </article>
+      <article class="llm-beyond-card">
+        <h3>Mixture of Experts (MoE)</h3>
+        <p>
+          Replace each block&rsquo;s one feed-forward network with many
+          &ldquo;experts&rdquo; and a tiny router that sends each token to
+          just a few of them. Result: a model with enormous total parameters
+          where any single token only pays for a fraction of the compute.
+          Several frontier models are built this way.
+        </p>
+      </article>
+      <article class="llm-beyond-card">
+        <h3>Tool use</h3>
+        <p>
+          Let the model emit special tokens that mean &ldquo;call the
+          calculator / search / run this code,&rdquo; execute the call
+          outside the model, and feed the result back into the context.
+          The model contributes judgment about <em>when</em> and
+          <em>what</em> to call; the tool contributes correctness the
+          weights cannot guarantee.
+        </p>
+      </article>
+      <article class="llm-beyond-card">
+        <h3>Agents</h3>
+        <p>
+          Put tool use in a loop: plan, act, observe the result, decide the
+          next step &mdash; dozens of forward passes stitched into one task.
+          Every &ldquo;AI agent&rdquo; you meet is still chapter 1&rsquo;s
+          next-token loop underneath, orchestrated by ordinary software.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       THE TRANSFORMER LAB
+  ================================================================ -->
+  <section class="llm-section llm-section-lab" id="lab" aria-labelledby="lab-h">
+    <div class="llm-section-head" data-llm-reveal>
+      <p class="llm-kicker"><span class="llm-kicker-num">Lab</span> Everything at once</p>
+      <h2 id="lab-h">The Transformer Lab</h2>
+      <p class="llm-lede">
+        Build your own tiny transformer and watch a complete forward pass
+        with nothing hidden: your architecture choices, real matrices, every
+        attention map, the full decoding pipeline. The weights are seeded
+        random &mdash; <strong>this machine has never been trained</strong>,
+        and that is the final lesson: watch how real machinery produces
+        confident-looking probabilities that mean nothing yet. Training
+        (chapter 9) is what would fill them with meaning.
+      </p>
+    </div>
+
+    <div class="llm-widget llm-lab" data-llm-reveal>
+      <div class="llm-lab-grid">
+        <div class="llm-lab-controls">
+          <p class="llm-panel-h">Architecture</p>
+          <label class="llm-select-label" for="llm-lab-d">Embedding dim
+            <select id="llm-lab-d">
+              <option value="4">4</option>
+              <option value="8" selected>8</option>
+              <option value="16">16</option>
+            </select>
+          </label>
+          <label class="llm-select-label" for="llm-lab-h">Attention heads
+            <select id="llm-lab-h">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="4">4</option>
+            </select>
+          </label>
+          <label class="llm-select-label" for="llm-lab-l">Layers
+            <select id="llm-lab-l">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+            </select>
+          </label>
+          <label class="llm-select-label" for="llm-lab-prompt">Prompt
+            <select id="llm-lab-prompt">
+              <option value="the cat chased the dog">the cat chased the dog</option>
+              <option value="the sun rose over the hill">the sun rose over the hill</option>
+              <option value="a token is a piece of text">a token is a piece of text</option>
+              <option value="the model predicts the next word">the model predicts the next word</option>
+            </select>
+          </label>
+          <p class="llm-panel-h">Decoding</p>
+          <label class="llm-slider-label" for="llm-lab-t">Temperature
+            <input type="range" id="llm-lab-t" min="10" max="200" value="100" step="5">
+            <output id="llm-lab-t-out">1.00</output>
+          </label>
+          <label class="llm-slider-label" for="llm-lab-k">Top-k
+            <input type="range" id="llm-lab-k" min="0" max="40" value="10" step="1">
+            <output id="llm-lab-k-out">10</output>
+          </label>
+          <label class="llm-slider-label" for="llm-lab-p">Top-p
+            <input type="range" id="llm-lab-p" min="5" max="100" value="90" step="5">
+            <output id="llm-lab-p-out">0.90</output>
+          </label>
+          <div class="llm-ctrl-row">
+            <button class="llm-btn llm-btn-primary" id="llm-lab-run" type="button">Run forward pass</button>
+            <button class="llm-btn" id="llm-lab-step" type="button">Sample next token</button>
+            <button class="llm-btn llm-btn-ghost" id="llm-lab-reseed" type="button">New random weights</button>
+          </div>
+          <div class="llm-stat-row">
+            <span class="llm-stat">Parameters <output id="llm-lab-params">&mdash;</output></span>
+            <span class="llm-stat">Seed <output id="llm-lab-seed">42</output></span>
+          </div>
+        </div>
+
+        <div class="llm-lab-stage">
+          <p class="llm-panel-h">Tokens in context</p>
+          <div class="llm-lab-tokens" id="llm-lab-tokens" aria-live="polite"></div>
+          <p class="llm-panel-h">Attention maps &mdash; every layer, every head <small>(row attends to column)</small></p>
+          <div class="llm-lab-attn" id="llm-lab-attn"></div>
+          <div class="llm-duo">
+            <div>
+              <p class="llm-panel-h">Next-token distribution (top 10)</p>
+              <div class="llm-bars llm-bars-mini" id="llm-lab-logits" aria-live="polite"></div>
+            </div>
+            <div>
+              <p class="llm-panel-h">Last sampled token, explained</p>
+              <div class="llm-why" id="llm-lab-explain" aria-live="polite">
+                <p class="llm-why-hint">Run the forward pass, then sample.</p>
+              </div>
+            </div>
+          </div>
+          <p class="llm-panel-h">Matrix inspector</p>
+          <div class="llm-ctrl-row">
+            <select id="llm-lab-inspect" aria-label="Choose a matrix to inspect"></select>
+          </div>
+          <div class="llm-matrix-scroll"><table class="llm-matrix" id="llm-lab-matrix"></table></div>
+        </div>
+      </div>
+      <p class="llm-widget-note llm-widget-note-after">
+        Every number above is genuinely computed by the architecture you
+        configured &mdash; the same code path the vector tests exercise under
+        Node. A production model differs by scale, not kind: thousands of
+        embedding dimensions instead of 8, dozens of heads and layers instead
+        of a handful, orders of magnitude more parameters, and &mdash;
+        decisively &mdash; weights shaped by training on trillions of tokens
+        instead of a random seed.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       CLOSE — THE ANSWER, AND ONWARD
+  ================================================================ -->
+  <section class="llm-section llm-section-close" aria-label="Closing">
+    <div class="llm-close" data-llm-reveal>
+      <p class="llm-kicker">The question, answered</p>
+      <h2>So &mdash; how can a computer generate the next word?</h2>
+      <p class="llm-prose-wide">
+        You can assemble the whole answer yourself now. Split the text into
+        <strong>tokens</strong> from a fixed vocabulary. Look each one up in
+        an <strong>embedding</strong> table so it becomes a vector, and add a
+        <strong>positional</strong> signature so order survives. Pass the
+        stack through dozens of <strong>transformer blocks</strong>, where
+        <strong>self-attention</strong> lets every token pull in exactly the
+        context it needs and feed-forward layers refine each one &mdash; all
+        of it just matrix multiplication, trained once by gradient descent
+        and frozen. Read off a probability for every token in the
+        vocabulary, let <strong>temperature, top-k, and top-p</strong> pick
+        one, append it, and go again. Repeat a few hundred times and you have
+        a paragraph &mdash; fluent by construction, true only insofar as
+        likelihood and truth happen to agree.
+      </p>
+      <p class="llm-prose-wide">
+        And now the <a href="/chatgpt/">How ChatGPT Works</a> capstone stops
+        being magic: it is <em>this page&rsquo;s machinery</em> &mdash;
+        deployed behind a chat interface, tuned with human feedback, running
+        on <a href="/gpu/">GPU</a> fleets in the <a href="/cloud/">cloud</a>,
+        streaming tokens back to you across
+        <a href="/internet/">the internet</a>. You have already learned every
+        concept it assembles. Go watch them work together.
+      </p>
+      <div class="llm-hero-cta">
+        <a class="llm-btn llm-btn-primary" href="/chatgpt/">Continue to How ChatGPT Works &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- knowledge-nav.js injects the "Where this fits" section here -->
+</div>

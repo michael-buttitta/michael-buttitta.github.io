@@ -151,16 +151,21 @@
         'through the OS, the internet, TLS, a cloud load balancer, ' +
         'tokenization, transformer layers on GPUs, and token sampling, all ' +
         'the way back to a streamed answer on your screen.',
-      prereqs: ['ai', 'machine-learning', 'internet', 'cloud', 'gpu']
+      prereqs: ['ai', 'machine-learning', 'llm', 'internet', 'cloud', 'gpu']
+    },
+
+    {
+      id: 'llm', name: 'Large Language Models', short: 'LLMs',
+      url: '/llm/', cat: 'intelligence', fa: '\uf1ab', x: 470, y: 25,
+      tagline: 'How a trained network becomes a machine that writes.',
+      blurb: 'Tokens, embeddings, self-attention, transformer blocks, and ' +
+        'probabilistic decoding \u2014 the bridge between machine learning ' +
+        'and ChatGPT, with a real tiny transformer you can open up and ' +
+        'inspect matrix by matrix.',
+      prereqs: ['machine-learning', 'ai']
     },
 
     /* ----- Planned topics: visible on the map, not yet built ------------- */
-    {
-      id: 'llm', name: 'Large Language Models', short: 'LLMs',
-      url: null, cat: 'future', fa: '\uf086', x: 470, y: 25,
-      tagline: 'Transformers, tokens, and text at planetary scale.', blurb: '',
-      prereqs: ['machine-learning', 'ai']
-    },
     {
       id: 'databases', name: 'Databases', short: 'Databases',
       url: null, cat: 'future', fa: '\uf1c0', x: 745, y: 630,
@@ -240,9 +245,16 @@
     { a: 'chatgpt', b: 'machine-learning',
       label: 'ChatGPT is a machine-learned model — trained once, then run for every reply.' },
 
-    /* dashed edges to planned topics */
-    { a: 'machine-learning', b: 'llm', planned: true,
+    { a: 'machine-learning', b: 'llm',
       label: 'LLMs are the training loop from this page, scaled to all of human text.' },
+    { a: 'ai', b: 'llm',
+      label: 'LLMs are one approach within modern AI — the one that made machines write.' },
+    { a: 'gpu', b: 'llm',
+      label: 'Attention is matrix multiplication — GPUs are why transformers are practical.' },
+    { a: 'llm', b: 'chatgpt',
+      label: 'ChatGPT is an LLM deployed as a product — every concept here runs inside it.' },
+
+    /* dashed edges to planned topics */
     { a: 'cloud', b: 'databases', planned: true,
       label: 'Every cloud application sits on top of a database.' },
     { a: 'cpu', b: 'algorithms', planned: true,
@@ -266,7 +278,7 @@
     {
       id: 'intelligence', name: 'The Road to AI',
       hook: 'The hardware and infrastructure behind machines that learn.',
-      steps: ['cpu', 'gpu', 'cloud', 'ai', 'machine-learning', 'chatgpt']
+      steps: ['cpu', 'gpu', 'cloud', 'ai', 'machine-learning', 'llm', 'chatgpt']
     }
   ];
 

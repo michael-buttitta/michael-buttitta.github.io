@@ -37,6 +37,7 @@ tabs:
   os: Understanding Operating Systems
   chatgpt: How ChatGPT Works
   ml: Understanding Machine Learning
+  llm: Large Language Models
 
 # the text displayed in the search bar & search results
 search:
