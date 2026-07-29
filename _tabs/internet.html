@@ -1,0 +1,940 @@
+---
+layout: gpu
+title: Internet
+icon: fas fa-globe
+order: 11
+description: >-
+  An interactive visual guide to how the internet works — follow one web
+  request from your keyboard through DNS, routers, undersea cables, CDNs,
+  load balancers, and data centers, all the way back to pixels on your
+  screen, explained with live simulations.
+extra_css:
+  - /assets/css/internet.css
+extra_js:
+  - /assets/js/internet.js
+---
+
+<div id="internet-experience">
+  <noscript>
+    <p class="net-noscript">
+      The live simulations on this page &mdash; the DNS walkthrough, the
+      routing playground, the request simulator &mdash; need JavaScript.
+      All of the explanations below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="net-rail" aria-label="Chapters">
+    <a class="net-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="net-rail-dot" href="#bigpicture" data-label="What is the Internet?"><span></span></a>
+    <a class="net-rail-dot" href="#dns" data-label="DNS"><span></span></a>
+    <a class="net-rail-dot" href="#ip" data-label="IP addresses"><span></span></a>
+    <a class="net-rail-dot" href="#routing" data-label="Routers &amp; ISPs"><span></span></a>
+    <a class="net-rail-dot" href="#packets" data-label="Packets"><span></span></a>
+    <a class="net-rail-dot" href="#tcpudp" data-label="TCP vs UDP"><span></span></a>
+    <a class="net-rail-dot" href="#tls" data-label="HTTPS &amp; TLS"><span></span></a>
+    <a class="net-rail-dot" href="#cdn" data-label="CDNs"><span></span></a>
+    <a class="net-rail-dot" href="#lb" data-label="Load balancers"><span></span></a>
+    <a class="net-rail-dot" href="#datacenter" data-label="Data centers"><span></span></a>
+    <a class="net-rail-dot" href="#rendering" data-label="Browser rendering"><span></span></a>
+    <a class="net-rail-dot" href="#speed" data-label="Why sites are fast"><span></span></a>
+    <a class="net-rail-dot" href="#journey" data-label="Real-world journey"><span></span></a>
+    <a class="net-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
+    <a class="net-rail-dot" href="#simulator" data-label="Request simulator"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="net-hero" id="top">
+    <canvas id="net-hero-canvas" aria-hidden="true"></canvas>
+    <div class="net-hero-inner">
+      <p class="net-kicker">An interactive exhibit</p>
+      <h1 class="net-hero-title">How the Internet Works</h1>
+      <p class="net-hero-sub">
+        Follow a single web request from your keyboard to servers halfway
+        around the world &mdash; and back again.
+      </p>
+      <div class="net-hero-cta">
+        <a class="net-btn net-btn-primary" href="#bigpicture">Begin the journey</a>
+        <span class="net-hero-hint">15 chapters &middot; live simulations &middot; one request</span>
+      </div>
+      <div class="net-hero-url" aria-hidden="true">
+        <span class="net-hero-url-scheme">https://</span><span id="net-hero-typed">www.google.com</span><span class="net-hero-caret"></span>
+      </div>
+    </div>
+    <div class="net-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <p class="net-prose net-framing">
+    Here is the whole page in one sentence: you type
+    <code>https://www.google.com</code>, press Enter, and roughly a quarter of
+    a second later a finished page appears. That quarter second contains a
+    name lookup across a global directory, a negotiation of encryption keys,
+    hundreds of packets crossing fiber under oceans, decisions made by dozens
+    of routers that have never heard of each other, and a rendering pipeline
+    that turns text into pixels. Every chapter below follows that same single
+    request one stage further.
+  </p>
+
+  <!-- ================================================================
+       01 — WHAT IS THE INTERNET?
+  ================================================================ -->
+  <section class="net-section" id="bigpicture" aria-labelledby="bigpicture-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">01</span> The big picture</p>
+      <h2 id="bigpicture-h">What is the Internet, actually?</h2>
+      <p class="net-lede">
+        The Internet is not one giant computer, and it isn&rsquo;t a cloud. It
+        is billions of independent devices &mdash; laptops, phones, servers,
+        routers &mdash; that can all exchange data because they agree on a
+        shared set of rules called <strong>protocols</strong>. Nobody owns it;
+        everybody who follows the rules can join it. The name literally means
+        <em>inter-network</em>: a network of networks.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      Your home Wi-Fi is one small network. Your Internet Service Provider
+      (ISP) runs a much bigger one. Long-haul <strong>backbone</strong>
+      operators run continent-spanning fiber networks, and cloud providers run
+      networks of data centers. The Internet is what you get when all of these
+      voluntarily interconnect. Watch the request below leave a laptop and
+      cross each of those networks in turn &mdash; and notice the response
+      making the same trip in reverse. This exact chain reappears in every
+      chapter that follows.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <canvas id="net-big-canvas" class="net-canvas" role="img"
+        aria-label="Animation of a request traveling from a laptop through a home router, an ISP, a regional network, the internet backbone, and a cloud provider to a server, with the response returning along the same path."></canvas>
+      <div class="net-panel-controls">
+        <button type="button" class="net-btn" id="net-big-send">Send a request</button>
+        <p class="net-panel-status" id="net-big-status" aria-live="polite"></p>
+      </div>
+      <p class="net-caption">
+        Simplified on purpose: a real request may cross 10&ndash;30 routers,
+        and the &ldquo;regional network&rdquo; and &ldquo;backbone&rdquo;
+        stages are often several distinct companies. The structure &mdash;
+        small network, bigger network, biggest networks, destination &mdash;
+        is accurate.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       02 — DNS
+  ================================================================ -->
+  <section class="net-section" id="dns" aria-labelledby="dns-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">02</span> Names to numbers</p>
+      <h2 id="dns-h">DNS: finding the address</h2>
+      <p class="net-lede">
+        Computers route traffic by number, not by name. Before your browser
+        can send a single byte to <code>www.google.com</code>, it must learn
+        that machine&rsquo;s <strong>IP address</strong>. The Domain Name
+        System (DNS) is the globally distributed directory that answers that
+        question &mdash; often called the &ldquo;phonebook of the
+        Internet,&rdquo; though the analogy undersells it: this phonebook is
+        split across millions of servers, cached everywhere, and updated
+        constantly.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      The lookup is a chain of delegation. Your device asks a
+      <strong>recursive resolver</strong> (usually run by your ISP, or a
+      public one like <code>1.1.1.1</code> or <code>8.8.8.8</code>). If the
+      resolver doesn&rsquo;t already know the answer, it asks a
+      <strong>root server</strong>, which doesn&rsquo;t know either &mdash;
+      but knows who handles <code>.com</code>. The <strong>TLD server</strong>
+      for <code>.com</code> knows who speaks for <code>google.com</code>: its
+      <strong>authoritative servers</strong>, which finally return the IP.
+      Step through it below.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <div class="net-dns-stage" id="net-dns-stage" aria-hidden="true">
+        <div class="net-dns-node" data-dns-node="browser"><span class="net-dns-ico">&#128421;</span>Your device</div>
+        <div class="net-dns-node" data-dns-node="resolver"><span class="net-dns-ico">&#128269;</span>Recursive resolver</div>
+        <div class="net-dns-node" data-dns-node="root"><span class="net-dns-ico">&#127758;</span>Root server</div>
+        <div class="net-dns-node" data-dns-node="tld"><span class="net-dns-ico">.com</span>TLD server</div>
+        <div class="net-dns-node" data-dns-node="auth"><span class="net-dns-ico">&#9733;</span>Authoritative DNS</div>
+      </div>
+      <div class="net-panel-controls">
+        <button type="button" class="net-btn" id="net-dns-play">Play lookup</button>
+        <button type="button" class="net-btn" id="net-dns-step">Step</button>
+        <button type="button" class="net-btn net-btn-ghost" id="net-dns-reset">Reset</button>
+        <label class="net-check"><input type="checkbox" id="net-dns-cached"> Resolver already has it cached</label>
+      </div>
+      <ol class="net-dns-log" id="net-dns-log" aria-live="polite"></ol>
+      <p class="net-caption">
+        In practice the full chain runs rarely: answers are cached at every
+        level with a time-to-live (TTL), so most lookups end at step one or
+        two. Tick the cache box to see why repeat visits feel faster.
+      </p>
+    </div>
+
+    <h3 class="net-h3">What DNS actually stores</h3>
+    <p class="net-prose">
+      DNS holds more than IP addresses. Each name maps to typed
+      <strong>records</strong>. Inspect the common ones &mdash; these are
+      realistic example values, not live lookups:
+    </p>
+    <div class="net-panel" data-net-reveal>
+      <div class="net-panel-controls" role="group" aria-label="Choose a DNS record type">
+        <button type="button" class="net-chip is-active" data-net-rr="A">A</button>
+        <button type="button" class="net-chip" data-net-rr="AAAA">AAAA</button>
+        <button type="button" class="net-chip" data-net-rr="CNAME">CNAME</button>
+        <button type="button" class="net-chip" data-net-rr="MX">MX</button>
+        <button type="button" class="net-chip" data-net-rr="TXT">TXT</button>
+        <button type="button" class="net-chip" data-net-rr="NS">NS</button>
+      </div>
+      <div class="net-rr-out" id="net-rr-out" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       03 — IP ADDRESSES
+  ================================================================ -->
+  <section class="net-section" id="ip" aria-labelledby="ip-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">03</span> Numbers with structure</p>
+      <h2 id="ip-h">IP addresses: where, not who</h2>
+      <p class="net-lede">
+        DNS handed back <code>142.250.72.196</code>. An IP address is not a
+        serial number &mdash; it is a <em>location</em> in the network&rsquo;s
+        structure, more like a postal address than a name. The left part
+        identifies a network; the right part identifies a device on it. That
+        structure is what lets routers forward traffic without knowing every
+        device on Earth.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      <strong>IPv4</strong> addresses are 32 bits &mdash; four numbers from 0
+      to 255 &mdash; giving about 4.3 billion possibilities, which ran out
+      years ago. <strong>IPv6</strong> is the 128-bit successor with room for
+      every device, sensor, and lightbulb ever made. The shortage is why your
+      home devices use <strong>private addresses</strong> (like
+      <code>192.168.x.x</code>) that never appear on the public Internet: your
+      router performs <strong>NAT</strong> (Network Address Translation),
+      letting a whole household share one public address. Pick an address to
+      inspect it, then drag the network/host divider:
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <div class="net-panel-controls" role="group" aria-label="Choose an address to inspect">
+        <button type="button" class="net-chip is-active" data-net-ip="pub4">Public IPv4</button>
+        <button type="button" class="net-chip" data-net-ip="priv4">Private IPv4</button>
+        <button type="button" class="net-chip" data-net-ip="loop">Loopback</button>
+        <button type="button" class="net-chip" data-net-ip="v6">IPv6</button>
+      </div>
+      <div class="net-ip-out" id="net-ip-out" aria-live="polite"></div>
+      <div class="net-ip-binwrap" id="net-ip-binwrap">
+        <label class="net-range-label" for="net-ip-prefix">Network prefix: /<span id="net-ip-prefixval">24</span></label>
+        <input type="range" id="net-ip-prefix" min="8" max="30" value="24">
+        <div class="net-ip-binary" id="net-ip-binary" aria-live="polite"></div>
+        <p class="net-panel-status" id="net-ip-status" aria-live="polite"></p>
+      </div>
+      <p class="net-caption">
+        Routers care only about the highlighted network bits: a router in
+        Chicago doesn&rsquo;t know your laptop, it knows &ldquo;traffic for
+        142.250.&hellip; heads toward that operator&rsquo;s network.&rdquo; The longer the
+        prefix, the more specific the route.
+      </p>
+    </div>
+
+    <h3 class="net-h3">NAT: one address, many devices</h3>
+    <div class="net-panel" data-net-reveal>
+      <div class="net-panel-controls">
+        <button type="button" class="net-btn" id="net-nat-send">Send from a random device</button>
+        <button type="button" class="net-btn net-btn-ghost" id="net-nat-reset">Clear table</button>
+      </div>
+      <div class="net-nat-wrap">
+        <div class="net-nat-lan" id="net-nat-lan" aria-hidden="true"></div>
+        <div class="net-nat-tablewrap">
+          <table class="net-table" id="net-nat-table">
+            <caption>Router&rsquo;s translation table</caption>
+            <thead><tr><th scope="col">Inside (private)</th><th scope="col">Outside (public)</th><th scope="col">Destination</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <p class="net-caption">
+        The router rewrites each outgoing packet&rsquo;s source to its own
+        public address and a unique port, remembering the mapping so replies
+        find their way back to the right device. Your laptop&rsquo;s private
+        address is never seen by the wider Internet.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       04 — ROUTERS & ISPs
+  ================================================================ -->
+  <section class="net-section" id="routing" aria-labelledby="routing-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">04</span> Hop by hop</p>
+      <h2 id="routing-h">Routers &amp; ISPs: no map, just neighbors</h2>
+      <p class="net-lede">
+        No single machine knows the whole route from your laptop to Google.
+        Instead, each <strong>router</strong> keeps a <strong>routing
+        table</strong> &mdash; a list of &ldquo;for addresses like <em>X</em>,
+        hand the packet to neighbor <em>Y</em>&rdquo; &mdash; and every packet
+        is forwarded one hop at a time. The route emerges from thousands of
+        local decisions, which is exactly why the Internet survives failures:
+        when a link dies, neighbors update their tables and traffic flows
+        around the hole.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      Your packet typically crosses your home router, your ISP&rsquo;s local
+      equipment, a regional ISP network, one or more backbone providers, and
+      finally the destination&rsquo;s own network. (Inside each building,
+      <strong>switches</strong> do the short-range equivalent: forwarding
+      frames between machines on the <em>same</em> network, while routers
+      forward between networks.) Try it below: send packets, then click a
+      router mid-stream to knock it offline, or add congestion, and watch the
+      network route around the damage.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <canvas id="net-route-canvas" class="net-canvas net-canvas-tall" role="img"
+        aria-label="Interactive network of routers between a home and a data center. Packets hop between routers; clicking a router disables it and traffic reroutes."></canvas>
+      <div class="net-panel-controls">
+        <button type="button" class="net-btn" id="net-route-send">Stream packets</button>
+        <label class="net-check"><input type="checkbox" id="net-route-congestion"> Congest the fast path</label>
+        <button type="button" class="net-btn net-btn-ghost" id="net-route-repair">Repair all routers</button>
+        <p class="net-panel-status" id="net-route-status" aria-live="polite"></p>
+      </div>
+      <p class="net-caption">
+        Real routing is driven by protocols (BGP between networks, OSPF and
+        friends inside them) and by business relationships, not just distance.
+        The behavior shown &mdash; multiple paths, automatic rerouting,
+        congestion making a longer path worth taking &mdash; is the honest
+        core of it.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       05 — PACKETS
+  ================================================================ -->
+  <section class="net-section" id="packets" aria-labelledby="packets-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">05</span> The unit of the Internet</p>
+      <h2 id="packets-h">Packets: everything is chopped up</h2>
+      <p class="net-lede">
+        The Internet never sends a web page. It sends <strong>packets</strong>
+        &mdash; small chunks, typically up to about 1,500 bytes each &mdash;
+        and every packet travels independently. A modest page becomes hundreds
+        of them; they may take different routes, arrive out of order, or not
+        arrive at all, and the receiving end reassembles the original from
+        sequence numbers.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      This design choice, <em>packet switching</em>, is the founding idea of
+      the Internet. There is no reserved circuit between you and Google the
+      way old telephone lines reserved a wire; links are shared by everyone,
+      packet by packet, which is what makes the network efficient and
+      resilient. Watch a page get sliced up, scattered across three paths, and
+      reassembled &mdash; then click any packet in flight to read what it
+      carries.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <canvas id="net-packet-canvas" class="net-canvas" role="img"
+        aria-label="Animation of a web page divided into numbered packets that travel along different paths and are reassembled in order at the destination. Packets can be clicked to inspect their headers."></canvas>
+      <div class="net-panel-controls">
+        <button type="button" class="net-btn" id="net-packet-replay">Replay</button>
+        <p class="net-panel-status" id="net-packet-hint">Click a packet in flight to inspect it.</p>
+      </div>
+      <div class="net-packet-inspect" id="net-packet-inspect" aria-live="polite" hidden></div>
+      <p class="net-caption">
+        Header fields shown are conceptual (real IP and TCP headers carry
+        more: TTL, checksums, flags, window sizes). Sequence numbers in real
+        TCP count bytes, not packets &mdash; the reassembly idea is the same.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 — TCP vs UDP
+  ================================================================ -->
+  <section class="net-section" id="tcpudp" aria-labelledby="tcpudp-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">06</span> Two philosophies</p>
+      <h2 id="tcpudp-h">TCP vs UDP: certainty or speed</h2>
+      <p class="net-lede">
+        Packets get lost &mdash; congestion, interference, overloaded routers.
+        What happens next depends on the transport protocol.
+        <strong>TCP</strong> promises complete, in-order delivery: every
+        packet is acknowledged, and anything lost is retransmitted.
+        <strong>UDP</strong> promises nothing: packets are fired off and
+        whatever arrives, arrives &mdash; but with zero waiting.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      Neither is &ldquo;better.&rdquo; A file download with one missing chunk
+      is corrupt, so downloads and web pages use TCP. A video call packet that
+      arrives late is <em>worthless</em> &mdash; that moment already happened
+      &mdash; so real-time audio, video, and games ride on UDP and simply
+      tolerate small gaps. (Modern HTTP/3 gets the best of both: it runs QUIC
+      over UDP and rebuilds reliability inside it.) Raise the packet loss and
+      watch each protocol keep its own promise:
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <div class="net-panel-controls" role="group" aria-label="Choose a workload">
+        <button type="button" class="net-chip is-active" data-net-scenario="download">File download</button>
+        <button type="button" class="net-chip" data-net-scenario="call">Video call</button>
+      </div>
+      <canvas id="net-proto-canvas" class="net-canvas" role="img"
+        aria-label="Side-by-side simulation of TCP and UDP delivering packets across a lossy link. TCP retransmits lost packets and delivers everything in order; UDP leaves gaps but never waits."></canvas>
+      <div class="net-panel-controls">
+        <button type="button" class="net-btn" id="net-proto-run">Run</button>
+        <label class="net-range-label" for="net-proto-loss">Packet loss: <span id="net-proto-lossval">20</span>%</label>
+        <input type="range" id="net-proto-loss" min="0" max="50" value="20">
+      </div>
+      <div class="net-proto-stats" id="net-proto-stats" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 — HTTPS & TLS
+  ================================================================ -->
+  <section class="net-section" id="tls" aria-labelledby="tls-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">07</span> The padlock</p>
+      <h2 id="tls-h">HTTPS &amp; TLS: talking in private</h2>
+      <p class="net-lede">
+        Your packets cross networks owned by strangers. Plain
+        <strong>HTTP</strong> sends readable text &mdash; anyone along the
+        path could read or alter it. <strong>HTTPS</strong> is the same HTTP
+        wrapped in <strong>TLS</strong> (Transport Layer Security), which does
+        two jobs before any page data flows: proves you&rsquo;re talking to
+        the real <code>google.com</code>, and agrees on secret keys so
+        everything after is encrypted.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      The proof comes from a <strong>certificate</strong> &mdash; a signed
+      statement from a certificate authority your browser already trusts that
+      says &ldquo;this public key belongs to google.com.&rdquo; The secrecy
+      comes from a <strong>key exchange</strong>: both sides derive the same
+      session key without ever sending it across the wire. Step through the
+      handshake &mdash; and for the mathematics that makes each step possible
+      (public-key cryptography, signatures, key exchange), see the
+      <a href="/cryptography/">Understanding Cryptography</a> exhibit.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <div class="net-tls-stage" id="net-tls-stage">
+        <div class="net-tls-party" id="net-tls-client"><span class="net-dns-ico">&#128421;</span>Browser</div>
+        <div class="net-tls-wire" id="net-tls-wire" aria-hidden="true"></div>
+        <div class="net-tls-party" id="net-tls-server"><span class="net-dns-ico">&#128274;</span>Server</div>
+      </div>
+      <div class="net-panel-controls">
+        <button type="button" class="net-btn" id="net-tls-play">Play handshake</button>
+        <button type="button" class="net-btn" id="net-tls-step">Step</button>
+        <button type="button" class="net-btn net-btn-ghost" id="net-tls-reset">Reset</button>
+      </div>
+      <ol class="net-dns-log" id="net-tls-log" aria-live="polite"></ol>
+      <p class="net-caption">
+        This shows TLS 1.3, the modern version: one round trip, and
+        everything after the first exchange is already encrypted. One honest
+        caveat for later: HTTPS proves you reached the domain in the address
+        bar and that nobody can eavesdrop &mdash; it says nothing about
+        whether the site itself is honest.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 — CDNs
+  ================================================================ -->
+  <section class="net-section" id="cdn" aria-labelledby="cdn-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">08</span> Moving content closer</p>
+      <h2 id="cdn-h">CDNs: the speed of light is the law</h2>
+      <p class="net-lede">
+        Light in fiber covers about 200,000 km per second &mdash; fast, but
+        finite. Sydney to Virginia and back is unavoidably ~200&nbsp;ms
+        <em>per round trip</em>, and loading a page takes several. No software
+        fixes physics. The fix is geographic: a <strong>Content Delivery
+        Network</strong> keeps copies of static content &mdash; images,
+        scripts, video &mdash; in hundreds of <strong>edge locations</strong>
+        worldwide, so your request travels to a nearby city instead of another
+        continent.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      Pick where you&rsquo;re browsing from. The origin server stays in
+      Virginia; toggle the CDN and compare the trip. This is why video
+      streaming, software updates, and image-heavy sites feel local
+      everywhere: the first viewer near you warms the cache, everyone after
+      is served from around the corner.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <div class="net-panel-controls" role="group" aria-label="Choose your location">
+        <button type="button" class="net-chip is-active" data-net-loc="syd">Sydney</button>
+        <button type="button" class="net-chip" data-net-loc="tok">Tokyo</button>
+        <button type="button" class="net-chip" data-net-loc="lon">London</button>
+        <button type="button" class="net-chip" data-net-loc="sao">S&atilde;o Paulo</button>
+        <button type="button" class="net-chip" data-net-loc="joh">Johannesburg</button>
+        <button type="button" class="net-chip" data-net-loc="nyc">New York</button>
+      </div>
+      <canvas id="net-cdn-canvas" class="net-canvas net-canvas-tall" role="img"
+        aria-label="World map showing a request from the chosen city either traveling to the origin server in Virginia or to a nearby CDN edge location, with round-trip latency for each."></canvas>
+      <div class="net-panel-controls">
+        <label class="net-check"><input type="checkbox" id="net-cdn-toggle" checked> CDN enabled</label>
+        <p class="net-panel-status" id="net-cdn-stats" aria-live="polite"></p>
+      </div>
+      <p class="net-caption">
+        Latencies are speed-of-light-in-fiber estimates over great-circle
+        distances, roughly doubled for real cable paths and equipment delays
+        &mdash; representative, not measured. Dynamic, personalized content
+        still travels to the origin (or to compute running at the edge).
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 — LOAD BALANCERS
+  ================================================================ -->
+  <section class="net-section" id="lb" aria-labelledby="lb-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">09</span> Sharing the load</p>
+      <h2 id="lb-h">Load balancers: one name, many servers</h2>
+      <p class="net-lede">
+        Millions of people are &ldquo;on google.com&rdquo; right now, and no
+        single server could survive that. Behind the name stands a fleet, and
+        in front of the fleet stands a <strong>load balancer</strong>: it
+        accepts every incoming request and forwards each one to a healthy,
+        not-too-busy server. Servers can fail, join, or be replaced without
+        visitors ever noticing.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      Crank the traffic below. With autoscaling on, new servers spin up when
+      load climbs and drain away when it falls &mdash; the same elasticity
+      story told in the <a href="/cloud/">Understanding Cloud Computing</a>
+      exhibit. Watch what the load balancer does when a server goes red: it
+      simply stops sending traffic there.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <canvas id="net-lb-canvas" class="net-canvas net-canvas-tall" role="img"
+        aria-label="Simulation of user requests arriving at a load balancer that distributes them across a row of servers. Server load bars rise with traffic; overloaded servers drop requests; autoscaling adds servers."></canvas>
+      <div class="net-panel-controls">
+        <label class="net-range-label" for="net-lb-traffic">Traffic: <span id="net-lb-trafficval">40</span> req/s</label>
+        <input type="range" id="net-lb-traffic" min="5" max="300" value="40">
+        <label class="net-check"><input type="checkbox" id="net-lb-autoscale" checked> Autoscale</label>
+        <button type="button" class="net-btn net-btn-ghost" id="net-lb-kill">Fail a server</button>
+        <p class="net-panel-status" id="net-lb-stats" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 — DATA CENTERS
+  ================================================================ -->
+  <section class="net-section" id="datacenter" aria-labelledby="datacenter-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">10</span> Where the servers live</p>
+      <h2 id="datacenter-h">Data centers: the Internet&rsquo;s buildings</h2>
+      <p class="net-lede">
+        &ldquo;The cloud&rdquo; is a building &mdash; many buildings: windowless
+        warehouses holding tens of thousands of servers stacked in
+        <strong>racks</strong>, wired together by layers of switches, fed by
+        redundant power, and cooled around the clock. Your request&rsquo;s
+        final hops happen inside one of these rooms, over cables a few meters
+        long.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      Providers build <strong>regions</strong> on different continents for
+      three reasons: latency (be near users), law (some data must stay in its
+      country), and blast radius (a flood, fire, or grid failure should never
+      take everything down). Explore the anatomy of a rack:
+    </p>
+
+    <div class="net-panel net-dc-panel" data-net-reveal>
+      <div class="net-dc-figure" aria-hidden="true">
+        <svg viewBox="0 0 200 320" class="net-dc-svg" id="net-dc-svg">
+          <rect x="30" y="8" width="140" height="304" rx="6" class="net-dc-frame"/>
+          <rect x="42" y="18"  width="116" height="22" rx="3" class="net-dc-part" data-dc-part="switch"/>
+          <g class="net-dc-part" data-dc-part="servers">
+            <rect x="42" y="48"  width="116" height="16" rx="2"/>
+            <rect x="42" y="68"  width="116" height="16" rx="2"/>
+            <rect x="42" y="88"  width="116" height="16" rx="2"/>
+            <rect x="42" y="108" width="116" height="16" rx="2"/>
+            <rect x="42" y="128" width="116" height="16" rx="2"/>
+            <rect x="42" y="148" width="116" height="16" rx="2"/>
+          </g>
+          <g class="net-dc-part" data-dc-part="storage">
+            <rect x="42" y="174" width="116" height="20" rx="2"/>
+            <rect x="42" y="198" width="116" height="20" rx="2"/>
+          </g>
+          <rect x="42" y="228" width="116" height="26" rx="3" class="net-dc-part" data-dc-part="power"/>
+          <rect x="42" y="262" width="116" height="20" rx="3" class="net-dc-part" data-dc-part="cooling"/>
+          <rect x="42" y="290" width="116" height="14" rx="3" class="net-dc-part" data-dc-part="fiber"/>
+        </svg>
+      </div>
+      <div class="net-dc-side">
+        <div class="net-panel-controls net-dc-controls" role="group" aria-label="Choose a rack component">
+          <button type="button" class="net-chip is-active" data-net-dc="switch">Top-of-rack switch</button>
+          <button type="button" class="net-chip" data-net-dc="servers">Servers</button>
+          <button type="button" class="net-chip" data-net-dc="storage">Storage</button>
+          <button type="button" class="net-chip" data-net-dc="power">Power</button>
+          <button type="button" class="net-chip" data-net-dc="cooling">Cooling</button>
+          <button type="button" class="net-chip" data-net-dc="fiber">Fiber</button>
+        </div>
+        <div class="net-dc-info" id="net-dc-info" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       11 — BROWSER RENDERING
+  ================================================================ -->
+  <section class="net-section" id="rendering" aria-labelledby="rendering-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">11</span> The last millisecond</p>
+      <h2 id="rendering-h">Browser rendering: bytes become pixels</h2>
+      <p class="net-lede">
+        The response arrived &mdash; but what arrived is text. The browser
+        still has to <em>build</em> the page: parse HTML into the
+        <strong>DOM</strong> tree, parse CSS into style rules, run
+        JavaScript, compute <strong>layout</strong> (where every box goes),
+        <strong>paint</strong> each box, and <strong>composite</strong> the
+        layers &mdash; a job modern browsers hand to the GPU.
+      </p>
+    </div>
+
+    <p class="net-prose">
+      Step through the pipeline and watch a miniature page assemble itself
+      stage by stage. This is where our story hands off to the rest of the
+      series: the parsing and script execution run on the
+      <a href="/cpu/">CPU</a>, compositing runs on the
+      <a href="/gpu/">GPU</a>, and everything in between lives in the
+      <a href="/memory/">memory hierarchy</a> &mdash; including the browser
+      cache that may spare you the whole network trip next time.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <ol class="net-render-stages" id="net-render-stages">
+        <li data-stage="0">HTML &rarr; DOM</li>
+        <li data-stage="1">CSS &rarr; styles</li>
+        <li data-stage="2">JavaScript</li>
+        <li data-stage="3">Layout</li>
+        <li data-stage="4">Paint</li>
+        <li data-stage="5">Composite</li>
+      </ol>
+      <canvas id="net-render-canvas" class="net-canvas" role="img"
+        aria-label="A miniature web page being constructed stage by stage: document structure appears, then styling, then script-driven content, then boxes are positioned, painted with color and text, and finally composited to the screen."></canvas>
+      <div class="net-panel-controls">
+        <button type="button" class="net-btn" id="net-render-play">Play</button>
+        <button type="button" class="net-btn" id="net-render-step">Step</button>
+        <button type="button" class="net-btn net-btn-ghost" id="net-render-reset">Reset</button>
+        <p class="net-panel-status" id="net-render-status" aria-live="polite"></p>
+      </div>
+      <p class="net-caption">
+        Real engines pipeline these stages and re-run them incrementally as
+        the page changes; JavaScript can interleave with parsing and force
+        layout early. The order shown is the conceptual dependency chain.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 — WHY SOME SITES ARE FAST
+  ================================================================ -->
+  <section class="net-section" id="speed" aria-labelledby="speed-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">12</span> Performance</p>
+      <h2 id="speed-h">Why some websites are fast</h2>
+      <p class="net-lede">
+        Page speed is a budget with several line items: name lookup,
+        connection setup, server thinking time, bytes on the wire, and
+        rendering. <strong>Latency</strong> (distance and round trips) and
+        <strong>bandwidth</strong> (bytes per second) are different costs
+        &mdash; a fat pipe doesn&rsquo;t shorten a long round trip. Fast sites
+        attack every line: move content closer, send fewer bytes, cache
+        aggressively.
+      </p>
+    </div>
+
+    <div class="net-panel" data-net-reveal>
+      <div class="net-sp-grid">
+        <div class="net-sp-controls">
+          <label class="net-range-label" for="net-sp-distance">Distance to server: <span id="net-sp-distanceval">8,000</span> km</label>
+          <input type="range" id="net-sp-distance" min="50" max="16000" step="50" value="8000">
+          <label class="net-range-label" for="net-sp-server">Server response time: <span id="net-sp-serverval">200</span> ms</label>
+          <input type="range" id="net-sp-server" min="20" max="800" step="10" value="200">
+          <label class="net-range-label" for="net-sp-img">Images: <span id="net-sp-imgval">2.0</span> MB</label>
+          <input type="range" id="net-sp-img" min="0" max="8" step="0.25" value="2">
+          <label class="net-range-label" for="net-sp-js">JavaScript bundle: <span id="net-sp-jsval">1.0</span> MB</label>
+          <input type="range" id="net-sp-js" min="0" max="5" step="0.25" value="1">
+          <label class="net-range-label" for="net-sp-bw">Bandwidth: <span id="net-sp-bwval">25</span> Mbps</label>
+          <input type="range" id="net-sp-bw" min="2" max="500" step="1" value="25">
+          <label class="net-check"><input type="checkbox" id="net-sp-cdn"> Serve via CDN</label>
+          <label class="net-check"><input type="checkbox" id="net-sp-compress"> Compress text &amp; optimize images</label>
+          <label class="net-check"><input type="checkbox" id="net-sp-cache"> Repeat visit (warm cache)</label>
+        </div>
+        <div class="net-sp-result">
+          <div class="net-sp-total" id="net-sp-total" aria-live="polite"></div>
+          <div class="net-sp-waterfall" id="net-sp-waterfall" aria-live="polite"></div>
+        </div>
+      </div>
+      <p class="net-caption">
+        A didactic model, not a benchmark: real loads overlap these phases,
+        open multiple connections, and depend on device speed. The
+        <em>shape</em> is right &mdash; distance multiplies every round trip,
+        the CDN shrinks distance, compression shrinks bytes, and a warm cache
+        skips most of the bill.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 — REAL-WORLD JOURNEY
+  ================================================================ -->
+  <section class="net-section" id="journey" aria-labelledby="journey-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">13</span> Putting it together</p>
+      <h2 id="journey-h">A real-world journey</h2>
+      <p class="net-lede">
+        Pick a destination and read the request&rsquo;s itinerary end to end.
+        The early stages &mdash; DNS, routing, TLS &mdash; are universal;
+        what sits behind the front door varies by the kind of service. These
+        are representative architectures built from common public patterns,
+        not claims about any company&rsquo;s actual internals.
+      </p>
+    </div>
+
+    <div class="net-panel" data-net-reveal>
+      <div class="net-panel-controls" role="group" aria-label="Choose a destination">
+        <button type="button" class="net-chip is-active" data-net-dest="search">Google Search</button>
+        <button type="button" class="net-chip" data-net-dest="wiki">Wikipedia</button>
+        <button type="button" class="net-chip" data-net-dest="github">GitHub</button>
+        <button type="button" class="net-chip" data-net-dest="netflix">Netflix</button>
+        <button type="button" class="net-chip" data-net-dest="amazon">Amazon</button>
+        <button type="button" class="net-chip" data-net-dest="ms">Microsoft</button>
+        <button type="button" class="net-chip" data-net-dest="cf">Cloudflare</button>
+      </div>
+      <ol class="net-journey" id="net-journey-out" aria-live="polite"></ol>
+      <p class="net-caption">
+        Steps tagged <span class="net-tag-universal">universal</span> happen
+        for essentially every HTTPS request on the Internet; steps tagged
+        <span class="net-tag-varies">varies</span> depend on the
+        provider&rsquo;s architecture and are illustrative. Services with
+        AI-powered features (search ranking, recommendations) run those as
+        backend workloads &mdash; the <a href="/ai/">Understanding AI</a>
+        exhibit covers what such systems actually do.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       14 — MISCONCEPTIONS
+  ================================================================ -->
+  <section class="net-section" id="myths" aria-labelledby="myths-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">14</span> Setting the record straight</p>
+      <h2 id="myths-h">Common misconceptions</h2>
+      <p class="net-lede">
+        Seven things people believe about the Internet that aren&rsquo;t quite
+        true &mdash; each one a quick expand.
+      </p>
+    </div>
+
+    <div class="net-myths" data-net-reveal>
+      <details class="net-myth">
+        <summary>The Internet and the Web are the same thing.</summary>
+        <p>The Internet is the transport: the global network moving packets between
+        machines. The World Wide Web is one application riding on it &mdash; pages,
+        links, HTTP. Email, video calls, online games, and app backends all use the
+        Internet without being the Web.</p>
+      </details>
+      <details class="net-myth">
+        <summary>Wi-Fi is the Internet.</summary>
+        <p>Wi-Fi is only the last few meters: a radio link between your device and
+        your router. If your ISP goes down, your Wi-Fi stays &ldquo;connected&rdquo;
+        while nothing loads &mdash; because the wireless hop was never the Internet,
+        just the on-ramp to it.</p>
+      </details>
+      <details class="net-myth">
+        <summary>DNS hosts websites.</summary>
+        <p>DNS stores only small typed records &mdash; chiefly name-to-address
+        mappings. The website itself lives on web servers elsewhere. DNS is the
+        directory that tells your browser where to go; it never serves the page.</p>
+      </details>
+      <details class="net-myth">
+        <summary>Data always takes the shortest path.</summary>
+        <p>Routing follows routing tables, which follow business agreements between
+        networks as much as geography. Traffic between two buildings in the same
+        city can detour through another city entirely because that&rsquo;s where the
+        two ISPs exchange traffic. Congestion and failures reroute it further.</p>
+      </details>
+      <details class="net-myth">
+        <summary>HTTPS means a website is trustworthy.</summary>
+        <p>The padlock proves two things: you reached the domain shown, and nobody
+        between you can read or alter the traffic. A phishing site can have a
+        perfectly valid certificate &mdash; the connection to the scammer is
+        securely encrypted. HTTPS authenticates the <em>pipe</em>, not the
+        character of who&rsquo;s on the other end.</p>
+      </details>
+      <details class="net-myth">
+        <summary>Download speed is the only thing that matters.</summary>
+        <p>Bandwidth is how much data flows per second; latency is how long each
+        round trip takes. Loading a page requires several round trips before bulk
+        data even starts, and video calls live or die on latency. Past a comfortable
+        threshold, extra megabits change little &mdash; distance and round trips are
+        usually the real bottleneck.</p>
+      </details>
+      <details class="net-myth">
+        <summary>The cloud is separate from the Internet.</summary>
+        <p>&ldquo;The cloud&rdquo; is data centers reached over the ordinary
+        Internet, run by companies that rent out computing. Your cloud photos sit on
+        physical drives in a building; the same DNS, routing, and TLS from this page
+        carry every byte to and from them.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       15 — SIMULATOR
+  ================================================================ -->
+  <section class="net-section" id="simulator" aria-labelledby="simulator-h">
+    <div class="net-section-head">
+      <p class="net-kicker"><span class="net-kicker-num">15</span> The whole story at once</p>
+      <h2 id="simulator-h">The request simulator</h2>
+      <p class="net-lede">
+        Everything from the previous fourteen chapters in one instrument.
+        Configure the world &mdash; where you are, where the site is, what the
+        network is like &mdash; press <strong>Send request</strong>, and watch
+        the full lifecycle play out with a running log and a timing breakdown.
+      </p>
+    </div>
+
+    <div class="net-panel net-sim" data-net-reveal>
+      <div class="net-sim-config">
+        <div class="net-sim-field">
+          <label for="net-sim-user">You are in</label>
+          <select id="net-sim-user">
+            <option value="nyc">New York</option>
+            <option value="lon">London</option>
+            <option value="tok">Tokyo</option>
+            <option value="syd" selected>Sydney</option>
+            <option value="sao">S&atilde;o Paulo</option>
+            <option value="joh">Johannesburg</option>
+          </select>
+        </div>
+        <div class="net-sim-field">
+          <label for="net-sim-origin">Website hosted in</label>
+          <select id="net-sim-origin">
+            <option value="vir" selected>Virginia, USA</option>
+            <option value="ore">Oregon, USA</option>
+            <option value="fra">Frankfurt</option>
+            <option value="sin">Singapore</option>
+          </select>
+        </div>
+        <div class="net-sim-field">
+          <label for="net-sim-proto">Protocol</label>
+          <select id="net-sim-proto">
+            <option value="https" selected>HTTPS</option>
+            <option value="http">HTTP (unencrypted)</option>
+          </select>
+        </div>
+        <div class="net-sim-field">
+          <label class="net-check"><input type="checkbox" id="net-sim-cdn" checked> CDN enabled</label>
+          <label class="net-check"><input type="checkbox" id="net-sim-dnscache"> DNS already cached</label>
+        </div>
+        <div class="net-sim-field">
+          <label class="net-range-label" for="net-sim-loss">Packet loss: <span id="net-sim-lossval">1</span>%</label>
+          <input type="range" id="net-sim-loss" min="0" max="20" value="1">
+        </div>
+        <div class="net-sim-field">
+          <label class="net-range-label" for="net-sim-congestion">Congestion: <span id="net-sim-congestionval">20</span>%</label>
+          <input type="range" id="net-sim-congestion" min="0" max="100" value="20">
+        </div>
+        <div class="net-sim-field">
+          <label class="net-range-label" for="net-sim-bw">Bandwidth: <span id="net-sim-bwval">50</span> Mbps</label>
+          <input type="range" id="net-sim-bw" min="2" max="500" value="50">
+        </div>
+        <div class="net-sim-field">
+          <label class="net-range-label" for="net-sim-users">Other users on the site: <span id="net-sim-usersval">1,000</span></label>
+          <input type="range" id="net-sim-users" min="0" max="100000" step="1000" value="1000">
+        </div>
+        <button type="button" class="net-btn net-btn-primary" id="net-sim-send">Send request</button>
+      </div>
+      <div class="net-sim-stagewrap">
+        <canvas id="net-sim-canvas" class="net-canvas" role="img"
+          aria-label="Animated map of the configured request: DNS lookup, routing across the world to the CDN edge or origin, TLS handshake, server processing, content download, and browser rendering."></canvas>
+        <ol class="net-dns-log net-sim-log" id="net-sim-log" aria-live="polite"></ol>
+        <table class="net-table net-sim-metrics" id="net-sim-metrics" hidden>
+          <caption>Timing breakdown</caption>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <p class="net-caption">
+      The simulator favors conceptual honesty over protocol-level precision:
+      times come from speed-of-light distance, round-trip counts, and simple
+      queueing behavior, not from real measurements. It will still teach you
+      the right instincts &mdash; distance costs round trips, loss costs
+      retransmissions, and a busy site without enough servers costs waiting.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       KEEP EXPLORING
+  ================================================================ -->
+  <section class="net-section net-section-outro" id="next" aria-labelledby="next-h">
+    <div class="net-section-head">
+      <p class="net-kicker">Keep exploring</p>
+      <h2 id="next-h">One connected story</h2>
+      <p class="net-lede">
+        A web request touches nearly every layer of computing. Each one has
+        its own exhibit.
+      </p>
+    </div>
+    <div class="net-nextgrid" data-net-reveal>
+      <a class="net-next" href="/cpu/">
+        <span class="net-next-tag">Inside a Modern CPU</span>
+        <p>The processors that parse your HTML, run your JavaScript, and execute the networking stack on every server your request touched.</p>
+      </a>
+      <a class="net-next" href="/gpu/">
+        <span class="net-next-tag">Inside a Modern GPU</span>
+        <p>How browsers composite and rasterize modern pages on the GPU &mdash; the final stage of the journey you just followed.</p>
+      </a>
+      <a class="net-next" href="/memory/">
+        <span class="net-next-tag">Inside Computer Memory</span>
+        <p>Browser caches, RAM, and storage &mdash; the hierarchy that decides whether your next visit needs the network at all.</p>
+      </a>
+      <a class="net-next" href="/cryptography/">
+        <span class="net-next-tag">Understanding Cryptography</span>
+        <p>The mathematics behind the padlock: public keys, certificates, signatures, and the key exchange inside every TLS handshake.</p>
+      </a>
+      <a class="net-next" href="/cloud/">
+        <span class="net-next-tag">Understanding Cloud Computing</span>
+        <p>Regions, autoscaling, and managed infrastructure &mdash; how the servers at the far end of your request are actually run.</p>
+      </a>
+      <a class="net-next" href="/ai/">
+        <span class="net-next-tag">Understanding AI</span>
+        <p>The search ranking and recommendation systems that may run behind a website &mdash; what those workloads really are.</p>
+      </a>
+    </div>
+  </section>
+</div>

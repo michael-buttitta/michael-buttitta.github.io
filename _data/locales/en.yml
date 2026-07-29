@@ -32,6 +32,7 @@ tabs:
   cryptography: Understanding Cryptography
   cloud: Understanding the Cloud
   ai: Understanding AI
+  internet: How the Internet Works
 
 # the text displayed in the search bar & search results
 search:
