@@ -1,0 +1,1777 @@
+/* =============================================================================
+   Understanding Blockchain — page styles
+   Loaded only on /blockchain/ via `extra_css` front matter (see _includes/metadata-hook.html).
+
+   Scoping: every rule lives under #blockchain-experience (or targets .bc-*
+   classes) so nothing leaks into the Chirpy theme. Colors extend the site's
+   "modern fintech" skin: slate surfaces, teal accent (#2DD4BF / #14B8A6),
+   Inter type.
+
+   Data-series palette (same validated set as /gpu/, /cpu/ and /memory/):
+   teal #0D9488, amber #D97706, sky #0284C7, rose #E11D48, violet #8B5CF6,
+   lime #65A30D. Semantic assignments used consistently across all chapters:
+     valid block / agreement = teal · pending / mining = amber ·
+     broadcast / reads = sky · invalid / tampered / failure = rose ·
+     central authority = violet · alt-fork = lime · empty = slate
+   ========================================================================== */
+
+/* Smooth in-page scrolling, only on this page and only if motion is OK */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(#blockchain-experience) {
+    scroll-behavior: smooth;
+  }
+}
+
+#blockchain-experience {
+  /* surfaces & lines */
+  --bc-bg: #0f172a;
+  --bc-deep: #0b1120;
+  --bc-panel: rgba(30, 41, 59, 0.45);
+  --bc-panel-solid: #151f36;
+  --bc-line: #1e293b;
+  --bc-line-strong: #334155;
+
+  /* text */
+  --bc-text: #cbd5e1;
+  --bc-text-strong: #f1f5f9;
+  --bc-muted: #94a3b8;
+  --bc-faint: #64748b;
+
+  /* brand accents (UI only) */
+  --bc-teal: #2dd4bf;
+  --bc-teal-deep: #14b8a6;
+
+  /* data series (validated) */
+  --bc-c-teal: #0d9488;
+  --bc-c-amber: #d97706;
+  --bc-c-sky: #0284c7;
+  --bc-c-rose: #e11d48;
+  --bc-c-violet: #8b5cf6;
+  --bc-c-lime: #65a30d;
+  --bc-c-free: #273449;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--bc-text);
+  overflow-wrap: break-word;
+}
+
+/* ---------- primitives ------------------------------------------------- */
+
+#blockchain-experience :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--bc-teal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+#blockchain-experience canvas {
+  display: block;
+  width: 100%;
+}
+
+#blockchain-experience .bc-canvas {
+  height: 320px;
+  border: 1px solid var(--bc-line);
+  border-radius: 12px;
+  background: var(--bc-deep);
+}
+
+#blockchain-experience .bc-canvas-tall {
+  height: 400px;
+}
+
+#blockchain-experience .bc-noscript {
+  margin: 1rem 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--bc-line-strong);
+  border-left: 3px solid var(--bc-teal);
+  border-radius: 8px;
+  background: var(--bc-panel);
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+#blockchain-experience .bc-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-kicker-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+#blockchain-experience h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: var(--bc-text-strong);
+}
+
+#blockchain-experience h2 em {
+  font-style: italic;
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-lede {
+  max-width: 62ch;
+  margin: 0;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-lede :is(em, strong, code) {
+  color: var(--bc-text);
+}
+
+#blockchain-experience .bc-prose {
+  max-width: 68ch;
+  margin: 0 0 1rem;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-prose :is(em, strong) {
+  color: var(--bc-text);
+}
+
+#blockchain-experience .bc-caption {
+  max-width: 72ch;
+  margin: 1rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-caption :is(strong, em, code, a) {
+  color: var(--bc-muted);
+}
+
+#blockchain-experience :is(.bc-caption, .bc-prose, .bc-field, .bc-myth, .bc-era, .bc-adopt) a {
+  color: var(--bc-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+#blockchain-experience :is(.bc-caption, .bc-prose, .bc-field, .bc-myth, .bc-era, .bc-adopt) a:hover {
+  color: var(--bc-teal);
+}
+
+#blockchain-experience code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.92em;
+}
+
+#blockchain-experience .bc-section {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: clamp(4rem, 9vh, 6.5rem) 0;
+  border-top: 1px solid var(--bc-line);
+  scroll-margin-top: 4.5rem;
+}
+
+#blockchain-experience .bc-section-head {
+  margin-bottom: 2.25rem;
+}
+
+#blockchain-experience .bc-panel-head {
+  margin: 0 0 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-inlabel {
+  display: block;
+  margin: 0 0 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+/* buttons */
+#blockchain-experience .bc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.62rem 1.4rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#blockchain-experience .bc-btn-primary {
+  background-color: var(--bc-teal-deep);
+  color: #0f172a !important;
+}
+
+#blockchain-experience .bc-btn-primary:hover {
+  background-color: var(--bc-teal);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.3);
+}
+
+#blockchain-experience .bc-btn-ghost {
+  background-color: transparent;
+  border-color: var(--bc-line-strong);
+  color: var(--bc-text) !important;
+}
+
+#blockchain-experience .bc-btn-ghost:hover {
+  border-color: var(--bc-muted);
+  background-color: rgba(51, 65, 85, 0.35);
+}
+
+#blockchain-experience .bc-btn-ghost[aria-pressed='true'] {
+  border-color: var(--bc-teal-deep);
+  color: var(--bc-teal) !important;
+  background-color: rgba(20, 184, 166, 0.12);
+}
+
+#blockchain-experience .bc-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* segmented mode tabs */
+#blockchain-experience .bc-mode-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  padding: 3px;
+  border: 1px solid var(--bc-line-strong);
+  border-radius: 10px;
+  background: var(--bc-deep);
+}
+
+#blockchain-experience .bc-mode-tab {
+  padding: 0.45rem 1rem;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--bc-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+#blockchain-experience .bc-mode-tab:hover {
+  color: var(--bc-text);
+}
+
+#blockchain-experience .bc-mode-tab[aria-pressed='true'] {
+  background: rgba(20, 184, 166, 0.16);
+  color: var(--bc-teal);
+}
+
+/* slider rows */
+#blockchain-experience .bc-sliderrow {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, auto) 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  margin-bottom: 0.8rem;
+}
+
+#blockchain-experience .bc-slider-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bc-text);
+}
+
+#blockchain-experience .bc-slider-out {
+  min-width: 4.5rem;
+  text-align: right;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--bc-teal);
+  font-weight: 600;
+}
+
+#blockchain-experience input[type='range'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+#blockchain-experience input[type='range']::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--bc-line-strong);
+}
+
+#blockchain-experience input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5.5px;
+  border: 2px solid #0f172a;
+  border-radius: 50%;
+  background: var(--bc-teal);
+}
+
+#blockchain-experience input[type='range']::-moz-range-track {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--bc-line-strong);
+}
+
+#blockchain-experience input[type='range']::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: 2px solid #0f172a;
+  border-radius: 50%;
+  background: var(--bc-teal);
+}
+
+/* text inputs & selects */
+#blockchain-experience .bc-textarea,
+#blockchain-experience .bc-select,
+#blockchain-experience .bc-numinput {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--bc-line-strong);
+  border-radius: 8px;
+  background: var(--bc-deep);
+  color: var(--bc-text-strong);
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+#blockchain-experience .bc-textarea {
+  resize: vertical;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+#blockchain-experience :is(.bc-textarea, .bc-select, .bc-numinput):focus {
+  border-color: var(--bc-teal-deep);
+}
+
+/* stat rows */
+#blockchain-experience .bc-statrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+#blockchain-experience .bc-stat {
+  flex: 1 1 140px;
+  padding: 0.7rem 0.95rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 10px;
+  background: var(--bc-panel);
+}
+
+#blockchain-experience .bc-stat-label {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-stat-val {
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--bc-text-strong);
+}
+
+/* generic interactive panel */
+#blockchain-experience .bc-panel {
+  padding: 1.4rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 16px;
+  background: var(--bc-panel);
+  margin: 1.5rem 0;
+}
+
+#blockchain-experience .bc-panel-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+}
+
+#blockchain-experience .bc-panel-status {
+  min-height: 1.4em;
+  margin: 1rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--bc-muted);
+}
+
+/* comparison table */
+#blockchain-experience .bc-table-wrap {
+  margin-top: 2rem;
+  overflow-x: auto;
+}
+
+#blockchain-experience .bc-compare {
+  width: 100%;
+  min-width: 640px;
+  border: 1px solid var(--bc-line);
+  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  background: var(--bc-panel);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+#blockchain-experience .bc-compare :is(th, td) {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--bc-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+#blockchain-experience .bc-compare thead th {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bc-teal);
+  background: var(--bc-deep);
+}
+
+#blockchain-experience .bc-compare tbody th {
+  width: 10.5rem;
+  font-weight: 600;
+  color: var(--bc-text-strong);
+}
+
+#blockchain-experience .bc-compare td {
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-compare tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+#blockchain-experience .bc-compare tbody tr:nth-child(odd) :is(th, td) {
+  background: rgba(30, 41, 59, 0.3);
+}
+
+/* ---------- reveal-on-scroll (JS adds html.bc-js and .is-in) ----------- */
+
+html.bc-js #blockchain-experience [data-bc-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+html.bc-js #blockchain-experience [data-bc-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- chapter rail ------------------------------------------------ */
+
+#blockchain-experience .bc-rail {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  #blockchain-experience .bc-rail {
+    position: fixed;
+    top: 50%;
+    right: 14px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    transform: translateY(-50%);
+  }
+
+  #blockchain-experience .bc-rail-dot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+  }
+
+  #blockchain-experience .bc-rail-dot span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--bc-line-strong);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  #blockchain-experience .bc-rail-dot:hover span,
+  #blockchain-experience .bc-rail-dot:focus-visible span {
+    background: var(--bc-muted);
+    transform: scale(1.3);
+  }
+
+  #blockchain-experience .bc-rail-dot.is-active span {
+    background: var(--bc-teal);
+    transform: scale(1.45);
+  }
+
+  #blockchain-experience .bc-rail-dot::after {
+    content: attr(data-label);
+    position: absolute;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--bc-line-strong);
+    border-radius: 6px;
+    background: var(--bc-deep);
+    color: var(--bc-text);
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  #blockchain-experience .bc-rail-dot:hover::after,
+  #blockchain-experience .bc-rail-dot:focus-visible::after {
+    opacity: 1;
+  }
+}
+
+/* ---------- hero -------------------------------------------------------- */
+
+#blockchain-experience .bc-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: min(86vh, 780px);
+  margin-top: 0.75rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(1100px 500px at 50% 115%, rgba(20, 184, 166, 0.16), transparent 60%),
+    radial-gradient(700px 380px at 15% -10%, rgba(139, 92, 246, 0.07), transparent 60%),
+    var(--bc-deep);
+}
+
+#blockchain-experience #bc-hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#blockchain-experience .bc-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  padding: 4rem 1.5rem;
+  text-align: center;
+}
+
+#blockchain-experience .bc-hero-inner .bc-kicker {
+  justify-content: center;
+}
+
+#blockchain-experience .bc-hero-title {
+  margin: 0 0 1.1rem;
+  font-size: clamp(2.5rem, 7vw, 4.4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: var(--bc-text-strong);
+  text-wrap: balance;
+}
+
+#blockchain-experience .bc-hero-sub {
+  max-width: 58ch;
+  margin: 0 auto;
+  font-size: clamp(1rem, 1.6vw, 1.18rem);
+  line-height: 1.7;
+  color: var(--bc-muted);
+  text-wrap: pretty;
+}
+
+#blockchain-experience .bc-hero-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 2.25rem;
+}
+
+#blockchain-experience .bc-hero-cta .bc-btn {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+}
+
+#blockchain-experience .bc-hero-hint {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-hero-scrollhint {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 34px;
+  border: 1.5px solid var(--bc-line-strong);
+  border-radius: 11px;
+}
+
+#blockchain-experience .bc-hero-scrollhint span {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 3px;
+  height: 7px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: var(--bc-teal);
+  animation: bc-scrollhint 1.8s ease-in-out infinite;
+}
+
+@keyframes bc-scrollhint {
+  0%   { transform: translateY(0); opacity: 1; }
+  70%  { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* ---------- two-column cards (02, 08, 11) ------------------------------- */
+
+#blockchain-experience .bc-twocol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+  margin: 1.5rem 0;
+  align-items: start;
+}
+
+#blockchain-experience .bc-card {
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 16px;
+  background: var(--bc-panel);
+}
+
+#blockchain-experience .bc-card-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-card-sub {
+  margin: 0 0 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--bc-text);
+}
+
+#blockchain-experience .bc-card-eg {
+  margin: 0.9rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-card-eg strong {
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-card-h4 {
+  margin: 1.1rem 0 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+#blockchain-experience .bc-list li {
+  position: relative;
+  padding-left: 1.35rem;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-list li::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+}
+
+#blockchain-experience .bc-list-pro li::before {
+  content: '+';
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-list-con li::before {
+  content: '\2212';
+  color: var(--bc-c-rose);
+}
+
+#blockchain-experience .bc-list-dot li::before {
+  content: '\2022';
+  color: var(--bc-teal);
+}
+
+@media (max-width: 860px) {
+  #blockchain-experience .bc-twocol {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- blocks & chains (03, 05, playground) ------------------------ */
+
+#blockchain-experience .bc-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#blockchain-experience .bc-block {
+  position: relative;
+  flex: 1 1 150px;
+  min-width: 150px;
+  max-width: 240px;
+}
+
+/* link connector between blocks */
+#blockchain-experience .bc-block:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -1.7rem;
+  width: 1.4rem;
+  height: 2px;
+  background: var(--bc-teal-deep);
+  transition: background-color 0.3s ease;
+}
+
+#blockchain-experience .bc-block.is-linkbroken:not(:last-child)::after {
+  background: var(--bc-c-rose);
+}
+
+#blockchain-experience .bc-block-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--bc-line-strong);
+  border-radius: 12px;
+  background: var(--bc-deep);
+  color: var(--bc-text);
+  text-align: left;
+  font: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+#blockchain-experience button.bc-block-inner {
+  cursor: pointer;
+}
+
+#blockchain-experience button.bc-block-inner:hover {
+  border-color: var(--bc-muted);
+  transform: translateY(-2px);
+}
+
+#blockchain-experience .bc-block.is-valid .bc-block-inner {
+  border-color: rgba(13, 148, 136, 0.55);
+}
+
+#blockchain-experience .bc-block.is-broken .bc-block-inner {
+  border-color: var(--bc-c-rose);
+  box-shadow: 0 0 0 1px rgba(225, 29, 72, 0.35), 0 0 18px rgba(225, 29, 72, 0.12);
+}
+
+#blockchain-experience .bc-block.is-selected .bc-block-inner {
+  border-color: var(--bc-teal);
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.4), 0 0 22px rgba(20, 184, 166, 0.14);
+  transform: translateY(-2px);
+}
+
+#blockchain-experience .bc-block.is-mining .bc-block-inner {
+  border-color: var(--bc-c-amber);
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.35);
+}
+
+#blockchain-experience .bc-block-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--bc-text-strong);
+}
+
+#blockchain-experience .bc-block.is-broken .bc-block-head {
+  color: var(--bc-c-rose);
+}
+
+#blockchain-experience .bc-block-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-block.is-valid .bc-block-badge {
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-block.is-broken .bc-block-badge {
+  color: var(--bc-c-rose);
+}
+
+#blockchain-experience .bc-block-sub {
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-block-hashrow {
+  display: flex;
+  gap: 0.45rem;
+  align-items: baseline;
+  font-size: 0.68rem;
+}
+
+#blockchain-experience .bc-block-hlabel {
+  flex: 0 0 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-block-hashrow code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--bc-c-sky);
+}
+
+#blockchain-experience .bc-block-hashrow.is-hash code {
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-block.is-broken .bc-block-hashrow code {
+  color: var(--bc-c-rose);
+}
+
+/* block inspector (03) */
+#blockchain-experience .bc-block-detail {
+  margin-top: 1.4rem;
+  padding: 1.2rem 1.3rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 14px;
+  background: var(--bc-deep);
+  min-height: 5rem;
+}
+
+#blockchain-experience .bc-block-detail-empty {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-bd-title {
+  margin: 0 0 0.9rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-bd {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+#blockchain-experience .bc-bd > div {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  gap: 0.7rem;
+}
+
+#blockchain-experience .bc-bd dt {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+  padding-top: 0.15rem;
+}
+
+#blockchain-experience .bc-bd dd {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--bc-text);
+  min-width: 0;
+}
+
+#blockchain-experience .bc-bd dd code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 0.78rem;
+  color: var(--bc-c-sky);
+}
+
+#blockchain-experience .bc-bd dd code.bc-bd-hash {
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-bd-txs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+#blockchain-experience .bc-bd-txs li {
+  font-size: 0.84rem;
+  color: var(--bc-muted);
+}
+
+@media (max-width: 640px) {
+  #blockchain-experience .bc-bd > div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}
+
+/* ---------- 04 · hashing ------------------------------------------------ */
+
+#blockchain-experience .bc-hash-out {
+  margin-top: 1.1rem;
+}
+
+#blockchain-experience .bc-hash-hex {
+  display: block;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--bc-line-strong);
+  border-radius: 10px;
+  background: var(--bc-deep);
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--bc-teal);
+  overflow-wrap: anywhere;
+  transition: color 0.2s ease;
+}
+
+#blockchain-experience .bc-hash-hex.is-flash {
+  color: var(--bc-c-amber);
+}
+
+/* field grids (03, 04, 06) */
+#blockchain-experience .bc-fieldgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0 0;
+}
+
+#blockchain-experience .bc-field {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 14px;
+  background: var(--bc-panel);
+}
+
+#blockchain-experience .bc-field h4 {
+  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--bc-text-strong);
+}
+
+#blockchain-experience .bc-field p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-field p em {
+  color: var(--bc-text);
+}
+
+/* ---------- 07 · consensus mechanisms ----------------------------------- */
+
+#blockchain-experience .bc-mech-tabs {
+  margin-bottom: 1.3rem;
+}
+
+#blockchain-experience .bc-mech-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+#blockchain-experience .bc-mech-name {
+  margin: 0 0 0.6rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-mech-desc {
+  margin: 0 0 0.7rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-mech-used {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-mech-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 14px;
+  background: var(--bc-deep);
+}
+
+#blockchain-experience .bc-mech-row {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+#blockchain-experience .bc-mech-metric {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-mech-bar {
+  display: block;
+  height: 10px;
+  border-radius: 4px;
+  background: var(--bc-c-free);
+  overflow: hidden;
+}
+
+#blockchain-experience .bc-mech-bar i {
+  display: block;
+  width: calc(var(--w, 0) * 1%);
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--bc-teal-deep), var(--bc-teal));
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (max-width: 860px) {
+  #blockchain-experience .bc-mech-body {
+    grid-template-columns: 1fr;
+  }
+
+  #blockchain-experience .bc-mech-row {
+    grid-template-columns: 8.5rem 1fr;
+  }
+}
+
+/* ---------- 09 · smart contracts ---------------------------------------- */
+
+#blockchain-experience .bc-flow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  margin: 0 0 1.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+#blockchain-experience .bc-flow-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.85rem 0.7rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 12px;
+  background: var(--bc-deep);
+  text-align: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+#blockchain-experience .bc-flow-node:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -0.55rem;
+  width: 0.6rem;
+  height: 2px;
+  background: var(--bc-line-strong);
+}
+
+#blockchain-experience .bc-flow-node.is-live {
+  border-color: rgba(45, 212, 191, 0.6);
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.3), 0 0 22px rgba(20, 184, 166, 0.14);
+  transform: translateY(-2px);
+}
+
+#blockchain-experience .bc-flow-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--bc-text-strong);
+}
+
+#blockchain-experience .bc-flow-node.is-live .bc-flow-name {
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-flow-desc {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--bc-faint);
+}
+
+@media (max-width: 720px) {
+  #blockchain-experience .bc-flow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #blockchain-experience .bc-flow-node:not(:last-child)::after {
+    display: none;
+  }
+}
+
+#blockchain-experience .bc-contract-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 1.4rem;
+  align-items: start;
+}
+
+#blockchain-experience .bc-code {
+  margin: 0 0 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--bc-line-strong);
+  border-radius: 10px;
+  background: var(--bc-deep);
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--bc-text);
+  overflow-x: auto;
+}
+
+#blockchain-experience .bc-contract-nodes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+#blockchain-experience .bc-scnode {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--bc-line-strong);
+  border-radius: 12px;
+  background: var(--bc-deep);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#blockchain-experience .bc-scnode.is-run {
+  border-color: var(--bc-c-amber);
+}
+
+#blockchain-experience .bc-scnode.is-agree {
+  border-color: rgba(13, 148, 136, 0.6);
+  box-shadow: 0 0 14px rgba(20, 184, 166, 0.1);
+}
+
+#blockchain-experience .bc-scnode-name {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-scnode.is-agree .bc-scnode-name {
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-scnode-out {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--bc-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 860px) {
+  #blockchain-experience .bc-contract-demo {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- 10 · adoption cards ----------------------------------------- */
+
+#blockchain-experience .bc-adopt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.1rem;
+}
+
+#blockchain-experience .bc-adopt {
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 16px;
+  background: var(--bc-panel);
+}
+
+#blockchain-experience .bc-adopt h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--bc-text-strong);
+}
+
+#blockchain-experience .bc-adopt-what {
+  margin: 0 0 0.9rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-adopt-dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+#blockchain-experience .bc-adopt-dl dt {
+  margin-bottom: 0.15rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-adopt-dl dd {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--bc-muted);
+}
+
+/* ---------- 11 · triage quiz -------------------------------------------- */
+
+#blockchain-experience .bc-quiz {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#blockchain-experience .bc-quiz-q {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+#blockchain-experience .bc-quiz-label {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--bc-text);
+}
+
+#blockchain-experience .bc-quiz-verdict {
+  margin: 1.4rem 0 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--bc-line-strong);
+  border-left: 3px solid var(--bc-teal);
+  border-radius: 8px;
+  background: var(--bc-deep);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--bc-text);
+}
+
+@media (max-width: 640px) {
+  #blockchain-experience .bc-quiz-q {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- 12 · misconceptions ----------------------------------------- */
+
+#blockchain-experience .bc-myths {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+#blockchain-experience .bc-myth {
+  border: 1px solid var(--bc-line);
+  border-radius: 12px;
+  background: var(--bc-panel);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+#blockchain-experience .bc-myth[open] {
+  border-color: rgba(45, 212, 191, 0.4);
+}
+
+#blockchain-experience .bc-myth summary {
+  padding: 0.95rem 1.15rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--bc-text-strong);
+  cursor: pointer;
+  list-style: none;
+  position: relative;
+  padding-right: 2.6rem;
+}
+
+#blockchain-experience .bc-myth summary::-webkit-details-marker {
+  display: none;
+}
+
+#blockchain-experience .bc-myth summary::after {
+  content: '+';
+  position: absolute;
+  right: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--bc-teal);
+  transition: transform 0.2s ease;
+}
+
+#blockchain-experience .bc-myth[open] summary::after {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+#blockchain-experience .bc-myth summary:hover {
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-myth p {
+  margin: 0;
+  padding: 0 1.15rem 1.05rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--bc-muted);
+}
+
+/* ---------- 13 · timeline ----------------------------------------------- */
+
+#blockchain-experience .bc-timeline-wrap {
+  position: relative;
+}
+
+#blockchain-experience .bc-timeline {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0.25rem 0.25rem 1.1rem;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bc-line-strong) transparent;
+}
+
+#blockchain-experience .bc-era {
+  position: relative;
+  flex: 0 0 min(290px, 78vw);
+  padding: 1.2rem 1.3rem 1.1rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 14px;
+  background: var(--bc-panel);
+  scroll-snap-align: start;
+}
+
+html.bc-js #blockchain-experience .bc-era {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+html.bc-js #blockchain-experience .bc-era.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+#blockchain-experience .bc-era-year {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-era h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--bc-text-strong);
+}
+
+#blockchain-experience .bc-era p {
+  margin: 0 0 0.8rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-era p em {
+  color: var(--bc-text);
+}
+
+#blockchain-experience .bc-era-stat {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+/* ---------- playground -------------------------------------------------- */
+
+#blockchain-experience .bc-playground .bc-lede {
+  max-width: 68ch;
+}
+
+#blockchain-experience .bc-pg {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) minmax(0, 1.8fr);
+  gap: 1.4rem;
+  align-items: start;
+}
+
+#blockchain-experience .bc-pg-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#blockchain-experience .bc-pg-group {
+  margin: 0;
+  padding: 1.1rem 1.2rem 1.2rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 14px;
+  background: var(--bc-panel);
+}
+
+#blockchain-experience .bc-pg-group legend {
+  float: left;
+  width: 100%;
+  margin: 0 0 0.8rem;
+  padding: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-pg-group > * {
+  clear: both;
+}
+
+#blockchain-experience .bc-pg-txrow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.9rem;
+}
+
+#blockchain-experience .bc-pg-txrow .bc-select {
+  flex: 1 1 5.5rem;
+  min-width: 0;
+}
+
+#blockchain-experience .bc-pg-txrow .bc-numinput {
+  flex: 0 0 4.6rem;
+}
+
+#blockchain-experience .bc-pg-txrow .bc-btn {
+  flex: 0 0 auto;
+  padding-inline: 0.9rem;
+}
+
+#blockchain-experience .bc-pg-arrow {
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-mempool {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 2.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#blockchain-experience .bc-mempool li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.42rem 0.7rem;
+  border: 1px dashed var(--bc-line-strong);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--bc-text);
+  background: var(--bc-deep);
+}
+
+#blockchain-experience .bc-mempool li .bc-mem-amt {
+  color: var(--bc-c-amber);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#blockchain-experience .bc-mempool .bc-mempool-empty {
+  border-style: solid;
+  border-color: var(--bc-line);
+  color: var(--bc-faint);
+  justify-content: flex-start;
+}
+
+#blockchain-experience .bc-pg-minestat {
+  min-height: 1.3em;
+  margin: 0.7rem 0 0;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-pg-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.3rem 1.4rem;
+  border: 1px solid var(--bc-line);
+  border-radius: 16px;
+  background: var(--bc-panel);
+}
+
+#blockchain-experience .bc-chain-pg {
+  gap: 1.1rem 1.6rem;
+}
+
+#blockchain-experience .bc-chain-pg .bc-block {
+  flex: 0 1 170px;
+  min-width: 145px;
+}
+
+#blockchain-experience .bc-chain-pg .bc-block:not(:last-child)::after {
+  right: -1.35rem;
+  width: 1.05rem;
+}
+
+#blockchain-experience .bc-pg-nodegrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.6rem;
+}
+
+#blockchain-experience .bc-pgnode {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--bc-line-strong);
+  border-radius: 10px;
+  background: var(--bc-deep);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#blockchain-experience .bc-pgnode-name {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-pgnode-state {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--bc-muted);
+}
+
+#blockchain-experience .bc-pgnode.is-ok {
+  border-color: rgba(13, 148, 136, 0.55);
+}
+
+#blockchain-experience .bc-pgnode.is-ok .bc-pgnode-state {
+  color: var(--bc-teal);
+}
+
+#blockchain-experience .bc-pgnode.is-bad {
+  border-color: var(--bc-c-rose);
+  box-shadow: 0 0 12px rgba(225, 29, 72, 0.12);
+}
+
+#blockchain-experience .bc-pgnode.is-bad .bc-pgnode-state {
+  color: var(--bc-c-rose);
+}
+
+#blockchain-experience .bc-pgnode.is-central {
+  border-color: rgba(139, 92, 246, 0.55);
+}
+
+#blockchain-experience .bc-pgnode.is-central .bc-pgnode-name {
+  color: var(--bc-c-violet);
+}
+
+#blockchain-experience .bc-pg-log {
+  min-height: 2.6em;
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--bc-muted);
+}
+
+@media (max-width: 980px) {
+  #blockchain-experience .bc-pg {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- footer ------------------------------------------------------ */
+
+#blockchain-experience .bc-foot {
+  padding: 2.5rem 0 1rem;
+  border-top: 1px solid var(--bc-line);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--bc-faint);
+}
+
+#blockchain-experience .bc-foot a {
+  color: var(--bc-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+#blockchain-experience .bc-foot a:hover {
+  color: var(--bc-teal);
+}
+
+/* ---------- reduced motion --------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html.bc-js #blockchain-experience [data-bc-reveal],
+  html.bc-js #blockchain-experience .bc-era {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  #blockchain-experience .bc-hero-scrollhint span {
+    animation: none;
+  }
+
+  #blockchain-experience * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

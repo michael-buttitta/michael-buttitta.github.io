@@ -28,6 +28,7 @@ tabs:
   bitcoin: Understanding Bitcoin
   cpu: Inside a CPU
   memory: Inside Memory
+  blockchain: Understanding Blockchain
 
 # the text displayed in the search bar & search results
 search:

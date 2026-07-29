@@ -1,0 +1,1091 @@
+---
+layout: gpu
+title: Blockchain
+icon: fas fa-cubes
+order: 7
+description: >-
+  An interactive visual guide to how blockchains work — the trust problem,
+  centralized vs decentralized systems, hashing, tamper-evident chains,
+  distributed consensus, smart contracts, where blockchain helps and where a
+  plain database is the better tool, explained with live simulations.
+extra_css:
+  - /assets/css/blockchain.css
+extra_js:
+  - /assets/js/blockchain.js
+---
+
+<div id="blockchain-experience">
+  <noscript>
+    <p class="bc-noscript">
+      The live demos on this page — real SHA-256 hashing, a tamper-evident
+      chain you can break, and a consensus simulator — need JavaScript. All of
+      the explanations below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="bc-rail" aria-label="Chapters">
+    <a class="bc-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="bc-rail-dot" href="#trust" data-label="The trust problem"><span></span></a>
+    <a class="bc-rail-dot" href="#systems" data-label="Centralized vs decentralized"><span></span></a>
+    <a class="bc-rail-dot" href="#anatomy" data-label="What is a blockchain?"><span></span></a>
+    <a class="bc-rail-dot" href="#hashing" data-label="Hashing"><span></span></a>
+    <a class="bc-rail-dot" href="#tamper" data-label="Why blocks are secure"><span></span></a>
+    <a class="bc-rail-dot" href="#consensus" data-label="Distributed consensus"><span></span></a>
+    <a class="bc-rail-dot" href="#mechanisms" data-label="Consensus mechanisms"><span></span></a>
+    <a class="bc-rail-dot" href="#pubpriv" data-label="Public vs private"><span></span></a>
+    <a class="bc-rail-dot" href="#contracts" data-label="Smart contracts"><span></span></a>
+    <a class="bc-rail-dot" href="#adoption" data-label="Real-world adoption"><span></span></a>
+    <a class="bc-rail-dot" href="#whennot" data-label="When NOT to use it"><span></span></a>
+    <a class="bc-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
+    <a class="bc-rail-dot" href="#history" data-label="Timeline"><span></span></a>
+    <a class="bc-rail-dot" href="#playground" data-label="Blockchain builder"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="bc-hero" id="top">
+    <canvas id="bc-hero-canvas" aria-hidden="true"></canvas>
+    <div class="bc-hero-inner">
+      <p class="bc-kicker">An interactive exhibit</p>
+      <h1 class="bc-hero-title">Understanding Blockchain</h1>
+      <p class="bc-hero-sub">
+        Discover how distributed consensus, cryptography, and shared ledgers
+        allow strangers around the world to agree on the same data &mdash;
+        without relying on a single central authority.
+      </p>
+      <div class="bc-hero-cta">
+        <a class="bc-btn bc-btn-primary" id="bc-hero-cta" href="#trust">Begin exploring</a>
+        <span class="bc-hero-hint">13 chapters &middot; live cryptography &middot; no installs</span>
+      </div>
+    </div>
+    <div class="bc-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       01 - THE TRUST PROBLEM
+  ================================================================ -->
+  <section class="bc-section" id="trust" aria-labelledby="trust-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">01</span> The problem</p>
+      <h2 id="trust-h">The trust problem</h2>
+      <p class="bc-lede">
+        Imagine ten companies that trade with each other all day and need one
+        shared record of who owes what. Who owns that record? Who is allowed
+        to update it? And when two copies disagree &mdash; whose version is
+        the truth? Every multi-party system ever built has had to answer
+        these questions somehow.
+      </p>
+    </div>
+
+    <p class="bc-prose">
+      Run a trading day below. When every company keeps its own books, small
+      differences creep in &mdash; a missed entry here, a typo there &mdash;
+      and reconciling them costs real time and money. The classic fix is to
+      appoint one trusted bookkeeper. That works, and it is how most of the
+      world runs today. But now everyone depends on one organization&rsquo;s
+      honesty, competence, and uptime.
+    </p>
+
+    <div class="bc-panel" data-bc-reveal>
+      <div class="bc-panel-controls" role="group" aria-label="Ledger keeping demos">
+        <button type="button" id="bc-trust-own" class="bc-btn bc-btn-ghost" aria-pressed="false">Everyone keeps their own books</button>
+        <button type="button" id="bc-trust-central" class="bc-btn bc-btn-ghost" aria-pressed="false">One company keeps the books</button>
+      </div>
+      <canvas id="bc-trust-canvas" class="bc-canvas"
+              aria-label="Animated demo: ten companies exchange trades. In self-kept mode their ledgers drift apart and disagreements accumulate; in central mode all trades route through one bookkeeper who becomes a single point of trust."></canvas>
+      <div class="bc-statrow">
+        <div class="bc-stat"><span class="bc-stat-label">Trades recorded</span><span class="bc-stat-val" id="bc-trust-trades">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Ledger disagreements</span><span class="bc-stat-val" id="bc-trust-disputes">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Who settles disputes?</span><span class="bc-stat-val" id="bc-trust-referee">&ndash;</span></div>
+      </div>
+      <p class="bc-panel-status" id="bc-trust-status" aria-live="polite"></p>
+    </div>
+
+    <p class="bc-prose">
+      Blockchain was invented to explore a third answer:
+      <em>can many independent computers maintain one shared source of truth,
+      with no single keeper?</em> The rest of this page unpacks how that
+      works &mdash; and, just as important, what it costs. Neither model is
+      simply &ldquo;better.&rdquo; They are different trade-offs, and by the
+      end you should be able to tell which one a given problem deserves.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       02 - CENTRALIZED VS DECENTRALIZED
+  ================================================================ -->
+  <section class="bc-section" id="systems" aria-labelledby="systems-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">02</span> Two architectures</p>
+      <h2 id="systems-h">Centralized vs decentralized systems</h2>
+      <p class="bc-lede">
+        A centralized system has one database, one owner, one administrator
+        &mdash; a single point of control. A decentralized system has many
+        nodes, a shared ledger, and a consensus rule instead of a boss.
+        Toggle between them below, then try knocking a machine offline in
+        each world.
+      </p>
+    </div>
+
+    <div class="bc-panel" data-bc-reveal>
+      <div class="bc-panel-controls">
+        <div class="bc-mode-tabs" role="group" aria-label="Architecture selector">
+          <button type="button" class="bc-mode-tab" id="bc-sys-central" aria-pressed="true">Centralized</button>
+          <button type="button" class="bc-mode-tab" id="bc-sys-decentral" aria-pressed="false">Decentralized</button>
+        </div>
+        <button type="button" id="bc-sys-fail" class="bc-btn bc-btn-ghost">Knock a machine offline</button>
+        <button type="button" id="bc-sys-heal" class="bc-btn bc-btn-ghost">Restore</button>
+      </div>
+      <canvas id="bc-sys-canvas" class="bc-canvas"
+              aria-label="Animated topology: centralized mode shows clients connected to one server; decentralized mode shows a mesh of peers. Failing the central server halts all requests, while failing one peer barely affects the mesh."></canvas>
+      <div class="bc-statrow">
+        <div class="bc-stat"><span class="bc-stat-label">Requests served</span><span class="bc-stat-val" id="bc-sys-served">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Requests failed</span><span class="bc-stat-val" id="bc-sys-failed">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">System status</span><span class="bc-stat-val" id="bc-sys-status">&ndash;</span></div>
+      </div>
+    </div>
+
+    <div class="bc-twocol" data-bc-reveal>
+      <div class="bc-card">
+        <h3 class="bc-card-title">Centralized</h3>
+        <p class="bc-card-sub">One database &rarr; one owner &rarr; one administrator &rarr; single point of control.</p>
+        <p class="bc-card-eg"><strong>Examples:</strong> a bank&rsquo;s core ledger, a company ERP, Google&nbsp;Docs, Amazon&rsquo;s inventory database.</p>
+        <h4 class="bc-card-h4">Strengths</h4>
+        <ul class="bc-list bc-list-pro">
+          <li>Fast &mdash; one machine (or cluster) decides, no waiting for votes</li>
+          <li>Cheap &mdash; data is stored once, not replicated to strangers</li>
+          <li>Simple &mdash; decades of mature tooling and expertise</li>
+          <li>Easy governance &mdash; one owner can fix mistakes and upgrade schemas</li>
+          <li>High throughput &mdash; tens of thousands of writes per second is routine</li>
+        </ul>
+        <h4 class="bc-card-h4">Weaknesses</h4>
+        <ul class="bc-list bc-list-con">
+          <li>Single point of failure &mdash; if it goes down, everything stops</li>
+          <li>Requires trust in the operator&rsquo;s honesty and competence</li>
+          <li>The owner can censor, block, or reverse transactions</li>
+          <li>Insiders can quietly alter records</li>
+          <li>An outage or breach affects every user at once</li>
+        </ul>
+      </div>
+      <div class="bc-card">
+        <h3 class="bc-card-title">Decentralized</h3>
+        <p class="bc-card-sub">Many nodes &rarr; shared ledger &rarr; consensus &rarr; replication.</p>
+        <p class="bc-card-eg"><strong>Examples:</strong> Bitcoin, Ethereum, Hyperledger Fabric, and (conceptually) content-addressed systems like IPFS.</p>
+        <h4 class="bc-card-h4">Strengths</h4>
+        <ul class="bc-list bc-list-pro">
+          <li>Fault tolerant &mdash; losing nodes barely dents the network</li>
+          <li>Transparent &mdash; every participant can verify the full history</li>
+          <li>Tamper resistant &mdash; rewriting history requires beating the whole network</li>
+          <li>No single owner &mdash; no one party can unilaterally change the rules</li>
+        </ul>
+        <h4 class="bc-card-h4">Trade-offs</h4>
+        <ul class="bc-list bc-list-con">
+          <li>Slower &mdash; every write waits for network-wide agreement</li>
+          <li>More expensive &mdash; every node stores and verifies everything</li>
+          <li>Harder governance &mdash; upgrades need broad coordination</li>
+          <li>Replication overhead grows with every participant</li>
+          <li>Consensus is eventual &mdash; brief disagreement windows are normal</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="bc-caption">
+      Keep this pairing in mind for the whole page: decentralization buys
+      resilience and neutrality <em>by spending</em> speed, cost, and
+      simplicity. Good engineering is choosing which side of that trade a
+      problem actually needs.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       03 - WHAT IS A BLOCKCHAIN?
+  ================================================================ -->
+  <section class="bc-section" id="anatomy" aria-labelledby="anatomy-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">03</span> The data structure</p>
+      <h2 id="anatomy-h">What is a blockchain?</h2>
+      <p class="bc-lede">
+        Strip away the hype and a blockchain is a surprisingly simple data
+        structure: a list of <em>blocks</em>, where each block bundles some
+        transactions and carries the cryptographic fingerprint of the block
+        before it. That one design choice &mdash; every block pointing at its
+        parent&rsquo;s fingerprint &mdash; is where all the interesting
+        properties come from.
+      </p>
+    </div>
+
+    <p class="bc-prose">
+      Click any block to inspect what is inside. Every hash you see is a real
+      SHA-256 digest computed in your browser, and each block&rsquo;s
+      &ldquo;previous hash&rdquo; field really is the hash of the block to
+      its left &mdash; that is the link in the chain.
+    </p>
+
+    <div class="bc-panel" data-bc-reveal>
+      <ol class="bc-chain" id="bc-anatomy-chain" aria-label="A four-block chain. Select a block to inspect its contents."></ol>
+      <div class="bc-block-detail" id="bc-anatomy-detail" aria-live="polite">
+        <p class="bc-block-detail-empty">Select a block above to inspect its contents.</p>
+      </div>
+    </div>
+
+    <div class="bc-fieldgrid" data-bc-reveal>
+      <div class="bc-field">
+        <h4>Transactions</h4>
+        <p>The payload: transfers, records, or events. Real systems bundle
+        hundreds or thousands per block and summarize them with a
+        <em>Merkle tree</em> &mdash; a hash of hashes that lets anyone prove a
+        single transaction is included without downloading the whole block.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Timestamp</h4>
+        <p>When the block was produced. Nodes tolerate small clock drift, so
+        blockchain time is approximate &mdash; good enough for ordering
+        blocks, not for stopwatches.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Previous hash</h4>
+        <p>The fingerprint of the parent block. This is the
+        &ldquo;chain&rdquo;: change any historical block and every descendant&rsquo;s
+        link breaks, as you will see two chapters from now.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Nonce</h4>
+        <p>A number the block producer is free to vary. In proof-of-work
+        systems, miners grind through nonces until the block&rsquo;s hash
+        satisfies a difficulty target. In other systems it plays a smaller
+        role &mdash; here, think of it as the adjustable dial.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Current hash</h4>
+        <p>The SHA-256 fingerprint of everything above. It is not stored
+        <em>in</em> the block so much as derived <em>from</em> it &mdash;
+        recompute it any time to check that nothing changed.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Where does it live?</h4>
+        <p>On every node&rsquo;s disk, in full. A ledger replicated to
+        thousands of machines is the opposite of a normal database&rsquo;s
+        &ldquo;store it once&rdquo; economics &mdash; the
+        <a href="/memory/">memory &amp; storage exhibit</a> shows what those
+        reads and writes actually cost.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       04 - HASHING
+  ================================================================ -->
+  <section class="bc-section" id="hashing" aria-labelledby="hashing-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">04</span> The fingerprint machine</p>
+      <h2 id="hashing-h">Hashing: fingerprints for data</h2>
+      <p class="bc-lede">
+        A cryptographic hash function takes any input &mdash; a word, a
+        contract, a terabyte &mdash; and produces a short, fixed-size
+        fingerprint. Same input, same fingerprint, every time. Change one
+        letter and the fingerprint changes beyond recognition. Blockchains
+        are built out of this one primitive.
+      </p>
+    </div>
+
+    <p class="bc-prose">
+      Type below. Your browser computes a real SHA-256 hash on every
+      keystroke &mdash; the same algorithm Bitcoin uses. Watch the
+      <em>avalanche effect</em>: edit a single character and see how many of
+      the 256 output bits flip.
+    </p>
+
+    <div class="bc-panel" data-bc-reveal>
+      <label class="bc-inlabel" for="bc-hash-input">Your input</label>
+      <textarea id="bc-hash-input" class="bc-textarea" rows="2"
+                spellcheck="false" autocomplete="off">Pay Ben 20 coins</textarea>
+      <div class="bc-hash-out">
+        <span class="bc-inlabel">SHA-256 fingerprint</span>
+        <output class="bc-hash-hex" id="bc-hash-hex" for="bc-hash-input"></output>
+      </div>
+      <div class="bc-statrow">
+        <div class="bc-stat"><span class="bc-stat-label">Input length</span><span class="bc-stat-val" id="bc-hash-len">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Output length</span><span class="bc-stat-val">256 bits, always</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Bits changed vs. previous input</span><span class="bc-stat-val" id="bc-hash-flips">&ndash;</span></div>
+      </div>
+      <p class="bc-panel-status" id="bc-hash-note" aria-live="polite"></p>
+    </div>
+
+    <div class="bc-fieldgrid" data-bc-reveal>
+      <div class="bc-field">
+        <h4>Deterministic</h4>
+        <p>The same input always produces the same hash, on any machine, in
+        any decade. That is what lets thousands of independent nodes check
+        each other&rsquo;s work.</p>
+      </div>
+      <div class="bc-field">
+        <h4>One-way</h4>
+        <p>Going from input to hash is fast; going from hash back to input is
+        computationally infeasible. The only known way is guessing inputs
+        until one matches.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Avalanche effect</h4>
+        <p>A one-bit change to the input flips, on average, half of the
+        output bits. Similar inputs give wildly different hashes, so you
+        cannot &ldquo;sneak up&rdquo; on a target hash by tweaking.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Integrity checking</h4>
+        <p>Publish a file&rsquo;s hash and anyone can later verify the file
+        was not altered &mdash; recompute and compare. A blockchain applies
+        this idea to an entire ledger, block by block.</p>
+      </div>
+    </div>
+
+    <p class="bc-caption">
+      Hashing is pure arithmetic &mdash; bit shifts, additions, and XORs
+      executed billions of times per second. If you want to see how a
+      processor actually churns through work like this, the
+      <a href="/cpu/">Inside a Modern CPU</a> exhibit walks through the
+      pipeline instruction by instruction.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       05 - WHY BLOCKS ARE SECURE (TAMPER DEMO)
+  ================================================================ -->
+  <section class="bc-section" id="tamper" aria-labelledby="tamper-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">05</span> The centerpiece</p>
+      <h2 id="tamper-h">Why blocks are secure</h2>
+      <p class="bc-lede">
+        Time to break something. Below is a five-block chain with real
+        hashes. Modify a transaction in block&nbsp;#2 and watch the damage
+        propagate: block&nbsp;#2&rsquo;s hash changes, so block&nbsp;#3&rsquo;s
+        &ldquo;previous hash&rdquo; no longer matches, so block&nbsp;#3 is
+        invalid &mdash; and so is everything after it.
+      </p>
+    </div>
+
+    <div class="bc-panel" data-bc-reveal>
+      <div class="bc-panel-controls">
+        <button type="button" id="bc-tamper-modify" class="bc-btn bc-btn-primary">Modify block #2</button>
+        <button type="button" id="bc-tamper-remine" class="bc-btn bc-btn-ghost" disabled>Re-mine broken blocks</button>
+        <button type="button" id="bc-tamper-reset" class="bc-btn bc-btn-ghost">Reset chain</button>
+      </div>
+      <ol class="bc-chain bc-chain-tamper" id="bc-tamper-chain" aria-label="Five-block chain used for the tampering demonstration."></ol>
+      <div class="bc-statrow">
+        <div class="bc-stat"><span class="bc-stat-label">Valid blocks</span><span class="bc-stat-val" id="bc-tamper-valid">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Broken links</span><span class="bc-stat-val" id="bc-tamper-broken">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Hash attempts to repair</span><span class="bc-stat-val" id="bc-tamper-work">&ndash;</span></div>
+      </div>
+      <p class="bc-panel-status" id="bc-tamper-status" aria-live="polite"></p>
+    </div>
+
+    <p class="bc-prose">
+      Notice what &ldquo;re-mining&rdquo; costs even in this toy: each
+      repaired block takes hundreds of hash attempts at our easy difficulty.
+      On a real proof-of-work network the difficulty is astronomically
+      higher, and here is the part that matters:
+      <em>while you rebuild history, the honest network keeps extending the
+      real chain.</em> To win, you would have to redo the work of every block
+      after your edit <em>and</em> outpace everyone else combined &mdash;
+      then convince every node to accept your version. Immutability is not a
+      law of physics; it is an economic wall that gets taller with every
+      block stacked on top.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       06 - DISTRIBUTED CONSENSUS
+  ================================================================ -->
+  <section class="bc-section" id="consensus" aria-labelledby="consensus-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">06</span> Agreement at scale</p>
+      <h2 id="consensus-h">Distributed consensus</h2>
+      <p class="bc-lede">
+        A chain of hashes proves history is <em>internally consistent</em>
+        &mdash; but which history? Hundreds of independent nodes, each with
+        its own copy of the ledger, must converge on one answer with nobody
+        in charge. Watch a transaction ripple across the network below.
+      </p>
+    </div>
+
+    <div class="bc-panel" data-bc-reveal>
+      <div class="bc-panel-controls">
+        <button type="button" id="bc-net-tx" class="bc-btn bc-btn-primary">Broadcast a transaction</button>
+        <button type="button" id="bc-net-fork" class="bc-btn bc-btn-ghost">Create a fork</button>
+        <button type="button" id="bc-net-reset" class="bc-btn bc-btn-ghost">Reset</button>
+      </div>
+      <canvas id="bc-net-canvas" class="bc-canvas bc-canvas-tall"
+              aria-label="Animated world map of nodes. A broadcast transaction spreads peer to peer, nodes validate it, a block is produced, and every node appends it. The fork demo shows two competing blocks until one branch grows longer and the network converges on it."></canvas>
+      <div class="bc-statrow">
+        <div class="bc-stat"><span class="bc-stat-label">Nodes</span><span class="bc-stat-val" id="bc-net-nodes">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Chain height</span><span class="bc-stat-val" id="bc-net-height">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Nodes in agreement</span><span class="bc-stat-val" id="bc-net-agree">&ndash;</span></div>
+        <div class="bc-stat"><span class="bc-stat-label">Phase</span><span class="bc-stat-val" id="bc-net-phase">idle</span></div>
+      </div>
+      <p class="bc-panel-status" id="bc-net-status" aria-live="polite"></p>
+    </div>
+
+    <div class="bc-fieldgrid" data-bc-reveal>
+      <div class="bc-field">
+        <h4>Why every node keeps a full copy</h4>
+        <p>If you only trust your own disk, you never have to ask anyone what
+        the ledger says. Replication is the price of removing the trusted
+        middleman &mdash; storage is spent to buy independence.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Validation before gossip</h4>
+        <p>Nodes do not blindly forward data. Each one checks signatures,
+        balances, and rules first, and drops anything invalid. Bad
+        transactions die within a hop or two.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Forks are normal</h4>
+        <p>Two block producers can succeed at nearly the same moment, briefly
+        splitting the network into two histories. The rule
+        &ldquo;follow the chain with the most accumulated work (or
+        stake)&rdquo; resolves it within a few blocks &mdash; which is why
+        recent blocks are treated as tentative and older ones as settled.</p>
+      </div>
+      <div class="bc-field">
+        <h4>Byzantine fault tolerance</h4>
+        <p>The deep problem here is agreeing when some participants may lie
+        or fail arbitrarily &mdash; computer science calls these
+        <em>Byzantine faults</em>. Every consensus mechanism in the next
+        chapter is a different strategy for surviving them.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 - CONSENSUS MECHANISMS
+  ================================================================ -->
+  <section class="bc-section" id="mechanisms" aria-labelledby="mechanisms-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">07</span> Four strategies</p>
+      <h2 id="mechanisms-h">Consensus mechanisms</h2>
+      <p class="bc-lede">
+        &ldquo;Who gets to add the next block?&rdquo; has more than one good
+        answer. Proof of Work sells the right for energy; Proof of Stake
+        sells it for locked-up capital; committee protocols like PBFT vote;
+        Proof of Authority simply appoints known validators. Each optimizes
+        for different priorities.
+      </p>
+    </div>
+
+    <div class="bc-panel" data-bc-reveal>
+      <div class="bc-mode-tabs bc-mech-tabs" role="group" aria-label="Consensus mechanism selector">
+        <button type="button" class="bc-mode-tab" data-mech="pow" aria-pressed="true">Proof of Work</button>
+        <button type="button" class="bc-mode-tab" data-mech="pos" aria-pressed="false">Proof of Stake</button>
+        <button type="button" class="bc-mode-tab" data-mech="pbft" aria-pressed="false">PBFT</button>
+        <button type="button" class="bc-mode-tab" data-mech="poa" aria-pressed="false">Proof of Authority</button>
+      </div>
+      <div class="bc-mech-body">
+        <div class="bc-mech-text">
+          <h3 class="bc-mech-name" id="bc-mech-name">Proof of Work</h3>
+          <p class="bc-mech-desc" id="bc-mech-desc"></p>
+          <p class="bc-mech-used" id="bc-mech-used"></p>
+        </div>
+        <div class="bc-mech-bars" id="bc-mech-bars" role="img" aria-label="Relative ratings for the selected mechanism across security, speed, energy efficiency, finality, and decentralization.">
+          <div class="bc-mech-row"><span class="bc-mech-metric">Security (permissionless)</span><span class="bc-mech-bar"><i data-metric="security"></i></span></div>
+          <div class="bc-mech-row"><span class="bc-mech-metric">Speed / throughput</span><span class="bc-mech-bar"><i data-metric="speed"></i></span></div>
+          <div class="bc-mech-row"><span class="bc-mech-metric">Energy efficiency</span><span class="bc-mech-bar"><i data-metric="energy"></i></span></div>
+          <div class="bc-mech-row"><span class="bc-mech-metric">Fast finality</span><span class="bc-mech-bar"><i data-metric="finality"></i></span></div>
+          <div class="bc-mech-row"><span class="bc-mech-metric">Decentralization</span><span class="bc-mech-bar"><i data-metric="decent"></i></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bc-table-wrap" data-bc-reveal>
+      <table class="bc-compare">
+        <thead>
+          <tr><th scope="col">Mechanism</th><th scope="col">Block producers</th><th scope="col">Cost of attack</th><th scope="col">Finality</th><th scope="col">Typical use</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Proof of Work</th>
+            <td>Anyone with hardware and electricity</td>
+            <td>Out-hash the honest majority (enormous energy spend)</td>
+            <td>Probabilistic &mdash; deeper is safer</td>
+            <td>Open, adversarial networks (Bitcoin)</td>
+          </tr>
+          <tr>
+            <th scope="row">Proof of Stake</th>
+            <td>Anyone who locks up (stakes) the native asset</td>
+            <td>Acquire a large stake, which slashing can destroy</td>
+            <td>Minutes &mdash; checkpointed finality</td>
+            <td>Open smart-contract platforms (Ethereum)</td>
+          </tr>
+          <tr>
+            <th scope="row">PBFT-style voting</th>
+            <td>A known committee; two-thirds must agree</td>
+            <td>Corrupt more than one-third of the committee</td>
+            <td>Immediate once votes land</td>
+            <td>Consortium networks with vetted members</td>
+          </tr>
+          <tr>
+            <th scope="row">Proof of Authority</th>
+            <td>A short list of approved validators</td>
+            <td>Compromise the validators themselves</td>
+            <td>Immediate</td>
+            <td>Private and test networks where identity is known</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="bc-caption">
+      There is no free lunch here: the mechanisms that are open to anyone pay
+      for it in energy or capital lock-up and slower finality, while the fast,
+      efficient ones quietly reintroduce a guest list. Choosing a consensus
+      mechanism <em>is</em> choosing how much you trust the participants.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       08 - PUBLIC VS PRIVATE BLOCKCHAINS
+  ================================================================ -->
+  <section class="bc-section" id="pubpriv" aria-labelledby="pubpriv-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">08</span> Two deployment models</p>
+      <h2 id="pubpriv-h">Public vs private blockchains</h2>
+      <p class="bc-lede">
+        &ldquo;Blockchain&rdquo; covers two very different deployment models.
+        Public chains are open networks anyone can join; private
+        (permissioned) chains restrict participation to vetted organizations.
+        They share the data structure but differ in almost everything else.
+      </p>
+    </div>
+
+    <div class="bc-twocol" data-bc-reveal>
+      <div class="bc-card">
+        <h3 class="bc-card-title">Public</h3>
+        <p class="bc-card-sub">Permissionless &mdash; the network is the product.</p>
+        <ul class="bc-list bc-list-dot">
+          <li>Anyone can run a node, transact, or produce blocks</li>
+          <li>No sign-up, no gatekeeper, pseudonymous participants</li>
+          <li>Highly decentralized; secured by economic incentives</li>
+          <li>Fully transparent &mdash; every transaction is world-readable</li>
+          <li>Governance by rough consensus of users, developers, and operators</li>
+        </ul>
+        <p class="bc-card-eg"><strong>Examples:</strong> Bitcoin, Ethereum.</p>
+      </div>
+      <div class="bc-card">
+        <h3 class="bc-card-title">Private / permissioned</h3>
+        <p class="bc-card-sub">A shared database for organizations that half-trust each other.</p>
+        <ul class="bc-list bc-list-dot">
+          <li>Participants are invited, identified, and legally accountable</li>
+          <li>An operator or consortium controls membership</li>
+          <li>Modestly decentralized &mdash; typically a handful of known validators</li>
+          <li>Data visibility can be restricted per participant</li>
+          <li>Governance by contract and committee, like any joint venture</li>
+        </ul>
+        <p class="bc-card-eg"><strong>Examples:</strong> Hyperledger Fabric, R3 Corda.</p>
+      </div>
+    </div>
+
+    <p class="bc-prose">
+      Why do businesses usually pick the permissioned kind? Because their
+      problem is rarely &ldquo;trust no one&rdquo; &mdash; it is
+      &ldquo;trust each other <em>a little</em>, verify a lot.&rdquo; Ten
+      banks sharing a settlement ledger already know each other&rsquo;s legal
+      names; they need shared bookkeeping with tamper evidence, privacy from
+      competitors, regulatory compliance, and someone to call when things
+      break. A permissioned chain (or, honestly, a well-designed shared
+      database) fits that shape. The radical openness of a public chain
+      solves a harder problem those firms usually do not have &mdash; and
+      charges accordingly.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       09 - SMART CONTRACTS
+  ================================================================ -->
+  <section class="bc-section" id="contracts" aria-labelledby="contracts-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">09</span> Programmable ledgers</p>
+      <h2 id="contracts-h">Smart contracts</h2>
+      <p class="bc-lede">
+        Early blockchains recorded one thing: transfers. The next idea was to
+        let the ledger run <em>code</em>. A smart contract is a program
+        stored on the chain; when a transaction calls it, every validating
+        node executes the same code on the same inputs and must arrive at
+        exactly the same result &mdash; which then becomes part of the
+        shared ledger.
+      </p>
+    </div>
+
+    <div class="bc-panel" data-bc-reveal>
+      <ol class="bc-flow" aria-label="Smart contract execution path">
+        <li class="bc-flow-node" data-step="0"><span class="bc-flow-name">User</span><span class="bc-flow-desc">signs a request</span></li>
+        <li class="bc-flow-node" data-step="1"><span class="bc-flow-name">Transaction</span><span class="bc-flow-desc">broadcast to the network</span></li>
+        <li class="bc-flow-node" data-step="2"><span class="bc-flow-name">Smart contract</span><span class="bc-flow-desc">code stored on-chain</span></li>
+        <li class="bc-flow-node" data-step="3"><span class="bc-flow-name">Business logic</span><span class="bc-flow-desc">runs on every node</span></li>
+        <li class="bc-flow-node" data-step="4"><span class="bc-flow-name">Updated ledger</span><span class="bc-flow-desc">identical everywhere</span></li>
+      </ol>
+
+      <div class="bc-contract-demo">
+        <div class="bc-contract-src">
+          <span class="bc-inlabel">The contract (pseudocode)</span>
+          <pre class="bc-code" aria-label="Escrow contract pseudocode">contract Escrow {
+  buyer paid: 50 coins (held)
+  if delivery confirmed by courier:
+      release 50 coins to seller
+  else if deadline passed:
+      refund 50 coins to buyer
+}</pre>
+          <div class="bc-panel-controls" role="group" aria-label="Choose the delivery outcome">
+            <button type="button" id="bc-sc-deliver" class="bc-btn bc-btn-primary">Courier confirms delivery</button>
+            <button type="button" id="bc-sc-late" class="bc-btn bc-btn-ghost">Deadline passes, no delivery</button>
+          </div>
+        </div>
+        <div class="bc-contract-nodes" id="bc-sc-nodes" aria-live="polite">
+          <div class="bc-scnode" data-node="0"><span class="bc-scnode-name">Node A</span><span class="bc-scnode-out">awaiting input&hellip;</span></div>
+          <div class="bc-scnode" data-node="1"><span class="bc-scnode-name">Node B</span><span class="bc-scnode-out">awaiting input&hellip;</span></div>
+          <div class="bc-scnode" data-node="2"><span class="bc-scnode-name">Node C</span><span class="bc-scnode-out">awaiting input&hellip;</span></div>
+          <div class="bc-scnode" data-node="3"><span class="bc-scnode-name">Node D</span><span class="bc-scnode-out">awaiting input&hellip;</span></div>
+        </div>
+      </div>
+      <p class="bc-panel-status" id="bc-sc-status" aria-live="polite"></p>
+    </div>
+
+    <p class="bc-prose">
+      The key property is <em>determinism</em>. Contract code is forbidden
+      from doing anything whose answer could differ between machines &mdash;
+      no random numbers, no clock reads, no calling the open internet.
+      Given the same chain state and the same transaction, node A in Tokyo
+      and node D in S&atilde;o Paulo must compute byte-for-byte identical
+      results, or consensus would shatter. (External facts, like our
+      courier&rsquo;s confirmation, must be delivered <em>onto</em> the chain
+      as signed transactions &mdash; a role played by so-called oracles, and
+      one of the genuinely hard problems in this field: the chain can verify
+      that the courier <em>said</em> the package arrived, not that it
+      actually did.)
+    </p>
+  </section>
+
+  <!-- ================================================================
+       10 - REAL-WORLD ADOPTION
+  ================================================================ -->
+  <section class="bc-section" id="adoption" aria-labelledby="adoption-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">10</span> In the field</p>
+      <h2 id="adoption-h">Real-world adoption</h2>
+      <p class="bc-lede">
+        Where is this actually used? Honest answer: adoption is real but
+        uneven &mdash; deep in a few niches, experimental in most others,
+        and quietly abandoned in some. Each card below says where blockchain
+        plausibly helps, how adoption is actually going, and when a plain
+        database remains the better call.
+      </p>
+    </div>
+
+    <div class="bc-adopt-grid" data-bc-reveal>
+      <article class="bc-adopt">
+        <h3>Financial services</h3>
+        <p class="bc-adopt-what">Stablecoin settlement, cross-border payments, tokenized funds and bonds.</p>
+        <dl class="bc-adopt-dl">
+          <div><dt>Why it may help</dt><dd>Settlement in minutes across borders and time zones, without chains of correspondent banks each keeping their own books.</dd></div>
+          <div><dt>Adoption</dt><dd>The strongest of any sector &mdash; stablecoin transfer volume is measured in trillions of dollars per year, and major asset managers run tokenized money-market funds.</dd></div>
+          <div><dt>Honest caveat</dt><dd>Domestic payments in most countries already settle fast on centralized rails; the win is concentrated in cross-border and after-hours flows.</dd></div>
+        </dl>
+      </article>
+      <article class="bc-adopt">
+        <h3>Supply chains</h3>
+        <p class="bc-adopt-what">Product provenance, food traceability, anti-counterfeiting.</p>
+        <dl class="bc-adopt-dl">
+          <div><dt>Why it may help</dt><dd>Many mutually distrustful parties (growers, shippers, customs, retailers) appending to one tamper-evident record.</dd></div>
+          <div><dt>Adoption</dt><dd>Mixed. Pilots were everywhere; several flagship projects (including IBM and Maersk&rsquo;s TradeLens) shut down after failing to attract enough participants.</dd></div>
+          <div><dt>Honest caveat</dt><dd>The chain can prove nobody edited the record &mdash; not that the record was true when written. Garbage in, immutable garbage out.</dd></div>
+        </dl>
+      </article>
+      <article class="bc-adopt">
+        <h3>Healthcare</h3>
+        <p class="bc-adopt-what">Medical record integrity, clinical trial audit logs, credential verification.</p>
+        <dl class="bc-adopt-dl">
+          <div><dt>Why it may help</dt><dd>Tamper-evident audit trails for records that many institutions touch and none should be able to silently rewrite.</dd></div>
+          <div><dt>Adoption</dt><dd>Early and narrow &mdash; mostly integrity anchoring and credentialing pilots, not primary storage.</dd></div>
+          <div><dt>Honest caveat</dt><dd>Patient data itself belongs in access-controlled databases; privacy law and practicality both argue against putting records on-chain. Hashes of records, not records.</dd></div>
+        </dl>
+      </article>
+      <article class="bc-adopt">
+        <h3>Digital identity</h3>
+        <p class="bc-adopt-what">Verifiable credentials &mdash; diplomas, licenses, attestations you hold yourself.</p>
+        <dl class="bc-adopt-dl">
+          <div><dt>Why it may help</dt><dd>A neutral place to anchor issuers&rsquo; public keys and revocations, so a credential can be checked without phoning the issuer.</dd></div>
+          <div><dt>Adoption</dt><dd>Growing via standards (W3C Verifiable Credentials, EU digital identity work); the ledger is usually a small supporting component.</dd></div>
+          <div><dt>Honest caveat</dt><dd>Most of the machinery is plain public-key cryptography &mdash; several credential systems work fine with no blockchain at all.</dd></div>
+        </dl>
+      </article>
+      <article class="bc-adopt">
+        <h3>Government</h3>
+        <p class="bc-adopt-what">Land registries, document notarization, public procurement records.</p>
+        <dl class="bc-adopt-dl">
+          <div><dt>Why it may help</dt><dd>Citizens can independently verify that titles and filings were not quietly altered &mdash; valuable where registry trust is weak.</dd></div>
+          <div><dt>Adoption</dt><dd>Scattered production use (Georgia anchors land titles; Estonia hash-chains state data); many announced projects went nowhere.</dd></div>
+          <div><dt>Honest caveat</dt><dd>A registry is only as good as the legal system behind it &mdash; a hash cannot evict a squatter or fix a corrupt clerk&rsquo;s original entry.</dd></div>
+        </dl>
+      </article>
+      <article class="bc-adopt">
+        <h3>Enterprise consortia</h3>
+        <p class="bc-adopt-what">Shared audit trails, interbank reconciliation, trade finance networks.</p>
+        <dl class="bc-adopt-dl">
+          <div><dt>Why it may help</dt><dd>Replaces N companies reconciling N private databases with one shared, append-only record every member can verify.</dd></div>
+          <div><dt>Adoption</dt><dd>Quietly steady in niches (trade finance, securities settlement pilots), far below the 2017-era hype.</dd></div>
+          <div><dt>Honest caveat</dt><dd>Consortium politics &mdash; who pays, who governs, who is liable &mdash; kills more projects than the technology does.</dd></div>
+        </dl>
+      </article>
+      <article class="bc-adopt">
+        <h3>Gaming &amp; digital goods</h3>
+        <p class="bc-adopt-what">Player-owned items, collectibles, cross-game assets.</p>
+        <dl class="bc-adopt-dl">
+          <div><dt>Why it may help</dt><dd>Items recorded on a public chain survive the studio shutting a server, and can be traded on open markets.</dd></div>
+          <div><dt>Adoption</dt><dd>A boom-and-bust cycle; a smaller, steadier scene remains after the 2021&ndash;22 collectibles frenzy deflated.</dd></div>
+          <div><dt>Honest caveat</dt><dd>The token proves ownership; the artwork and game logic usually still live on someone&rsquo;s server. Most games are better served by ordinary databases.</dd></div>
+        </dl>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       11 - WHEN NOT TO USE BLOCKCHAIN
+  ================================================================ -->
+  <section class="bc-section" id="whennot" aria-labelledby="whennot-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">11</span> Engineering judgment</p>
+      <h2 id="whennot-h">When <em>not</em> to use blockchain</h2>
+      <p class="bc-lede">
+        This may be the most useful chapter on the page. Blockchain is not a
+        better database &mdash; it is a <em>different</em> database that pays
+        heavy costs (speed, storage, complexity, governance) to remove a
+        trusted operator. If you have a trusted operator, you are paying
+        those costs for nothing.
+      </p>
+    </div>
+
+    <div class="bc-twocol" data-bc-reveal>
+      <div class="bc-card">
+        <h3 class="bc-card-title">Reach for a traditional database when&hellip;</h3>
+        <ul class="bc-list bc-list-dot">
+          <li>One trusted owner exists &mdash; a company managing its own data needs PostgreSQL, not consensus</li>
+          <li>Speed matters &mdash; a single machine commits in microseconds; global consensus takes seconds to minutes</li>
+          <li>Cost matters &mdash; storing data once beats replicating it to every participant forever</li>
+          <li>Data changes often &mdash; an append-only ledger is miserable for records you update and delete all day</li>
+          <li>Privacy is critical &mdash; access control and encryption-at-rest are mature; a replicated ledger is deliberately hard to hide</li>
+        </ul>
+        <p class="bc-card-eg"><strong>Concretely:</strong> your user accounts, product catalog, analytics events, internal inventory, medical records, and 99% of CRUD apps belong in SQL, a cloud database, or &mdash; if you need scale-out &mdash; a distributed database like Spanner or Cassandra, which replicate <em>within one trust domain</em> and are much faster for it.</p>
+      </div>
+      <div class="bc-card">
+        <h3 class="bc-card-title">Consider a blockchain when&hellip;</h3>
+        <ul class="bc-list bc-list-dot">
+          <li>Multiple independent organizations must write to one shared record</li>
+          <li>They do not fully trust each other &mdash; or a would-be middleman</li>
+          <li>Tamper evidence matters more than raw speed</li>
+          <li>Participants (or the public) benefit from verifying the history themselves</li>
+          <li>Removing the central operator is itself the point &mdash; for resilience, neutrality, or censorship resistance</li>
+        </ul>
+        <p class="bc-card-eg"><strong>The test:</strong> if you deleted the word &ldquo;blockchain&rdquo; from the pitch, would the design still make sense? If a shared Postgres instance run by a lawyer-approved third party solves it, that is usually the answer.</p>
+      </div>
+    </div>
+
+    <div class="bc-panel" data-bc-reveal>
+      <h3 class="bc-panel-head">Do you need a blockchain? A 30-second triage</h3>
+      <div class="bc-quiz" id="bc-quiz">
+        <div class="bc-quiz-q">
+          <span class="bc-quiz-label" id="bc-quiz-q1-label">Do several independent organizations need to write to the same records?</span>
+          <div class="bc-mode-tabs" role="group" aria-labelledby="bc-quiz-q1-label">
+            <button type="button" class="bc-mode-tab" data-q="writers" data-val="1" aria-pressed="false">Yes</button>
+            <button type="button" class="bc-mode-tab" data-q="writers" data-val="0" aria-pressed="false">No</button>
+          </div>
+        </div>
+        <div class="bc-quiz-q">
+          <span class="bc-quiz-label" id="bc-quiz-q2-label">Is there a party everyone would trust to host it (a regulator, vendor, or consortium operator)?</span>
+          <div class="bc-mode-tabs" role="group" aria-labelledby="bc-quiz-q2-label">
+            <button type="button" class="bc-mode-tab" data-q="trusted" data-val="1" aria-pressed="false">Yes</button>
+            <button type="button" class="bc-mode-tab" data-q="trusted" data-val="0" aria-pressed="false">No</button>
+          </div>
+        </div>
+        <div class="bc-quiz-q">
+          <span class="bc-quiz-label" id="bc-quiz-q3-label">Must the history be verifiable by outsiders, or provably tamper-evident?</span>
+          <div class="bc-mode-tabs" role="group" aria-labelledby="bc-quiz-q3-label">
+            <button type="button" class="bc-mode-tab" data-q="verify" data-val="1" aria-pressed="false">Yes</button>
+            <button type="button" class="bc-mode-tab" data-q="verify" data-val="0" aria-pressed="false">No</button>
+          </div>
+        </div>
+        <div class="bc-quiz-q">
+          <span class="bc-quiz-label" id="bc-quiz-q4-label">Are high throughput, low latency, or strict data privacy hard requirements?</span>
+          <div class="bc-mode-tabs" role="group" aria-labelledby="bc-quiz-q4-label">
+            <button type="button" class="bc-mode-tab" data-q="perf" data-val="1" aria-pressed="false">Yes</button>
+            <button type="button" class="bc-mode-tab" data-q="perf" data-val="0" aria-pressed="false">No</button>
+          </div>
+        </div>
+      </div>
+      <p class="bc-quiz-verdict" id="bc-quiz-verdict" aria-live="polite">Answer the four questions to get a verdict.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 - COMMON MISCONCEPTIONS
+  ================================================================ -->
+  <section class="bc-section" id="myths" aria-labelledby="myths-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">12</span> Clearing the fog</p>
+      <h2 id="myths-h">Common misconceptions</h2>
+      <p class="bc-lede">
+        The word &ldquo;blockchain&rdquo; drags a decade of marketing behind
+        it. Expand each card for the short, honest version.
+      </p>
+    </div>
+
+    <div class="bc-myths" data-bc-reveal>
+      <details class="bc-myth">
+        <summary>&ldquo;Blockchain = Bitcoin&rdquo;</summary>
+        <p>Bitcoin is one application of blockchain &mdash; the first and
+        largest, but an application nonetheless. The underlying idea (a
+        replicated, hash-linked ledger with consensus) also powers smart
+        contract platforms, permissioned consortium networks, and systems
+        with no currency at all. This site&rsquo;s
+        <a href="/bitcoin/">Understanding Bitcoin</a> exhibit covers the
+        famous application in depth.</p>
+      </details>
+      <details class="bc-myth">
+        <summary>&ldquo;Blockchain = cryptocurrency&rdquo;</summary>
+        <p>Public chains use a native asset to pay block producers &mdash;
+        that is the incentive engine. But permissioned chains run by known
+        organizations often have no coin at all: validators participate
+        because a contract says so, not because they are paid in tokens.</p>
+      </details>
+      <details class="bc-myth">
+        <summary>&ldquo;Decentralized means anonymous&rdquo;</summary>
+        <p>Mostly the opposite. Public chains are radically transparent:
+        every transaction is world-readable forever, tied to pseudonymous
+        addresses. Link an address to a person once &mdash; through an
+        exchange, a purchase, a mistake &mdash; and their entire history is
+        exposed. Chain-analysis firms do exactly this for a living.</p>
+      </details>
+      <details class="bc-myth">
+        <summary>&ldquo;Immutable means impossible to change&rdquo;</summary>
+        <p>Immutability is economic, not physical. Rewriting history requires
+        redoing the work (or controlling the stake or committee) faster than
+        the honest majority &mdash; wildly expensive on large networks,
+        entirely feasible on small ones, several of which have suffered
+        successful 51% attacks. And a community can deliberately fork:
+        Ethereum rolled back the DAO hack in 2016 by collective choice.</p>
+      </details>
+      <details class="bc-myth">
+        <summary>&ldquo;Blockchain is automatically more secure&rdquo;</summary>
+        <p>The ledger&rsquo;s integrity is only one layer. Smart contract
+        bugs, stolen private keys, compromised exchanges, and fraudulent
+        data fed by oracles have cost users billions &mdash; none of which
+        the chain itself prevents. A blockchain secures the <em>record</em>
+        of what happened, not the wisdom of what happened.</p>
+      </details>
+      <details class="bc-myth">
+        <summary>&ldquo;Public blockchains are the only kind&rdquo;</summary>
+        <p>Permissioned blockchains &mdash; Hyperledger Fabric, R3 Corda and
+        kin &mdash; restrict who may read, write, and validate. They trade
+        away open participation for speed, privacy, and accountable
+        governance, and they are the variant most enterprises actually
+        deploy.</p>
+      </details>
+      <details class="bc-myth">
+        <summary>&ldquo;Every business problem needs blockchain&rdquo;</summary>
+        <p>Most do not. If one trusted party can run the database, a
+        conventional database is faster, cheaper, more private, and easier
+        to fix when something goes wrong. Blockchain earns its costs only
+        when removing the trusted party is the actual requirement &mdash;
+        see the previous chapter&rsquo;s triage.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 - TIMELINE
+  ================================================================ -->
+  <section class="bc-section" id="history" aria-labelledby="history-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">13</span> How we got here</p>
+      <h2 id="history-h">A brief history of the idea</h2>
+      <p class="bc-lede">
+        Blockchain was not one invention but a slow assembly of parts &mdash;
+        decades of cryptography research that clicked together in 2008.
+        Scroll the timeline.
+      </p>
+    </div>
+
+    <div class="bc-timeline-wrap" data-bc-reveal>
+      <ol class="bc-timeline" id="bc-timeline" aria-label="Timeline of blockchain milestones">
+        <li class="bc-era">
+          <span class="bc-era-year">1976&ndash;79</span>
+          <h3>Public-key cryptography &amp; Merkle trees</h3>
+          <p>Diffie and Hellman show strangers can share secrets in public; Ralph Merkle patents the hash tree &mdash; a way to fingerprint huge datasets so any piece can be verified against one small root hash.</p>
+          <span class="bc-era-stat">the raw ingredients</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">1991</span>
+          <h3>Hash-chained timestamps</h3>
+          <p>Haber and Stornetta propose linking documents into a chain of hashes so no timestamp can be back-dated without breaking every later link &mdash; a blockchain in all but name, published weekly as a hash in <em>The New York Times</em>.</p>
+          <span class="bc-era-stat">the chain, before the coin</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">1997&ndash;2004</span>
+          <h3>Proof of work</h3>
+          <p>Adam Back&rsquo;s Hashcash makes senders burn CPU time to deter spam; Hal Finney builds reusable proof-of-work tokens. Costly computation becomes a currency of credibility.</p>
+          <span class="bc-era-stat">work as a signal</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2008</span>
+          <h3>The Bitcoin whitepaper</h3>
+          <p>Satoshi Nakamoto combines the pieces &mdash; hash chains, Merkle trees, proof of work, peer-to-peer gossip &mdash; into the first system where strangers maintain a ledger with no authority at all. Nine pages that started an industry.</p>
+          <span class="bc-era-stat">the synthesis</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2009</span>
+          <h3>The genesis block</h3>
+          <p>The Bitcoin network goes live. For the first time, the double-spending problem is solved in the wild without a bank. The <a href="/bitcoin/">Understanding Bitcoin</a> exhibit dissects this machine bolt by bolt.</p>
+          <span class="bc-era-stat">theory becomes a network</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2015</span>
+          <h3>Ethereum &amp; smart contracts</h3>
+          <p>Vitalik Buterin&rsquo;s Ethereum generalizes the ledger into a shared computer: arbitrary programs, executed identically by every node. Blockchains become platforms, not just payment rails.</p>
+          <span class="bc-era-stat">the ledger learns to run code</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2015&ndash;17</span>
+          <h3>Enterprise platforms</h3>
+          <p>Hyperledger (Linux Foundation) and R3 Corda bring permissioned designs to consortia. A wave of corporate pilots follows &mdash; some land, many quietly conclude that a database would do.</p>
+          <span class="bc-era-stat">the permissioned turn</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2020</span>
+          <h3>DeFi</h3>
+          <p>Lending, trading, and market-making rebuilt as composable smart contracts. Billions flow in &mdash; demonstrating both the power of programmable settlement and the cost of buggy code, as exploits drain protocols.</p>
+          <span class="bc-era-stat">finance as software</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2021</span>
+          <h3>NFTs</h3>
+          <p>Unique on-chain tokens make digital collectibles tradable at scale &mdash; one application among many, briefly mistaken for the whole point. The speculative wave crests and recedes; the primitive (a ledger entry proving ownership of a unique item) remains.</p>
+          <span class="bc-era-stat">one application, loudly</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2023&ndash;now</span>
+          <h3>Tokenized real-world assets</h3>
+          <p>Money-market funds, treasuries, and bank deposits appear on-chain from household-name institutions; stablecoins settle trillions yearly. Quieter than past cycles &mdash; and more consequential: the technology fades into infrastructure.</p>
+          <span class="bc-era-stat">boring on purpose</span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       PLAYGROUND - BLOCKCHAIN BUILDER
+  ================================================================ -->
+  <section class="bc-section bc-playground" id="playground" aria-labelledby="playground-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">&#9733;</span> Playground</p>
+      <h2 id="playground-h">The blockchain builder</h2>
+      <p class="bc-lede">
+        Everything on this page, in one sandbox. Create transactions, mine
+        them into blocks with real SHA-256 proof-of-work, replicate the
+        chain across a network of nodes &mdash; then tamper with history and
+        watch the network catch you. Flip to centralized mode to see the
+        same attack succeed silently.
+      </p>
+    </div>
+
+    <div class="bc-pg" data-bc-reveal>
+      <div class="bc-pg-controls">
+        <fieldset class="bc-pg-group">
+          <legend>1 &middot; Create transactions</legend>
+          <div class="bc-pg-txrow">
+            <label class="bc-visually-hidden" for="bc-pg-from">Sender</label>
+            <select id="bc-pg-from" class="bc-select">
+              <option>Ava</option><option>Ben</option><option>Cleo</option><option>Dan</option>
+            </select>
+            <span class="bc-pg-arrow" aria-hidden="true">&rarr;</span>
+            <label class="bc-visually-hidden" for="bc-pg-to">Recipient</label>
+            <select id="bc-pg-to" class="bc-select">
+              <option>Ben</option><option>Ava</option><option>Cleo</option><option>Dan</option>
+            </select>
+            <label class="bc-visually-hidden" for="bc-pg-amt">Amount</label>
+            <input type="number" id="bc-pg-amt" class="bc-numinput" min="1" max="999" step="1" value="25">
+            <button type="button" id="bc-pg-addtx" class="bc-btn bc-btn-ghost">Add</button>
+          </div>
+          <div class="bc-pg-mempool">
+            <span class="bc-inlabel">Pending transactions (mempool)</span>
+            <ul id="bc-pg-mempool" class="bc-mempool" aria-live="polite"></ul>
+          </div>
+        </fieldset>
+
+        <fieldset class="bc-pg-group">
+          <legend>2 &middot; Mine a block</legend>
+          <div class="bc-sliderrow">
+            <label class="bc-slider-label" for="bc-pg-diff">Difficulty</label>
+            <input type="range" id="bc-pg-diff" min="1" max="3" value="2" step="1">
+            <output class="bc-slider-out" id="bc-pg-diff-out">2 zeros</output>
+          </div>
+          <button type="button" id="bc-pg-mine" class="bc-btn bc-btn-primary">Mine block</button>
+          <p class="bc-pg-minestat" id="bc-pg-minestat" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset class="bc-pg-group">
+          <legend>3 &middot; The network</legend>
+          <div class="bc-sliderrow">
+            <label class="bc-slider-label" for="bc-pg-nodes">Nodes</label>
+            <input type="range" id="bc-pg-nodes" min="3" max="9" value="5" step="1">
+            <output class="bc-slider-out" id="bc-pg-nodes-out">5</output>
+          </div>
+          <div class="bc-mode-tabs" role="group" aria-label="Network architecture">
+            <button type="button" class="bc-mode-tab" id="bc-pg-mode-d" aria-pressed="true">Decentralized</button>
+            <button type="button" class="bc-mode-tab" id="bc-pg-mode-c" aria-pressed="false">Centralized</button>
+          </div>
+          <div class="bc-panel-controls">
+            <button type="button" id="bc-pg-tamper" class="bc-btn bc-btn-ghost">Tamper with block #2</button>
+            <button type="button" id="bc-pg-sync" class="bc-btn bc-btn-ghost">Run consensus check</button>
+            <button type="button" id="bc-pg-reset" class="bc-btn bc-btn-ghost">Reset everything</button>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="bc-pg-stage">
+        <div class="bc-pg-chainwrap">
+          <span class="bc-inlabel">Your node&rsquo;s chain</span>
+          <ol class="bc-chain bc-chain-pg" id="bc-pg-chain" aria-label="The chain on your node, produced by the playground."></ol>
+        </div>
+        <div class="bc-pg-netwrap">
+          <span class="bc-inlabel" id="bc-pg-netlabel">Network replicas</span>
+          <div class="bc-pg-nodegrid" id="bc-pg-nodegrid" aria-labelledby="bc-pg-netlabel" aria-live="polite"></div>
+        </div>
+        <div class="bc-statrow">
+          <div class="bc-stat"><span class="bc-stat-label">Chain height</span><span class="bc-stat-val" id="bc-pg-height">1</span></div>
+          <div class="bc-stat"><span class="bc-stat-label">Total hash attempts</span><span class="bc-stat-val" id="bc-pg-attempts">0</span></div>
+          <div class="bc-stat"><span class="bc-stat-label">Network verdict</span><span class="bc-stat-val" id="bc-pg-verdict">in sync</span></div>
+        </div>
+        <p class="bc-pg-log" id="bc-pg-log" aria-live="polite">The genesis block is already in place. Add a transaction to begin.</p>
+      </div>
+    </div>
+
+    <p class="bc-caption">
+      This simulator favors intuition over protocol precision: real networks
+      have thousands of nodes, transaction signatures, Merkle trees, fee
+      markets, and difficulty that adjusts automatically &mdash; but the
+      logic you just exercised (hash, link, replicate, verify, reject) is
+      genuinely the whole trick. Try the tamper button in both network modes;
+      the difference between &ldquo;rejected by 4 of 5 replicas&rdquo; and
+      &ldquo;nobody noticed&rdquo; is this entire page in one sentence.
+    </p>
+  </section>
+
+  <footer class="bc-foot">
+    <p>
+      Part of an interactive series &mdash; continue with
+      <a href="/bitcoin/">Understanding Bitcoin</a> (blockchain&rsquo;s first
+      killer app, with real cryptography in the browser),
+      <a href="/cpu/">Inside a Modern CPU</a> (the hardware that does the
+      hashing), <a href="/memory/">Inside Computer Memory</a> (where ledgers
+      actually live), and <a href="/gpu/">Inside a Modern GPU</a>.
+    </p>
+  </footer>
+</div>
