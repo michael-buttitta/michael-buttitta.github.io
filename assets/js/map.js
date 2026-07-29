@@ -46,7 +46,20 @@
     return cat ? cat.color : '#2DD4BF';
   }
 
-  function radiusOf(t) { return t.url ? R : R_PLANNED; }
+  function radiusOf(t) {
+    if (t.capstone) { return R + 12; }
+    return t.url ? R : R_PLANNED;
+  }
+
+  /* flat-topped hexagon path for capstone nodes (distinct from topic circles) */
+  function hexPoints(r) {
+    var pts = [];
+    for (var i = 0; i < 6; i++) {
+      var a = Math.PI / 180 * (60 * i - 90);
+      pts.push((Math.cos(a) * r).toFixed(1) + ',' + (Math.sin(a) * r).toFixed(1));
+    }
+    return pts.join(' ');
+  }
 
   function stateText(id) {
     var s = G.progress.stateOf(id);
@@ -111,18 +124,24 @@
       var r = radiusOf(t);
       var g = el('g', {
         'class': 'tm-node' + (t.url ? '' : ' tm-node-planned') +
-                 (t.brand ? ' tm-node-brand' : ''),
+                 (t.brand ? ' tm-node-brand' : '') +
+                 (t.capstone ? ' tm-node-capstone' : ''),
         transform: 'translate(' + t.x + ',' + t.y + ')',
         tabindex: '0',
         role: 'button',
-        'aria-label': t.name + (t.url ? '' : ' — coming soon') +
+        'aria-label': t.name + (t.capstone ? ' — capstone experience' : '') +
+          (t.url ? '' : ' — coming soon') +
           (stateText(t.id) ? ', ' + stateText(t.id) : '') + '. Opens details.'
       }, gNodes);
       g.style.setProperty('--cat', catColor(t));
       g.dataset.id = t.id;
 
       var float = el('g', { 'class': 'tm-node-float' }, g);
-      el('circle', { 'class': 'tm-node-bg', r: r }, float);
+      if (t.capstone) {
+        el('polygon', { 'class': 'tm-node-bg', points: hexPoints(r) }, float);
+      } else {
+        el('circle', { 'class': 'tm-node-bg', r: r }, float);
+      }
 
       var state = G.progress.stateOf(t.id);
       if (t.url && state > 0) {

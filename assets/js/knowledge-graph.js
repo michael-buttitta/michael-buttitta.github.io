@@ -23,6 +23,7 @@
     networks:     { name: 'Networks',           color: '#38BDF8' },
     security:     { name: 'Security & Trust',   color: '#FBBF24' },
     intelligence: { name: 'Intelligence',       color: '#FB7185' },
+    capstone:     { name: 'Capstone experiences', color: '#F8FAFC' },
     future:       { name: 'On the roadmap',     color: '#64748B' }
   };
 
@@ -128,6 +129,20 @@
       prereqs: ['blockchain', 'internet']
     },
 
+    /* ----- Capstone experiences: synthesis journeys across many topics ---
+       capstone: true renders as a distinct hexagonal node on the map. ---- */
+    {
+      id: 'chatgpt', name: 'How ChatGPT Works', short: 'ChatGPT',
+      url: '/chatgpt/', cat: 'capstone', capstone: true, fa: '',
+      x: 715, y: 250,
+      tagline: 'One prompt’s complete journey — the whole map, working together.',
+      blurb: 'The capstone experience: follow a single prompt from a keystroke ' +
+        'through the OS, the internet, TLS, a cloud load balancer, ' +
+        'tokenization, transformer layers on GPUs, and token sampling, all ' +
+        'the way back to a streamed answer on your screen.',
+      prereqs: ['ai', 'internet', 'cloud', 'gpu']
+    },
+
     /* ----- Planned topics: visible on the map, not yet built ------------- */
     {
       id: 'machine-learning', name: 'Machine Learning', short: 'ML',
@@ -186,6 +201,24 @@
     { a: 'internet', b: 'bitcoin',
       label: 'Bitcoin is a peer-to-peer network riding on the internet.' },
 
+    /* the capstone touches nearly everything — that is its point */
+    { a: 'chatgpt', b: 'ai',
+      label: 'The assistant is a transformer language model — AI is the engine of the whole experience.' },
+    { a: 'chatgpt', b: 'gpu',
+      label: 'Every token of every reply is matrix math on thousands of GPU cores.' },
+    { a: 'chatgpt', b: 'cloud',
+      label: 'Your prompt is served by load-balanced GPU fleets in cloud regions.' },
+    { a: 'chatgpt', b: 'internet',
+      label: 'Prompt out, tokens back — one HTTPS round trip across the backbone per message.' },
+    { a: 'chatgpt', b: 'cryptography',
+      label: 'A TLS handshake encrypts your conversation before it leaves your machine.' },
+    { a: 'chatgpt', b: 'os',
+      label: 'Keystrokes, sockets, and streams all pass through the operating system on both ends.' },
+    { a: 'chatgpt', b: 'cpu',
+      label: 'From the keyboard interrupt to rendering the reply, the CPU bookends every message.' },
+    { a: 'chatgpt', b: 'memory',
+      label: 'Your prompt lives in RAM at home; model weights live in VRAM in the data center.' },
+
     /* dashed edges to planned topics */
     { a: 'ai', b: 'machine-learning', planned: true,
       label: 'Machine learning is the engine room of modern AI.' },
@@ -212,7 +245,7 @@
     {
       id: 'intelligence', name: 'The Road to AI',
       hook: 'The hardware and infrastructure behind machines that learn.',
-      steps: ['cpu', 'gpu', 'cloud', 'ai']
+      steps: ['cpu', 'gpu', 'cloud', 'ai', 'chatgpt']
     }
   ];
 

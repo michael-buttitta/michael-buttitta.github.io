@@ -1,0 +1,845 @@
+---
+layout: gpu
+title: ChatGPT
+icon: fas fa-comment-dots
+order: 13
+description: >-
+  How ChatGPT works, end to end — follow one prompt from the keystroke on
+  your keyboard through the operating system, DNS, TLS, the internet
+  backbone, a cloud load balancer, tokenization, embeddings, transformer
+  layers, attention, GPU inference, and token sampling, all the way back to
+  a streamed answer on your screen. The capstone experience connecting
+  every exhibit on this site.
+extra_css:
+  - /assets/css/chatgpt.css
+  - /assets/css/knowledge-nav.css
+extra_js:
+  - /assets/js/knowledge-graph.js
+  - /assets/js/chatgpt.js
+  - /assets/js/knowledge-nav.js
+---
+
+<div id="chatgpt-experience">
+  <noscript>
+    <p class="cg-noscript">
+      The live demonstrations on this page &mdash; the tokenizer, the
+      attention visualizer, the sampling playground, the prompt tracer
+      &mdash; need JavaScript. All of the explanations below still read
+      fine without it, and every stage links to a full exhibit that also
+      works without JavaScript.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="cg-rail" aria-label="Chapters">
+    <a class="cg-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="cg-rail-dot" href="#computer" data-label="Your computer"><span></span></a>
+    <a class="cg-rail-dot" href="#network" data-label="The internet"><span></span></a>
+    <a class="cg-rail-dot" href="#tls" data-label="Encryption"><span></span></a>
+    <a class="cg-rail-dot" href="#cloud" data-label="The cloud"><span></span></a>
+    <a class="cg-rail-dot" href="#tokens" data-label="Tokenization"><span></span></a>
+    <a class="cg-rail-dot" href="#embeddings" data-label="Embeddings"><span></span></a>
+    <a class="cg-rail-dot" href="#transformer" data-label="Transformer"><span></span></a>
+    <a class="cg-rail-dot" href="#attention" data-label="Attention"><span></span></a>
+    <a class="cg-rail-dot" href="#gpu" data-label="GPU inference"><span></span></a>
+    <a class="cg-rail-dot" href="#sampling" data-label="Choosing tokens"><span></span></a>
+    <a class="cg-rail-dot" href="#streaming" data-label="Streaming"><span></span></a>
+    <a class="cg-rail-dot" href="#safety" data-label="Safety layers"><span></span></a>
+    <a class="cg-rail-dot" href="#scale" data-label="Costs &amp; scale"><span></span></a>
+    <a class="cg-rail-dot" href="#trace" data-label="Trace my prompt"><span></span></a>
+    <a class="cg-rail-dot" href="#constellation" data-label="The whole map"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="cg-hero" id="top">
+    <canvas id="cg-hero-canvas" aria-hidden="true"></canvas>
+    <div class="cg-hero-inner">
+      <p class="cg-kicker">The capstone experience</p>
+      <h1 class="cg-hero-title">How ChatGPT Works</h1>
+      <p class="cg-hero-sub">
+        Every exhibit on this site &mdash; CPUs, memory, GPUs, operating
+        systems, the internet, cryptography, the cloud, AI &mdash; working
+        together in the two seconds between pressing Enter and seeing the
+        first word of an answer.
+      </p>
+      <div class="cg-hero-prompt" role="img"
+           aria-label="A chat input containing the prompt: Explain why sunsets are red.">
+        <span class="cg-hero-prompt-text" id="cg-hero-typed">Explain why sunsets are red.</span><span class="cg-hero-caret" aria-hidden="true"></span>
+        <button type="button" class="cg-btn cg-btn-primary cg-hero-send" id="cg-hero-send">
+          Send <span aria-hidden="true">&#8599;</span>
+        </button>
+      </div>
+      <p class="cg-hero-hint">
+        13 chapters &middot; one prompt &middot; ten technologies &middot;
+        live demonstrations
+      </p>
+    </div>
+    <div class="cg-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <p class="cg-prose cg-framing">
+    Here is the whole page in one sentence: you type
+    <strong>&ldquo;Explain why sunsets are red.&rdquo;</strong>, press Send,
+    and about two seconds later words start appearing &mdash; and in between,
+    your keystroke crossed an operating system, your prompt was encrypted and
+    routed across the internet backbone, a load balancer picked a server in a
+    data center, your sentence was chopped into tokens and turned into
+    vectors, thousands of GPU cores multiplied enormous matrices dozens of
+    times, a probability distribution was sampled one token at a time, and
+    each token raced back across the planet to be drawn on your screen.
+    Every chapter below follows that same single prompt one stage further.
+    None of this describes any one company&rsquo;s exact system &mdash; it is
+    the common architecture that most modern AI assistants share.
+  </p>
+
+  <!-- ================================================================
+       01 — YOUR COMPUTER
+  ================================================================ -->
+  <section class="cg-section" id="computer" aria-labelledby="computer-h"
+           data-cg-topics="cpu os memory">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">01</span> Your computer</p>
+      <h2 id="computer-h">ChatGPT does not begin in the cloud</h2>
+      <p class="cg-lede">
+        It begins under your fingertip. Before your prompt touches any
+        network, it lives entirely inside your own machine: a keyboard
+        interrupt, an operating-system event, a browser buffer in RAM, and a
+        network stack assembling an HTTP request. The first few milliseconds
+        of every ChatGPT conversation are pure
+        <a href="/cpu/">CPU</a>, <a href="/memory/">memory</a>, and
+        <a href="/operating-systems/">operating system</a>.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <ol class="cg-stages" id="cg-local-stages">
+        <li class="cg-stage" data-note="Pressing a key closes a circuit. The keyboard controller sends a scancode over USB and raises a hardware interrupt — the same mechanism covered in the CPU exhibit.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-keyboard"></i></span>
+          <span class="cg-stage-name">Keyboard</span>
+          <span class="cg-stage-sub">scancode + hardware interrupt</span>
+        </li>
+        <li class="cg-stage" data-note="The OS interrupt handler runs in kernel mode, translates the scancode into a character, and routes it to whichever window has focus — your browser.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-cogs"></i></span>
+          <span class="cg-stage-name">Operating system</span>
+          <span class="cg-stage-sub">interrupt handler &rarr; focused window</span>
+        </li>
+        <li class="cg-stage" data-note="The browser's event loop fires a keydown event. JavaScript on the chat page appends the character to the input field's text.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-window-maximize"></i></span>
+          <span class="cg-stage-name">Browser</span>
+          <span class="cg-stage-sub">event loop &rarr; input field</span>
+        </li>
+        <li class="cg-stage" data-note="Your prompt now exists as bytes in RAM — in the browser's memory, inside a virtual address space the OS manages with paging.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-memory"></i></span>
+          <span class="cg-stage-name">Memory</span>
+          <span class="cg-stage-sub">UTF-8 bytes in the browser&rsquo;s RAM</span>
+        </li>
+        <li class="cg-stage" data-note="On Send, the browser serializes the prompt into an HTTPS request and hands it to the kernel's network stack — sockets, TCP, IP — ready to leave the machine.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-network-wired"></i></span>
+          <span class="cg-stage-name">Network stack</span>
+          <span class="cg-stage-sub">HTTPS request &rarr; socket &rarr; packets</span>
+        </li>
+      </ol>
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-local-play">Press the first key</button>
+        <p class="cg-panel-status" id="cg-local-status" aria-live="polite"></p>
+      </div>
+      <p class="cg-caption">
+        Each keystroke repeats the first three stages; Send triggers the last
+        two. The full mechanics live in the
+        <a href="/cpu/">CPU</a>, <a href="/memory/">Memory</a>, and
+        <a href="/operating-systems/">Operating Systems</a> exhibits.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       02 — THE INTERNET
+  ================================================================ -->
+  <section class="cg-section" id="network" aria-labelledby="network-h"
+           data-cg-topics="internet">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">02</span> The internet</p>
+      <h2 id="network-h">Your prompt crosses the planet</h2>
+      <p class="cg-lede">
+        The browser first asks DNS to turn the chat service&rsquo;s domain
+        name into an IP address, then sends your encrypted prompt hop by hop:
+        your router, your ISP, the internet backbone, and finally a cloud
+        region that might be hundreds or thousands of kilometers away. This
+        is the exact journey the <a href="/internet/">Internet exhibit</a>
+        follows in fifteen chapters &mdash; compressed here into one strip.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <div class="cg-hops" id="cg-net-hops" role="group" aria-label="Network hops — select a hop to inspect it">
+        <button type="button" class="cg-hop" data-hop="browser">
+          <span class="cg-hop-icon" aria-hidden="true"><i class="fas fa-window-maximize"></i></span>
+          <span class="cg-hop-name">Browser</span>
+        </button>
+        <button type="button" class="cg-hop" data-hop="dns">
+          <span class="cg-hop-icon" aria-hidden="true"><i class="fas fa-address-book"></i></span>
+          <span class="cg-hop-name">DNS</span>
+        </button>
+        <button type="button" class="cg-hop" data-hop="router">
+          <span class="cg-hop-icon" aria-hidden="true"><i class="fas fa-wifi"></i></span>
+          <span class="cg-hop-name">Router</span>
+        </button>
+        <button type="button" class="cg-hop" data-hop="isp">
+          <span class="cg-hop-icon" aria-hidden="true"><i class="fas fa-building"></i></span>
+          <span class="cg-hop-name">ISP</span>
+        </button>
+        <button type="button" class="cg-hop" data-hop="backbone">
+          <span class="cg-hop-icon" aria-hidden="true"><i class="fas fa-water"></i></span>
+          <span class="cg-hop-name">Backbone</span>
+        </button>
+        <button type="button" class="cg-hop" data-hop="region">
+          <span class="cg-hop-icon" aria-hidden="true"><i class="fas fa-cloud"></i></span>
+          <span class="cg-hop-name">Cloud region</span>
+        </button>
+        <span class="cg-hop-track" aria-hidden="true"><span class="cg-hop-dot" id="cg-net-dot"></span></span>
+      </div>
+      <div class="cg-hop-detail" id="cg-net-detail" aria-live="polite">
+        <p>Select any hop to inspect it, or send the prompt across all six.</p>
+      </div>
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-net-play">Send the prompt</button>
+        <p class="cg-panel-status" id="cg-net-status" aria-live="polite"></p>
+      </div>
+      <p class="cg-caption">
+        Simplified on purpose &mdash; a real request crosses 10&ndash;30
+        routers. For DNS resolution, packets, TCP, and undersea cables in
+        full detail, see <a href="/internet/">How the Internet Works</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       03 — SECURE COMMUNICATION
+  ================================================================ -->
+  <section class="cg-section" id="tls" aria-labelledby="tls-h"
+           data-cg-topics="cryptography">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">03</span> Secure communication</p>
+      <h2 id="tls-h">Nobody on the path can read your prompt</h2>
+      <p class="cg-lede">
+        Every router, ISP, and backbone operator between you and the data
+        center handles your packets &mdash; and none of them can read your
+        prompt. Before a single word travels, your browser and the server
+        perform a <strong>TLS handshake</strong>: the server proves its
+        identity with a certificate, both sides agree on a shared secret
+        using public-key cryptography, and everything after that is
+        ciphertext. The mathematics behind each step is the subject of the
+        <a href="/cryptography/">Cryptography exhibit</a>.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <ol class="cg-stages cg-stages-tls" id="cg-tls-stages">
+        <li class="cg-stage" data-note="ClientHello: your browser proposes TLS versions and cipher suites, and sends a random value plus a public key share.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-hand-paper"></i></span>
+          <span class="cg-stage-name">ClientHello</span>
+          <span class="cg-stage-sub">&ldquo;here are the ciphers I speak&rdquo;</span>
+        </li>
+        <li class="cg-stage" data-note="The server replies with its chosen cipher, its own key share, and its certificate — a document signed by a certificate authority binding its public key to its domain name.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-certificate"></i></span>
+          <span class="cg-stage-name">Certificate</span>
+          <span class="cg-stage-sub">signed identity from the server</span>
+        </li>
+        <li class="cg-stage" data-note="Your browser verifies the certificate's signature chain against certificate authorities it already trusts. A failure here is the 'connection not secure' warning.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-user-check"></i></span>
+          <span class="cg-stage-name">Verification</span>
+          <span class="cg-stage-sub">signature chain checked locally</span>
+        </li>
+        <li class="cg-stage" data-note="Both sides combine their key shares (elliptic-curve Diffie-Hellman) to derive the same symmetric session key — without that key ever crossing the wire.">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-key"></i></span>
+          <span class="cg-stage-name">Key exchange</span>
+          <span class="cg-stage-sub">shared secret, never transmitted</span>
+        </li>
+        <li class="cg-stage" data-note="From here on, every byte — your prompt and the streamed reply — is encrypted with fast symmetric encryption (typically AES-GCM or ChaCha20-Poly1305).">
+          <span class="cg-stage-icon" aria-hidden="true"><i class="fas fa-lock"></i></span>
+          <span class="cg-stage-name">Encrypted session</span>
+          <span class="cg-stage-sub">prompt sent as ciphertext</span>
+        </li>
+      </ol>
+      <div class="cg-wire" id="cg-tls-wire" aria-hidden="true">
+        <span class="cg-wire-label">on the wire:</span>
+        <span class="cg-wire-text" id="cg-tls-wiretext">Explain why sunsets are red.</span>
+      </div>
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-tls-play">Run the handshake</button>
+        <p class="cg-panel-status" id="cg-tls-status" aria-live="polite"></p>
+      </div>
+      <p class="cg-caption">
+        Certificates, Diffie&ndash;Hellman, and symmetric ciphers each get a
+        full interactive chapter in
+        <a href="/cryptography/">Understanding Cryptography</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       04 — THE CLOUD
+  ================================================================ -->
+  <section class="cg-section" id="cloud" aria-labelledby="cloud-h"
+           data-cg-topics="cloud">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">04</span> The cloud</p>
+      <h2 id="cloud-h">One prompt among millions</h2>
+      <p class="cg-lede">
+        Your prompt arrives at a cloud region where it is one request among a
+        constant torrent. A <strong>load balancer</strong> spreads incoming
+        requests across many application servers; the application server
+        checks your session and forwards the prompt to an
+        <strong>inference service</strong>; the inference service queues it
+        for a <strong>GPU cluster</strong>. No single machine could serve
+        everyone &mdash; the whole point of the
+        <a href="/cloud/">cloud</a> is that capacity is a fleet, not a box.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <canvas id="cg-cloud-canvas" class="cg-canvas" role="img"
+        aria-label="Animation of requests arriving at a load balancer, being distributed to the least busy of several application servers, and forwarded to a GPU cluster. One highlighted request represents your prompt."></canvas>
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-cloud-play">Route my prompt</button>
+        <p class="cg-panel-status" id="cg-cloud-status" aria-live="polite"></p>
+      </div>
+      <p class="cg-caption">
+        Inference is distributed because demand is bursty and models are
+        huge: a large model may not even fit on one GPU, so a single reply
+        can involve several GPUs working in concert. Regions, availability
+        zones, and auto-scaling are covered in
+        <a href="/cloud/">Understanding Cloud Computing</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       05 — TOKENIZATION
+  ================================================================ -->
+  <section class="cg-section" id="tokens" aria-labelledby="tokens-h"
+           data-cg-topics="ai">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">05</span> Tokenization</p>
+      <h2 id="tokens-h">The model never sees your words</h2>
+      <p class="cg-lede">
+        A language model doesn&rsquo;t read letters or words. The first thing
+        that happens inside the inference server is that your prompt is
+        chopped into <strong>tokens</strong> &mdash; frequent chunks of text
+        that might be a whole word (<code>sunset</code>), a piece of one
+        (<code>sun</code>&thinsp;+&thinsp;<code>sets</code>), or punctuation.
+        Each token maps to a number, and each number to a vector. Tokens are
+        a compromise: characters would make sequences enormously long, whole
+        words couldn&rsquo;t handle names or typos, and subwords get both
+        &mdash; a fixed vocabulary that can still spell anything.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <label class="cg-label" for="cg-tok-input">Type anything &mdash; watch it become tokens</label>
+      <textarea id="cg-tok-input" class="cg-input" rows="2"
+        spellcheck="false">Explain why sunsets are red.</textarea>
+      <p class="cg-tok-count" id="cg-tok-count" aria-live="polite"></p>
+
+      <div class="cg-tok-flow">
+        <div class="cg-tok-row">
+          <span class="cg-tok-rowlabel">Tokens</span>
+          <div class="cg-tok-tokens" id="cg-tok-tokens"></div>
+        </div>
+        <div class="cg-tok-row">
+          <span class="cg-tok-rowlabel">Token IDs</span>
+          <div class="cg-tok-ids" id="cg-tok-ids"></div>
+        </div>
+        <div class="cg-tok-row">
+          <span class="cg-tok-rowlabel">Embeddings</span>
+          <div class="cg-tok-embeds" id="cg-tok-embeds"></div>
+        </div>
+      </div>
+      <p class="cg-caption">
+        This is an <strong>illustrative</strong> tokenizer built for this
+        page &mdash; real model families (GPT, Claude, Llama&hellip;) each
+        train their own vocabularies with byte-pair encoding or similar
+        algorithms, so the same sentence tokenizes differently in each. The
+        principle is identical: text &rarr; subword pieces &rarr; integer IDs
+        &rarr; vectors.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 — EMBEDDINGS
+  ================================================================ -->
+  <section class="cg-section" id="embeddings" aria-labelledby="embeddings-h"
+           data-cg-topics="ai">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">06</span> Embeddings</p>
+      <h2 id="embeddings-h">Meaning becomes geometry</h2>
+      <p class="cg-lede">
+        Each token ID looks up a vector with thousands of dimensions &mdash;
+        its <strong>embedding</strong>. These vectors are learned during
+        training so that tokens used in similar contexts end up near each
+        other. Meaning stops being a dictionary definition and becomes a
+        <em>location</em>: &ldquo;cat&rdquo; is close to &ldquo;dog&rdquo;,
+        far from &ldquo;pizza&rdquo;, and the <em>direction</em> between
+        related words often carries meaning too.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <canvas id="cg-emb-canvas" class="cg-canvas cg-canvas-tall" role="img"
+        aria-label="A two-dimensional projection of word embeddings. Animal words cluster together, food words cluster together, vehicle words cluster together, and sunset-related words form their own neighborhood."></canvas>
+      <p class="cg-panel-status" id="cg-emb-info" aria-live="polite">
+        Hover or tap a word to see its nearest neighbors.
+      </p>
+      <p class="cg-caption">
+        Real embeddings have thousands of dimensions; this map is a
+        hand-made 2-D illustration of the one property that matters:
+        <strong>similar meaning &rarr; nearby points</strong>. Distances here
+        are for intuition, not measurements from a real model.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 — TRANSFORMER
+  ================================================================ -->
+  <section class="cg-section" id="transformer" aria-labelledby="transformer-h"
+           data-cg-topics="ai">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">07</span> The transformer</p>
+      <h2 id="transformer-h">A stack of layers, one job: predict the next token</h2>
+      <p class="cg-lede">
+        The embeddings now flow through the <strong>transformer</strong> —
+        dozens of near-identical layers stacked on top of each other. Each
+        layer does two things: <strong>attention</strong> lets every token
+        gather information from the tokens before it, and a small
+        <strong>feed-forward network</strong> transforms what was gathered.
+        Layer by layer, the vectors stop representing isolated tokens and
+        start representing your sentence&rsquo;s meaning. At the top, the
+        model emits one thing only: a probability for every token in its
+        vocabulary to come <em>next</em>.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <div class="cg-tf" id="cg-tf-diagram">
+        <div class="cg-tf-tokens" id="cg-tf-intokens" aria-hidden="true"></div>
+        <div class="cg-tf-block cg-tf-embed" data-tf="embed">Embedding layer</div>
+        <div class="cg-tf-layers" id="cg-tf-layers"></div>
+        <div class="cg-tf-block cg-tf-head" data-tf="head">Prediction head &mdash; scores for every token in the vocabulary</div>
+        <div class="cg-tf-out" id="cg-tf-out" aria-hidden="true"></div>
+      </div>
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-tf-play">Run one forward pass</button>
+        <p class="cg-panel-status" id="cg-tf-status" aria-live="polite"></p>
+      </div>
+      <p class="cg-caption">
+        Deliberately conceptual: real models have many more layers, multiple
+        attention heads per layer, normalization, and residual connections.
+        The intuition &mdash; embed, repeatedly mix context and transform,
+        then score the vocabulary &mdash; is the honest core. For how the
+        model <em>learned</em> its weights in the first place, see
+        <a href="/ai/">Understanding AI</a> on training vs inference.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 — ATTENTION
+  ================================================================ -->
+  <section class="cg-section" id="attention" aria-labelledby="attention-h"
+           data-cg-topics="ai">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">08</span> Attention</p>
+      <h2 id="attention-h">Every word looks back at the words before it</h2>
+      <p class="cg-lede">
+        Attention is the transformer&rsquo;s superpower. As the model
+        processes each token, it computes how relevant every <em>earlier</em>
+        token is, and blends their information in proportion. That is how
+        &ldquo;it&rdquo; can mean the animal in one sentence and the street
+        in a nearly identical one &mdash; the model doesn&rsquo;t follow a
+        grammar rule, it learned where to look. Hover any token below.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <div class="cg-attn-picks" role="group" aria-label="Choose an example sentence">
+        <button type="button" class="cg-chip cg-attn-pick is-on" data-attn="0">&ldquo;&hellip;it was too tired&rdquo;</button>
+        <button type="button" class="cg-chip cg-attn-pick" data-attn="1">&ldquo;&hellip;it was too wide&rdquo;</button>
+        <button type="button" class="cg-chip cg-attn-pick" data-attn="2">&ldquo;Explain why sunsets are red&rdquo;</button>
+      </div>
+      <div class="cg-attn-stage">
+        <svg class="cg-attn-svg" id="cg-attn-svg" aria-hidden="true"></svg>
+        <div class="cg-attn-tokens" id="cg-attn-tokens" role="group"
+             aria-label="Tokens — focus one to see which earlier tokens it attends to"></div>
+      </div>
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-attn-play">Animate all tokens</button>
+        <p class="cg-panel-status" id="cg-attn-status" aria-live="polite"></p>
+      </div>
+      <p class="cg-caption">
+        The first two sentences are a classic pair: only the last word
+        changes, yet &ldquo;it&rdquo; shifts its strongest attention from
+        <em>animal</em> to <em>street</em>. Weights here are hand-crafted to
+        illustrate the behavior; a real model computes them fresh in every
+        one of dozens of layers, with many attention heads looking for
+        different patterns at once.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 — GPU INFERENCE
+  ================================================================ -->
+  <section class="cg-section" id="gpu" aria-labelledby="gpu-h"
+           data-cg-topics="gpu memory">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">09</span> GPU inference</p>
+      <h2 id="gpu-h">Why this needs thousands of cores</h2>
+      <p class="cg-lede">
+        Everything the transformer does &mdash; attention, feed-forward
+        layers, the final vocabulary scores &mdash; is
+        <strong>matrix multiplication</strong>: millions of independent
+        multiply-and-add operations with no need to wait for each other.
+        That is precisely the workload a <a href="/gpu/">GPU</a> was built
+        for. A CPU races through a handful of operations at a time;
+        a GPU does tens of thousands simultaneously &mdash; and keeping its
+        cores fed is why <a href="/memory/">memory bandwidth</a> matters as
+        much as raw compute.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <div class="cg-gpu-race">
+        <figure class="cg-gpu-side">
+          <figcaption>CPU &mdash; a few powerful cores, in sequence</figcaption>
+          <canvas id="cg-gpu-cpu" class="cg-canvas cg-canvas-half" role="img"
+            aria-label="A grid of matrix cells being computed a few at a time by CPU cores."></canvas>
+        </figure>
+        <figure class="cg-gpu-side">
+          <figcaption>GPU &mdash; thousands of small cores, at once</figcaption>
+          <canvas id="cg-gpu-gpu" class="cg-canvas cg-canvas-half" role="img"
+            aria-label="The same grid of matrix cells computed in large parallel waves by GPU cores."></canvas>
+        </figure>
+      </div>
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-gpu-race">Race: one attention matrix</button>
+        <p class="cg-panel-status" id="cg-gpu-status" aria-live="polite"></p>
+      </div>
+      <p class="cg-caption">
+        Illustrative speeds, honest shape: both sides compute the same
+        matrix, the GPU just does it in wide parallel waves. Inside a real
+        inference step this happens hundreds of times per token &mdash;
+        which is why models are served from
+        <a href="/cloud/">GPU clusters</a>, not laptops. The full story is in
+        <a href="/gpu/">Inside a Modern GPU</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 — CHOOSING THE NEXT TOKEN
+  ================================================================ -->
+  <section class="cg-section" id="sampling" aria-labelledby="sampling-h"
+           data-cg-topics="ai">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">10</span> Choosing the next token</p>
+      <h2 id="sampling-h">The model proposes; the sampler decides</h2>
+      <p class="cg-lede">
+        The transformer&rsquo;s output is not a word &mdash; it is a
+        probability for <em>every</em> token in the vocabulary. Something
+        still has to pick one. Always taking the most likely token gives
+        safe, repetitive text; sampling from the full distribution
+        occasionally picks nonsense. Real systems steer between the two with
+        three dials: <strong>temperature</strong> reshapes the distribution,
+        <strong>top-k</strong> keeps only the k likeliest tokens, and
+        <strong>top-p</strong> keeps the smallest set whose probabilities sum
+        to p. Drag them and watch the same model produce different prose.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <p class="cg-samp-context">
+        The sky at sunset looks <span class="cg-samp-cursor" aria-hidden="true">&#9612;</span>
+      </p>
+      <div class="cg-samp-bars" id="cg-samp-bars"
+           aria-label="Probability of each candidate next token under the current sampling settings"></div>
+
+      <div class="cg-samp-controls">
+        <div class="cg-slider">
+          <label for="cg-samp-temp">Temperature <output id="cg-samp-temp-out">0.8</output></label>
+          <input type="range" id="cg-samp-temp" min="0.1" max="2" step="0.05" value="0.8">
+        </div>
+        <div class="cg-slider">
+          <label for="cg-samp-topk">Top-k <output id="cg-samp-topk-out">all</output></label>
+          <input type="range" id="cg-samp-topk" min="1" max="12" step="1" value="12">
+        </div>
+        <div class="cg-slider">
+          <label for="cg-samp-topp">Top-p <output id="cg-samp-topp-out">1.00</output></label>
+          <input type="range" id="cg-samp-topp" min="0.05" max="1" step="0.05" value="1">
+        </div>
+      </div>
+
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-samp-gen">Generate a sentence</button>
+        <button type="button" class="cg-btn cg-btn-ghost" id="cg-samp-again">Again</button>
+      </div>
+      <p class="cg-samp-out" id="cg-samp-out" aria-live="polite"></p>
+      <p class="cg-caption">
+        A tiny hand-built word model, so the effect is unmistakable: near
+        temperature 0 it converges on the same sentence every time; near 2
+        it wanders. Production systems make exactly this trade &mdash; low
+        temperature for code and facts, higher for brainstorming. Grayed
+        bars are tokens the current top-k / top-p settings have eliminated.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       11 — STREAMING
+  ================================================================ -->
+  <section class="cg-section" id="streaming" aria-labelledby="streaming-h"
+           data-cg-topics="internet os">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">11</span> Streaming</p>
+      <h2 id="streaming-h">Why the answer appears word by word</h2>
+      <p class="cg-lede">
+        The model produces one token at a time &mdash; each new token
+        requires a full pass through every transformer layer, with all the
+        text so far as context. Rather than make you stare at a spinner
+        until the last token is done, the server <strong>streams</strong>
+        each token back over the open HTTPS connection the moment it exists.
+        Your <a href="/operating-systems/">OS</a> delivers the bytes to the
+        browser, the browser appends them to the page, and your
+        <a href="/cpu/">CPU</a> re-renders &mdash; dozens of times per
+        answer.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <div class="cg-stream-race">
+        <div class="cg-stream-side">
+          <p class="cg-stream-label">Without streaming</p>
+          <div class="cg-bubble" id="cg-stream-wait">
+            <span class="cg-stream-placeholder">&mdash;</span>
+          </div>
+          <p class="cg-stream-time" id="cg-stream-wait-time" aria-live="polite"></p>
+        </div>
+        <div class="cg-stream-side">
+          <p class="cg-stream-label">With streaming</p>
+          <div class="cg-bubble" id="cg-stream-live">
+            <span class="cg-stream-placeholder">&mdash;</span>
+          </div>
+          <p class="cg-stream-time" id="cg-stream-live-time" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="cg-panel-controls">
+        <button type="button" class="cg-btn" id="cg-stream-play">Ask both servers</button>
+        <p class="cg-panel-status" id="cg-stream-status" aria-live="polite"></p>
+      </div>
+      <p class="cg-caption">
+        Identical total time; wildly different experience. The streamed side
+        also happens to contain the real answer to our prompt &mdash; the
+        physics is called Rayleigh scattering. Timings are illustrative.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 — SAFETY & MODERATION
+  ================================================================ -->
+  <section class="cg-section" id="safety" aria-labelledby="safety-h">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">12</span> Safety &amp; moderation</p>
+      <h2 id="safety-h">The model is not alone</h2>
+      <p class="cg-lede">
+        In production, the language model sits inside several layers of
+        supporting systems. Implementations differ between providers and
+        most details are not public, but the common pattern is an envelope
+        of checks around the model itself &mdash; some before your prompt
+        reaches it, some after the reply leaves it.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <div class="cg-safety" role="group" aria-label="Layers around the language model — select one for details">
+        <button type="button" class="cg-safety-layer" data-note="Malformed requests, oversized inputs, and invalid sessions are rejected before any model work happens — ordinary engineering hygiene, same as any web service.">
+          <span>Input validation</span>
+        </button>
+        <button type="button" class="cg-safety-layer" data-note="Rate limiting caps how many requests each user or key can make, protecting capacity and blunting abuse and scraping.">
+          <span>Rate limiting</span>
+        </button>
+        <button type="button" class="cg-safety-layer" data-note="Safety classifiers — often smaller models — may screen prompts and drafts of replies for categories the provider restricts.">
+          <span>Safety classifiers</span>
+        </button>
+        <button type="button" class="cg-safety-layer cg-safety-core" data-note="The language model itself, whose behavior is also shaped during training to follow instructions and decline certain requests.">
+          <span>The language model</span>
+        </button>
+        <button type="button" class="cg-safety-layer" data-note="Content moderation may filter, annotate, or block responses in flight — which is why a stream occasionally stops mid-answer.">
+          <span>Content moderation</span>
+        </button>
+        <button type="button" class="cg-safety-layer" data-note="Logging and abuse detection watch for patterns across many requests; policies on what is retained, for how long, differ by provider and plan.">
+          <span>Logging &amp; abuse detection</span>
+        </button>
+      </div>
+      <p class="cg-panel-status" id="cg-safety-info" aria-live="polite">
+        Select a layer to read what it does.
+      </p>
+      <p class="cg-caption">
+        Presented as a common pattern, not a diagram of any specific
+        provider &mdash; the exact pipeline, ordering, and criteria are
+        proprietary and vary between systems.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 — COSTS & SCALE
+  ================================================================ -->
+  <section class="cg-section" id="scale" aria-labelledby="scale-h"
+           data-cg-topics="cloud">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">13</span> Costs &amp; scale</p>
+      <h2 id="scale-h">What it takes to answer everyone at once</h2>
+      <p class="cg-lede">
+        Multiply this page by everyone using AI assistants at the same
+        moment: millions of concurrent conversations, each one running the
+        full transformer once <em>per token</em>. Serving that means fleets
+        of GPU servers across <a href="/cloud/">cloud regions</a>, petabytes
+        of fast storage holding model weights and logs, and networks moving
+        tokens between machines with microsecond budgets. Every operator
+        works the same trade-off triangle: <strong>latency</strong> (how
+        fast your tokens arrive), <strong>throughput</strong> (how many
+        users share each GPU), and <strong>energy</strong> (what the whole
+        thing costs to run).
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <canvas id="cg-scale-canvas" class="cg-canvas" aria-hidden="true"></canvas>
+      <div class="cg-slider cg-slider-wide">
+        <label for="cg-scale-batch">Requests batched per GPU
+          <output id="cg-scale-batch-out">8</output></label>
+        <input type="range" id="cg-scale-batch" min="1" max="64" step="1" value="8">
+      </div>
+      <div class="cg-scale-meters">
+        <div class="cg-meter">
+          <span class="cg-meter-label">Your latency per token</span>
+          <span class="cg-meter-track"><span class="cg-meter-fill" id="cg-scale-lat"></span></span>
+          <span class="cg-meter-val" id="cg-scale-lat-val"></span>
+        </div>
+        <div class="cg-meter">
+          <span class="cg-meter-label">Tokens served per second (whole GPU)</span>
+          <span class="cg-meter-track"><span class="cg-meter-fill cg-meter-fill-alt" id="cg-scale-thr"></span></span>
+          <span class="cg-meter-val" id="cg-scale-thr-val"></span>
+        </div>
+      </div>
+      <p class="cg-caption">
+        Illustrative units, real dilemma: batching more users onto one GPU
+        raises total throughput (and energy efficiency per token) but makes
+        each individual user wait longer between tokens. Providers tune this
+        constantly; none of the numbers above are measurements of any real
+        system.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       PLAYGROUND — TRACE MY PROMPT
+  ================================================================ -->
+  <section class="cg-section cg-section-trace" id="trace" aria-labelledby="trace-h">
+    <div class="cg-section-head">
+      <p class="cg-kicker"><span class="cg-kicker-num">&#9733;</span> Playground</p>
+      <h2 id="trace-h">Trace my prompt</h2>
+      <p class="cg-lede">
+        The whole page in one simulator. Type any prompt and watch it make
+        the complete journey &mdash; fourteen stages, each one clickable,
+        each one linking to the exhibit that teaches it in full.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <div class="cg-trace-inputrow">
+        <label class="cg-visually-hidden" for="cg-trace-input">Prompt to trace</label>
+        <input type="text" id="cg-trace-input" class="cg-input"
+               value="Explain why sunsets are red." maxlength="120"
+               spellcheck="false">
+        <button type="button" class="cg-btn cg-btn-primary" id="cg-trace-run">Trace it</button>
+      </div>
+      <ol class="cg-trace-steps" id="cg-trace-steps">
+        <!-- steps rendered by chatgpt.js; the static links below keep the
+             journey navigable without JavaScript -->
+      </ol>
+      <div class="cg-trace-detail" id="cg-trace-detail" aria-live="polite">
+        <p>Run a trace, or select any stage to inspect it.</p>
+      </div>
+      <p class="cg-caption">
+        Timings are order-of-magnitude illustrations. Without JavaScript,
+        the same journey reads: your computer
+        (<a href="/cpu/">CPU</a> &middot; <a href="/memory/">memory</a>
+        &middot; <a href="/operating-systems/">OS</a>) &rarr; the network
+        (<a href="/internet/">internet</a> &middot;
+        <a href="/cryptography/">TLS</a>) &rarr; the
+        <a href="/cloud/">cloud</a> &rarr; the model
+        (<a href="/ai/">AI</a> on a <a href="/gpu/">GPU</a>) &rarr; a
+        streamed reply back to your screen.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       CONSTELLATION — LIVE KNOWLEDGE GRAPH
+  ================================================================ -->
+  <section class="cg-section" id="constellation" aria-labelledby="constellation-h">
+    <div class="cg-section-head">
+      <p class="cg-kicker">The Technology Map</p>
+      <h2 id="constellation-h">You just used the whole map</h2>
+      <p class="cg-lede">
+        Every chapter you scrolled through lit up part of the Technology Map
+        &mdash; the knowledge graph connecting all the exhibits on this
+        site. One chat message touches nearly every major idea in modern
+        computing, each of them decades in the making.
+      </p>
+    </div>
+
+    <div class="cg-panel" data-cg-reveal>
+      <div class="cg-const" id="cg-const">
+        <!-- mini graph rendered by chatgpt.js from the shared knowledge graph -->
+      </div>
+      <p class="cg-panel-status" id="cg-const-count" aria-live="polite"></p>
+      <p class="cg-caption">
+        Nodes illuminate as you experience the chapter where they appear
+        (this view resets each visit). Click any node to open its full
+        exhibit, or explore the interactive version on the
+        <a href="/map/">Technology Map</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       CLOSING
+  ================================================================ -->
+  <section class="cg-section cg-closing" aria-label="Closing">
+    <div class="cg-panel cg-closing-panel" data-cg-reveal>
+      <h2 class="cg-closing-title">&ldquo;I understand what happens every time I send a prompt.&rdquo;</h2>
+      <p class="cg-prose">
+        A keystroke became an interrupt, an interrupt became a request, a
+        request became ciphertext, ciphertext crossed the backbone, a load
+        balancer chose a server, a tokenizer chopped your sentence, thousands
+        of GPU cores pushed vectors through a transformer, a sampler rolled
+        weighted dice one token at a time, and the answer streamed back to be
+        painted on your screen &mdash; all in about the time it takes to
+        blink twice. And one distinction is worth keeping: the model
+        <em>predicts</em>; it does not understand the way you do. It is
+        statistical pattern completion, executed on an extraordinary stack of
+        engineering &mdash; which makes it more impressive to understand,
+        not less.
+      </p>
+      <div class="cg-closing-ctas">
+        <a class="cg-btn cg-btn-primary" href="/map/">Explore the full Technology Map &rarr;</a>
+      </div>
+    </div>
+  </section>
+</div>

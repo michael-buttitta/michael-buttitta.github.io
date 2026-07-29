@@ -258,6 +258,32 @@
 #map-experience .tm-node:focus-visible .tm-node-bg {
   stroke: #f1f5f9;
 }
+/* capstone experiences: hexagonal, glowing — visually a different species */
+#map-experience .tm-node.tm-node-capstone .tm-node-bg {
+  fill: rgba(45, 212, 191, 0.08);
+  stroke-width: 2.4;
+  filter: drop-shadow(0 0 12px rgba(248, 250, 252, 0.28));
+}
+#map-experience .tm-node.tm-node-capstone:hover .tm-node-bg,
+#map-experience .tm-node.tm-node-capstone:focus-visible .tm-node-bg,
+#map-experience .tm-node.tm-node-capstone.is-active .tm-node-bg {
+  fill: rgba(45, 212, 191, 0.16);
+  stroke-width: 3.2;
+  filter: drop-shadow(0 0 18px rgba(248, 250, 252, 0.45));
+}
+#map-experience .tm-node.tm-node-capstone .tm-node-glyph {
+  fill: #f8fafc;
+}
+@media (prefers-reduced-motion: no-preference) {
+  #map-experience .tm-node.tm-node-capstone .tm-node-bg {
+    animation: tm-capstone-pulse 4.5s ease-in-out infinite;
+  }
+  @keyframes tm-capstone-pulse {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(248, 250, 252, 0.2)); }
+    50% { filter: drop-shadow(0 0 18px rgba(248, 250, 252, 0.42)); }
+  }
+}
+
 #map-experience .tm-node.tm-node-planned .tm-node-bg {
   fill: rgba(30, 41, 59, 0.55);
   stroke-dasharray: 4 5;
@@ -699,6 +725,18 @@
 #map-experience .tm-card-planned {
   opacity: 0.75;
   border-style: dashed;
+}
+
+#map-experience .tm-card-capstone {
+  border-color: rgba(248, 250, 252, 0.35);
+  background:
+    radial-gradient(ellipse 80% 120% at 15% 0%, rgba(45, 212, 191, 0.09), transparent 60%),
+    var(--tm-card);
+}
+
+#map-experience a.tm-card-capstone:hover {
+  border-color: #f8fafc;
+  box-shadow: 0 0 18px rgba(248, 250, 252, 0.12);
 }
 
 /* -------------------------------------------------------------- mobile --- */

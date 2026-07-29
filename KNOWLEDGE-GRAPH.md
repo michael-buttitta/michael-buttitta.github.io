@@ -58,14 +58,25 @@ HTML): Hardware `#2DD4BF` teal · Systems `#A78BFA` violet · Networks
 rose · Roadmap `#64748B` slate. Base palette matches the site skin
 (slate `#0F172A`, teal accent, Inter).
 
+## Capstone experiences
+
+**"How ChatGPT Works" (`/chatgpt/`) is the first capstone** — a synthesis
+journey that follows one prompt end-to-end and links *into* the foundational
+exhibits rather than repeating them. Mechanically it is a normal topic entry
+plus `capstone: true` and `cat: 'capstone'` (category color `#F8FAFC`):
+`map.js` renders capstones as larger **hexagonal** nodes with a glow
+(`.tm-node-capstone`), and the static index/home mirrors use
+`.tm-card-capstone` / a Capstone group. The page itself
+(`_tabs/chatgpt.html`, `assets/css/chatgpt.css`, `assets/js/chatgpt.js`,
+`.cg-*` classes) also renders a mini constellation of the shared graph that
+illuminates node-by-node as chapters are read (session-local, separate from
+the localStorage progress store).
+
 ## Roadmap (deliberately not built yet)
 
-- **Capstone journeys** that synthesize existing pages: "How ChatGPT Works"
-  (AI + GPU + cloud + internet), "How a Credit Card Transaction Works"
+- **More capstone journeys**: "How a Credit Card Transaction Works"
   (cryptography + internet + databases), "How Netflix Streams a Movie"
-  (internet + cloud + memory + OS). Capstones should appear on the map as a
-  distinct node shape and link *into* existing sections rather than repeat
-  them.
+  (internet + cloud + memory + OS) — follow the chatgpt mechanism above.
 - **Knowledge checkpoints** — optional predict-what-happens-next micro
   interactions inside exhibits, feeding the same progress store.
 - **Next topics** — Machine Learning, Databases, Algorithms, Quantum
