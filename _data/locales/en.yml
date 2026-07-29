@@ -30,6 +30,7 @@ tabs:
   memory: Inside Memory
   blockchain: Understanding Blockchain
   cryptography: Understanding Cryptography
+  cloud: Understanding the Cloud
 
 # the text displayed in the search bar & search results
 search:

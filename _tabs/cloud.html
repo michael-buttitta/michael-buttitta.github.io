@@ -1,0 +1,1308 @@
+---
+layout: gpu
+title: Cloud
+icon: fas fa-cloud
+order: 9
+description: >-
+  An interactive visual guide to cloud computing — what the cloud actually is,
+  data centers, regions and availability zones, virtual machines, containers
+  and Kubernetes, cloud networking, storage, auto scaling, serverless,
+  security, and real-world architectures, explained with live simulations.
+extra_css:
+  - /assets/css/cloud.css
+extra_js:
+  - /assets/js/cloud.js
+---
+
+<div id="cloud-experience">
+  <noscript>
+    <p class="cl-noscript">
+      The live simulations on this page &mdash; the auto-scaling demo, the
+      Kubernetes scheduler, the architecture builder &mdash; need JavaScript.
+      All of the explanations below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="cl-rail" aria-label="Chapters">
+    <a class="cl-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="cl-rail-dot" href="#what" data-label="What is the cloud?"><span></span></a>
+    <a class="cl-rail-dot" href="#why" data-label="Why the cloud exists"><span></span></a>
+    <a class="cl-rail-dot" href="#providers" data-label="The major providers"><span></span></a>
+    <a class="cl-rail-dot" href="#regions" data-label="Regions &amp; zones"><span></span></a>
+    <a class="cl-rail-dot" href="#vms" data-label="Virtual machines"><span></span></a>
+    <a class="cl-rail-dot" href="#containers" data-label="Containers &amp; Kubernetes"><span></span></a>
+    <a class="cl-rail-dot" href="#network" data-label="Cloud networking"><span></span></a>
+    <a class="cl-rail-dot" href="#storage" data-label="Storage"><span></span></a>
+    <a class="cl-rail-dot" href="#scaling" data-label="Auto scaling"><span></span></a>
+    <a class="cl-rail-dot" href="#serverless" data-label="Serverless"><span></span></a>
+    <a class="cl-rail-dot" href="#security" data-label="Security"><span></span></a>
+    <a class="cl-rail-dot" href="#architecture" data-label="A request's journey"><span></span></a>
+    <a class="cl-rail-dot" href="#usecases" data-label="Real-world use cases"><span></span></a>
+    <a class="cl-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
+    <a class="cl-rail-dot" href="#builder" data-label="Architecture builder"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="cl-hero" id="top">
+    <canvas id="cl-hero-canvas" aria-hidden="true"></canvas>
+    <div class="cl-hero-inner">
+      <p class="cl-kicker">An interactive exhibit</p>
+      <h1 class="cl-hero-title">Understanding Cloud Computing</h1>
+      <p class="cl-hero-sub">
+        Discover how millions of servers around the world work together to
+        power the modern internet.
+      </p>
+      <div class="cl-hero-cta">
+        <a class="cl-btn cl-btn-primary" id="cl-hero-cta" href="#what">Begin exploring</a>
+        <span class="cl-hero-hint">15 chapters &middot; live simulations &middot; no vendor pitch</span>
+      </div>
+    </div>
+    <div class="cl-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       01 — WHAT IS "THE CLOUD"?
+  ================================================================ -->
+  <section class="cl-section" id="what" aria-labelledby="what-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">01</span> First principles</p>
+      <h2 id="what-h">What is &ldquo;the cloud&rdquo;?</h2>
+      <p class="cl-lede">
+        The cloud is not a mysterious place in the sky. It is a network of
+        real, physical computers &mdash; millions of them &mdash; racked in
+        professionally managed buildings called <strong>data centers</strong>,
+        rented out over the internet. Every &ldquo;cloud&rdquo; photo you
+        upload and every &ldquo;cloud&rdquo; app you open lands on a hard
+        drive or a CPU in one of these buildings.
+      </p>
+    </div>
+
+    <p class="cl-prose">
+      Follow a single request below. When you open a web app, your laptop
+      doesn&rsquo;t talk to a cloud &mdash; it talks through your router, your
+      internet provider, and the internet backbone until it reaches a specific
+      building, a specific rack, and a specific machine. The fluffy cloud icon
+      on architecture diagrams is just shorthand for &ldquo;somebody
+      else&rsquo;s well-run data center.&rdquo;
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls" role="group" aria-label="Request journey demo controls">
+        <button type="button" id="cl-path-run" class="cl-btn cl-btn-primary">Follow a request</button>
+      </div>
+      <canvas id="cl-path-canvas" class="cl-canvas"
+              aria-label="Animated demo: a request travels from a laptop through a home router, an internet service provider, and internet backbone hops. A cloud symbol fades away to reveal that the destination is a physical data center building containing server racks."></canvas>
+      <p class="cl-panel-status" id="cl-path-status" aria-live="polite"></p>
+    </div>
+
+    <p class="cl-prose">
+      What makes a data center different from a very large closet full of
+      computers is everything wrapped around the machines. A modern facility
+      is an exercise in engineering paranoia &mdash; every system that could
+      fail has a backup, and usually the backup has a backup:
+    </p>
+
+    <div class="cl-cards4" data-cl-reveal>
+      <div class="cl-card">
+        <div class="cl-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><path d="M26 6L14 27h8l-4 15 14-23h-8z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Power</h3>
+        <p>Dual utility feeds, room-sized battery banks (UPS) that carry the
+        load instantly when the grid blips, and diesel generators that can run
+        for days. A large data center draws as much power as a small town.</p>
+      </div>
+      <div class="cl-card">
+        <div class="cl-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><path d="M24 8v32M10 24h28M14 14l20 20M34 14L14 34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Cooling</h3>
+        <p>Servers turn nearly every watt into heat. Facilities alternate
+        &ldquo;cold aisles&rdquo; and &ldquo;hot aisles,&rdquo; push chilled
+        air through the racks, and increasingly pipe liquid directly to the
+        hottest chips. Cooling is often the second-largest cost after the
+        hardware itself.</p>
+      </div>
+      <div class="cl-card">
+        <div class="cl-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="4" fill="currentColor"/><circle cx="10" cy="10" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="38" cy="10" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="10" cy="38" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="38" cy="38" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M13 13l8 8m14-8l-8 8m-14 14l8-8m14 8l-8-8" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <h3>Networking</h3>
+        <p>Multiple independent fiber routes into the building, massive
+        internal switch fabrics moving terabits per second between racks, and
+        direct connections to internet exchanges &mdash; so no single cut
+        cable takes the facility offline.</p>
+      </div>
+      <div class="cl-card">
+        <div class="cl-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><rect x="8" y="10" width="14" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><rect x="26" y="10" width="14" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M11 16h8M11 22h8M29 16h8M29 22h8" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <h3>Redundancy</h3>
+        <p>Everything is provisioned <em>N+1</em> or better: one more
+        generator, chiller, and network path than the building strictly needs.
+        Individual servers are expected to die &mdash; the design goal is that
+        nobody outside the building ever notices.</p>
+      </div>
+    </div>
+
+    <p class="cl-prose">
+      So the honest one-line definition: <strong>cloud computing is renting
+      slices of other people&rsquo;s industrial-grade computers over the
+      internet, on demand, by the second.</strong> The rest of this page is
+      about how that trick actually works &mdash; and why it reshaped the
+      software industry.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       02 — WHY CLOUD COMPUTING EXISTS
+  ================================================================ -->
+  <section class="cl-section" id="why" aria-labelledby="why-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">02</span> Origins</p>
+      <h2 id="why-h">Why cloud computing exists</h2>
+      <p class="cl-lede">
+        Before the cloud, launching software meant buying computers. You
+        estimated your peak traffic, ordered servers months in advance,
+        installed them in a rented cage, and prayed your estimate was right.
+        Guess low and your site collapsed on its best day. Guess high and you
+        paid for machines that sat idle at 3&nbsp;a.m. &mdash; every night,
+        forever.
+      </p>
+    </div>
+
+    <div class="cl-story" data-cl-reveal>
+      <div class="cl-story-step"><span class="cl-story-num">1</span><p>Company buys servers &mdash; large upfront capital cost, delivery in weeks.</p></div>
+      <div class="cl-story-step"><span class="cl-story-num">2</span><p>Maintains hardware &mdash; staff to rack, cable, patch, and replace failed disks.</p></div>
+      <div class="cl-story-step"><span class="cl-story-num">3</span><p>Handles outages &mdash; a dead power supply at 2&nbsp;a.m. is <em>your</em> pager going off.</p></div>
+      <div class="cl-story-step"><span class="cl-story-num">4</span><p>Overprovisions for the worst case &mdash; capacity sized for the biggest day of the year.</p></div>
+      <div class="cl-story-step"><span class="cl-story-num">5</span><p>Repeats every time the business grows &mdash; or shrinks.</p></div>
+    </div>
+
+    <p class="cl-prose">
+      In the mid-2000s, companies running enormous websites realized they had
+      accidentally become world-class at exactly this problem &mdash; and that
+      the machinery they&rsquo;d built to run their own services could be
+      rented out. Instead of buying servers, a customer could click a button
+      and have a machine in sixty seconds, billed by the hour, returned just
+      as easily. Computing became <strong>operating expense instead of
+      capital expense</strong>, and capacity became <strong>elastic</strong>.
+    </p>
+
+    <p class="cl-prose">
+      The classic analogy is electricity: you don&rsquo;t run a generator
+      behind your house; you plug into a grid and pay for what you use. The
+      analogy is genuinely useful &mdash; shared infrastructure, metered
+      billing, professional operations &mdash; but imperfect. Electrons are
+      interchangeable; computing isn&rsquo;t. Your data has gravity, your code
+      has vendor-specific dependencies, and moving providers is much harder
+      than switching power companies. Keep the analogy, keep its limits.
+    </p>
+
+    <p class="cl-prose">
+      The chart below makes the economics concrete. Demand for almost every
+      consumer service follows a daily curve &mdash; quiet at night, busy in
+      the evening. Compare owning fixed capacity against elastic capacity that
+      follows the curve, then drag the spike slider to simulate your product
+      going viral.
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls" role="group" aria-label="Capacity model controls">
+        <button type="button" id="cl-demand-own" class="cl-btn cl-btn-ghost" aria-pressed="true">Own servers</button>
+        <button type="button" id="cl-demand-cloud" class="cl-btn cl-btn-ghost" aria-pressed="false">Cloud (elastic)</button>
+      </div>
+      <div class="cl-sliders">
+        <div class="cl-slider">
+          <label for="cl-demand-spike">Evening peak</label>
+          <input type="range" id="cl-demand-spike" min="1" max="5" step="0.1" value="2">
+          <output id="cl-demand-spike-out">2.0&times;</output>
+        </div>
+        <div class="cl-slider" id="cl-demand-prov-wrap">
+          <label for="cl-demand-prov">Servers you bought</label>
+          <input type="range" id="cl-demand-prov" min="1" max="6" step="0.1" value="3">
+          <output id="cl-demand-prov-out">3.0&times;</output>
+        </div>
+      </div>
+      <canvas id="cl-demand-canvas" class="cl-canvas"
+              aria-label="Chart of demand over 24 hours with an evening peak. In owned-server mode a flat capacity line shows wasted idle capacity below it and an outage where demand exceeds it. In cloud mode capacity steps up and down to track demand closely."></canvas>
+      <div class="cl-statrow">
+        <div class="cl-stat"><span class="cl-stat-label">Average utilization</span><span class="cl-stat-val" id="cl-demand-util">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Capacity paid for but idle</span><span class="cl-stat-val" id="cl-demand-waste">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Demand you couldn&rsquo;t serve</span><span class="cl-stat-val" id="cl-demand-drop">&ndash;</span></div>
+      </div>
+      <p class="cl-panel-status" id="cl-demand-status" aria-live="polite"></p>
+    </div>
+
+    <p class="cl-prose">
+      This is the core economic argument, and it cuts both ways: elasticity is
+      transformative for spiky, growing, or unpredictable workloads &mdash;
+      but a perfectly steady workload running for years can genuinely be
+      cheaper on hardware you own. The cloud&rsquo;s deepest value is less
+      about price than about <strong>speed</strong>: any idea can have
+      world-class infrastructure in minutes.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       03 — THE MAJOR PROVIDERS
+  ================================================================ -->
+  <section class="cl-section" id="providers" aria-labelledby="providers-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">03</span> The landscape</p>
+      <h2 id="providers-h">Meet the major cloud providers</h2>
+      <p class="cl-lede">
+        Three companies operate most of the world&rsquo;s public cloud:
+        Amazon Web Services, Microsoft Azure, and Google Cloud Platform.
+        They are different ecosystems solving the same problems &mdash; the
+        concepts you learn on this page transfer between all of them.
+      </p>
+    </div>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-ptabs" role="tablist" aria-label="Cloud providers">
+        <button type="button" class="cl-ptab" id="cl-ptab-aws" role="tab" aria-selected="true" aria-controls="cl-ppanel-aws">AWS</button>
+        <button type="button" class="cl-ptab" id="cl-ptab-azure" role="tab" aria-selected="false" aria-controls="cl-ppanel-azure">Microsoft Azure</button>
+        <button type="button" class="cl-ptab" id="cl-ptab-gcp" role="tab" aria-selected="false" aria-controls="cl-ppanel-gcp">Google Cloud</button>
+      </div>
+
+      <div class="cl-ppanel" id="cl-ppanel-aws" role="tabpanel" aria-labelledby="cl-ptab-aws">
+        <h3>Amazon Web Services</h3>
+        <p><strong>History.</strong> Launched in 2006 with S3 (storage) and
+        EC2 (rentable servers), born from Amazon&rsquo;s experience running
+        its own retail infrastructure. First mover, and still the largest
+        provider by market share.</p>
+        <p><strong>Typical strengths.</strong> The broadest service catalog
+        (hundreds of services), the most mature ecosystem of tools and
+        third-party integrations, and the largest hiring pool of experienced
+        engineers.</p>
+        <p><strong>Common customers.</strong> Startups that grew up on it
+        (Netflix, Airbnb, Stripe are famously heavy users), plus enterprises
+        of every size and large public-sector deployments.</p>
+        <p><strong>Global footprint.</strong> Dozens of regions on six
+        continents, each with multiple availability zones.</p>
+        <p><strong>Example services.</strong> EC2 (virtual machines), S3
+        (object storage), Lambda (serverless functions), RDS (managed
+        databases), EKS (managed Kubernetes), CloudFront (CDN).</p>
+      </div>
+
+      <div class="cl-ppanel" id="cl-ppanel-azure" role="tabpanel" aria-labelledby="cl-ptab-azure" hidden>
+        <h3>Microsoft Azure</h3>
+        <p><strong>History.</strong> Announced in 2008 and launched in 2010,
+        built on Microsoft&rsquo;s decades of enterprise software and its own
+        global services (Office, Xbox, Bing).</p>
+        <p><strong>Typical strengths.</strong> Deep integration with the
+        Microsoft stack &mdash; Windows Server, Active Directory, Office 365,
+        .NET &mdash; and strong hybrid-cloud tooling for companies that keep
+        some infrastructure on-premises.</p>
+        <p><strong>Common customers.</strong> Large enterprises,
+        organizations already licensed on Microsoft software, and regulated
+        industries with hybrid requirements.</p>
+        <p><strong>Global footprint.</strong> More announced regions than any
+        other provider, with particular depth in enterprise and government
+        markets.</p>
+        <p><strong>Example services.</strong> Azure Virtual Machines, Blob
+        Storage, Azure Functions, Azure SQL Database, AKS (managed
+        Kubernetes), Azure Front Door / CDN.</p>
+      </div>
+
+      <div class="cl-ppanel" id="cl-ppanel-gcp" role="tabpanel" aria-labelledby="cl-ptab-gcp" hidden>
+        <h3>Google Cloud Platform</h3>
+        <p><strong>History.</strong> Grew from App Engine (2008) into a full
+        platform, exposing the infrastructure Google built to run Search,
+        Gmail, and YouTube &mdash; including technologies like Borg, the
+        internal system that inspired Kubernetes.</p>
+        <p><strong>Typical strengths.</strong> Data analytics and machine
+        learning services (BigQuery is a flagship), a global private network,
+        and first-party Kubernetes expertise &mdash; Google created and
+        open-sourced it.</p>
+        <p><strong>Common customers.</strong> Data-heavy companies, ML/AI
+        teams, and organizations standardized on Kubernetes and open-source
+        tooling.</p>
+        <p><strong>Global footprint.</strong> Dozens of regions linked by one
+        of the largest private fiber networks in the world.</p>
+        <p><strong>Example services.</strong> Compute Engine (virtual
+        machines), Cloud Storage, Cloud Functions / Cloud Run, Cloud SQL, GKE
+        (managed Kubernetes), Cloud CDN.</p>
+      </div>
+    </div>
+
+    <p class="cl-prose">
+      The names differ; the shapes rhyme. Whatever provider you meet, look
+      for the same five primitives &mdash; rentable machines, object storage,
+      functions, managed databases, managed Kubernetes &mdash; and you can
+      orient yourself in minutes:
+    </p>
+
+    <div class="cl-tablewrap" data-cl-reveal>
+      <table class="cl-table">
+        <caption class="cl-visually-hidden">Equivalent services across AWS, Azure, and Google Cloud</caption>
+        <thead>
+          <tr><th scope="col">Concept</th><th scope="col">AWS</th><th scope="col">Azure</th><th scope="col">Google Cloud</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Virtual machines</th><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
+          <tr><th scope="row">Object storage</th><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
+          <tr><th scope="row">Serverless functions</th><td>Lambda</td><td>Azure Functions</td><td>Cloud Functions</td></tr>
+          <tr><th scope="row">Managed SQL database</th><td>RDS</td><td>Azure SQL Database</td><td>Cloud SQL</td></tr>
+          <tr><th scope="row">Managed Kubernetes</th><td>EKS</td><td>AKS</td><td>GKE</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="cl-prose">
+      Beyond the big three sit meaningful players with their own niches
+      &mdash; Alibaba Cloud (dominant in China), Oracle and IBM (enterprise
+      workloads), and developer-focused clouds like DigitalOcean, Hetzner,
+      and Cloudflare. None of this page is vendor-specific on purpose:
+      <strong>learn the concepts once, map the names later.</strong>
+    </p>
+  </section>
+
+  <!-- ================================================================
+       04 — REGIONS & AVAILABILITY ZONES
+  ================================================================ -->
+  <section class="cl-section" id="regions" aria-labelledby="regions-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">04</span> Geography</p>
+      <h2 id="regions-h">Data centers, regions &amp; availability zones</h2>
+      <p class="cl-lede">
+        The cloud is not one place &mdash; it&rsquo;s a planet-wide mesh of
+        campuses. Providers organize the world into <strong>regions</strong>
+        (a metro area with a cluster of data centers) and each region into
+        <strong>availability zones</strong> (independent facilities with
+        separate power, cooling, and networking). This geography is what
+        makes applications fast <em>and</em> hard to kill.
+      </p>
+    </div>
+
+    <p class="cl-prose">
+      Physics sets the rules: signals in fiber travel at roughly two-thirds
+      the speed of light, so every 1,000&nbsp;km adds about 10&nbsp;ms of
+      round trip. That&rsquo;s why providers put regions near people. Click
+      anywhere on the map &mdash; or pick a city &mdash; and watch the
+      request route to the nearest region.
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls cl-wrap" role="group" aria-label="Choose a user location">
+        <button type="button" class="cl-btn cl-btn-ghost cl-map-city" data-lat="40.7" data-lon="-74.0" data-name="New York">New York</button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-map-city" data-lat="51.5" data-lon="-0.1" data-name="London">London</button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-map-city" data-lat="28.6" data-lon="77.2" data-name="Delhi">Delhi</button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-map-city" data-lat="-33.9" data-lon="151.2" data-name="Sydney">Sydney</button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-map-city" data-lat="-23.5" data-lon="-46.6" data-name="S&atilde;o Paulo">S&atilde;o Paulo</button>
+      </div>
+      <canvas id="cl-map-canvas" class="cl-canvas cl-canvas-tall"
+              aria-label="Stylized world map with cloud regions marked as glowing nodes. Choosing a user location draws a route to the nearest region and estimates the round-trip latency."></canvas>
+      <div class="cl-statrow">
+        <div class="cl-stat"><span class="cl-stat-label">Nearest region</span><span class="cl-stat-val" id="cl-map-region">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Distance</span><span class="cl-stat-val" id="cl-map-dist">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Est. round trip</span><span class="cl-stat-val" id="cl-map-latency">&ndash;</span></div>
+      </div>
+      <p class="cl-panel-status" id="cl-map-status" aria-live="polite"></p>
+      <p class="cl-caption">Stylized map with illustrative region locations &mdash; real providers operate many more. Latency estimated from great-circle distance in fiber plus routing overhead.</p>
+    </div>
+
+    <p class="cl-prose">
+      Zoom in on any one region and there&rsquo;s a deliberate hierarchy of
+      failure domains. Each level exists so that a failure at that level
+      stays contained:
+    </p>
+
+    <div class="cl-zoom" data-cl-reveal>
+      <div class="cl-zoom-step">
+        <span class="cl-zoom-tag">Region</span>
+        <p>A metro area (&ldquo;Ireland&rdquo;, &ldquo;Oregon&rdquo;) with
+        2&ndash;6 availability zones. Your data usually stays inside the
+        region you choose &mdash; which is also how providers help you meet
+        data-residency laws.</p>
+      </div>
+      <div class="cl-zoom-arrow" aria-hidden="true"></div>
+      <div class="cl-zoom-step">
+        <span class="cl-zoom-tag">Availability zone</span>
+        <p>One or more data centers with independent power, cooling, and
+        network, far enough apart that a fire or flood in one shouldn&rsquo;t
+        touch another &mdash; but close enough for millisecond links. Serious
+        systems run in at least two.</p>
+      </div>
+      <div class="cl-zoom-arrow" aria-hidden="true"></div>
+      <div class="cl-zoom-step">
+        <span class="cl-zoom-tag">Rack</span>
+        <p>A cabinet of a few dozen servers sharing a top-of-rack switch and
+        power feed. Schedulers deliberately spread your machines across racks
+        so one failed switch doesn&rsquo;t take out all your replicas.</p>
+      </div>
+      <div class="cl-zoom-arrow" aria-hidden="true"></div>
+      <div class="cl-zoom-step">
+        <span class="cl-zoom-tag">Server</span>
+        <p>The actual computer &mdash; the same CPUs, memory, and SSDs
+        explored in the <a href="/cpu/">CPU</a> and
+        <a href="/memory/">memory</a> exhibits, just dense, headless, and
+        expected to be replaceable.</p>
+      </div>
+    </div>
+
+    <p class="cl-prose">
+      This hierarchy is the backbone of <strong>high availability</strong>
+      (run copies in multiple zones; a zone outage becomes a non-event) and
+      <strong>disaster recovery</strong> (replicate to a second region;
+      even a regional catastrophe &mdash; earthquake, grid failure &mdash;
+      leaves you a place to fail over to). Geography, turned into an
+      engineering tool.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       05 — VIRTUAL MACHINES
+  ================================================================ -->
+  <section class="cl-section" id="vms" aria-labelledby="vms-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">05</span> The big idea</p>
+      <h2 id="vms-h">Virtual machines: one computer, many computers</h2>
+      <p class="cl-lede">
+        The technology that made cloud computing possible is
+        <strong>virtualization</strong>: a layer of software called a
+        <strong>hypervisor</strong> that slices one physical server into many
+        isolated <strong>virtual machines</strong>, each believing it owns
+        the whole computer.
+      </p>
+    </div>
+
+    <p class="cl-prose">
+      A physical server in a cloud data center might have 64 CPU cores and
+      hundreds of gigabytes of RAM &mdash; far more than most customers
+      need. The hypervisor sits directly on the hardware and hands out
+      slices: two cores and 8&nbsp;GB to this customer&rsquo;s VM, eight
+      cores and 32&nbsp;GB to that one. Each VM boots its own operating
+      system and cannot see, read, or crash its neighbors. That isolation is
+      what makes <strong>multi-tenancy</strong> &mdash; strangers safely
+      sharing one machine &mdash; possible, and multi-tenancy is what makes
+      renting by the hour economical.
+    </p>
+
+    <p class="cl-prose">
+      Try being the hypervisor. The host below has <strong>16 cores</strong>
+      and <strong>64&nbsp;GB of RAM</strong>. Pack customer VMs onto it and
+      watch the resources allocate &mdash; then see what happens when a
+      request doesn&rsquo;t fit.
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls cl-wrap" role="group" aria-label="Add virtual machines">
+        <button type="button" id="cl-vm-add-small" class="cl-btn cl-btn-ghost">+ Small (2 cores &middot; 4 GB)</button>
+        <button type="button" id="cl-vm-add-medium" class="cl-btn cl-btn-ghost">+ Medium (4 cores &middot; 16 GB)</button>
+        <button type="button" id="cl-vm-add-large" class="cl-btn cl-btn-ghost">+ Large (8 cores &middot; 32 GB)</button>
+        <button type="button" id="cl-vm-reset" class="cl-btn cl-btn-ghost">Reset host</button>
+      </div>
+      <div class="cl-host">
+        <div class="cl-host-title">Physical server &middot; 16 cores &middot; 64 GB RAM</div>
+        <div class="cl-host-bar-label">CPU cores</div>
+        <div class="cl-host-bar" id="cl-vm-cpu" aria-hidden="true"></div>
+        <div class="cl-host-bar-label">Memory</div>
+        <div class="cl-host-bar" id="cl-vm-ram" aria-hidden="true"></div>
+        <div class="cl-host-hv">Hypervisor &mdash; schedules CPU time, maps memory, enforces isolation</div>
+      </div>
+      <ul class="cl-vm-list" id="cl-vm-list" aria-live="polite"></ul>
+      <p class="cl-panel-status" id="cl-vm-status" aria-live="polite"></p>
+    </div>
+
+    <p class="cl-prose">
+      Under the hood the hypervisor is a scheduler, much like the operating
+      system schedulers described in the <a href="/cpu/">CPU exhibit</a>:
+      it time-slices physical cores among virtual ones, uses hardware
+      virtualization features built into modern processors to keep guests
+      isolated at silicon speed, and maps each VM&rsquo;s &ldquo;physical&rdquo;
+      memory onto real DRAM. When you click &ldquo;launch instance&rdquo; on
+      any cloud console, this is what happens: a scheduler finds a host with
+      free capacity, the hypervisor carves out your slice, and a machine that
+      didn&rsquo;t exist forty seconds ago accepts your login.
+    </p>
+
+    <div class="cl-callout" data-cl-reveal>
+      <p><strong>Why this revolutionized everything:</strong> before
+      virtualization, one server ran one workload, and the average machine
+      idled below 15% utilization. Virtualization let providers pack many
+      tenants per box, driving utilization &mdash; and driving down the price
+      of renting a computer &mdash; by an order of magnitude. Every chapter
+      after this one builds on that trick.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 — CONTAINERS & KUBERNETES
+  ================================================================ -->
+  <section class="cl-section" id="containers" aria-labelledby="containers-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">06</span> Shipping code</p>
+      <h2 id="containers-h">Containers &amp; Kubernetes</h2>
+      <p class="cl-lede">
+        Virtual machines solved &ldquo;share the hardware.&rdquo; Containers
+        solved a different problem: <strong>&ldquo;it works on my
+        machine.&rdquo;</strong> A container packages an application with
+        every library it needs into one sealed, portable unit that runs
+        identically on a laptop, a server, or any cloud.
+      </p>
+    </div>
+
+    <p class="cl-prose">
+      The key difference from a VM: a container doesn&rsquo;t bring its own
+      operating system. All containers on a machine share the host&rsquo;s
+      OS kernel, isolated from each other by kernel features rather than by
+      a hypervisor. That makes them megabytes instead of gigabytes, and
+      startable in milliseconds instead of minutes &mdash; light enough to
+      run dozens per machine and to treat them as disposable.
+    </p>
+
+    <div class="cl-stack-compare" data-cl-reveal>
+      <div class="cl-stack">
+        <h3>Virtual machines</h3>
+        <div class="cl-stack-layers">
+          <span class="cl-layer cl-layer-app">App A</span><span class="cl-layer cl-layer-app">App B</span>
+          <span class="cl-layer cl-layer-os">Guest OS</span><span class="cl-layer cl-layer-os">Guest OS</span>
+          <span class="cl-layer cl-layer-hv cl-layer-wide">Hypervisor</span>
+          <span class="cl-layer cl-layer-hw cl-layer-wide">Physical hardware</span>
+        </div>
+        <p>Strong hardware-level isolation. Each guest boots a full OS &mdash; heavyweight but very well separated.</p>
+      </div>
+      <div class="cl-stack">
+        <h3>Containers</h3>
+        <div class="cl-stack-layers">
+          <span class="cl-layer cl-layer-app">App A</span><span class="cl-layer cl-layer-app">App B</span><span class="cl-layer cl-layer-app">App C</span>
+          <span class="cl-layer cl-layer-rt cl-layer-wide">Container runtime</span>
+          <span class="cl-layer cl-layer-os cl-layer-wide">Shared OS kernel</span>
+          <span class="cl-layer cl-layer-hw cl-layer-wide">Physical or virtual hardware</span>
+        </div>
+        <p>Lightweight process-level isolation. Starts in milliseconds; in the cloud, containers usually run <em>inside</em> VMs &mdash; the layers stack rather than compete.</p>
+      </div>
+    </div>
+
+    <p class="cl-prose">
+      Once you have hundreds of disposable containers, a new question
+      appears: who decides where each one runs, restarts the ones that
+      crash, and adds more when traffic grows? That job is
+      <strong>orchestration</strong>, and the industry-standard orchestrator
+      is <strong>Kubernetes</strong>. You declare a desired state &mdash;
+      &ldquo;keep 6 replicas of this service running&rdquo; &mdash; and its
+      scheduler continuously works to make reality match. Try it: schedule
+      replicas onto the cluster below, then kill a node.
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-sliders">
+        <div class="cl-slider">
+          <label for="cl-k8s-replicas">Desired replicas</label>
+          <input type="range" id="cl-k8s-replicas" min="2" max="10" step="1" value="4">
+          <output id="cl-k8s-replicas-out">4</output>
+        </div>
+      </div>
+      <div class="cl-panel-controls" role="group" aria-label="Cluster controls">
+        <button type="button" id="cl-k8s-kill" class="cl-btn cl-btn-ghost">Kill node 2</button>
+      </div>
+      <div class="cl-k8s" id="cl-k8s-nodes" aria-live="polite"></div>
+      <p class="cl-panel-status" id="cl-k8s-status" aria-live="polite"></p>
+      <p class="cl-caption">A deliberately simplified scheduler: each node fits four pods. Real Kubernetes weighs CPU and memory requests, affinity rules, and much more &mdash; but the loop of <em>observe &rarr; compare to desired state &rarr; correct</em> is exactly this.</p>
+    </div>
+
+    <p class="cl-prose">
+      Notice what you did <em>not</em> do: SSH into a machine, copy files,
+      or restart anything by hand. Self-healing, scaling, and portability
+      &mdash; the qualities that made containers the default way to ship
+      cloud software &mdash; all come from that declarative loop.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       07 — NETWORKING
+  ================================================================ -->
+  <section class="cl-section" id="network" aria-labelledby="network-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">07</span> Plumbing</p>
+      <h2 id="network-h">Networking in the cloud</h2>
+      <p class="cl-lede">
+        Every cloud application lives inside a <strong>virtual network</strong>
+        &mdash; a software-defined private network you design: its address
+        ranges, its subnets, its firewall rules. The physical switches and
+        fiber belong to the provider; the topology is yours.
+      </p>
+    </div>
+
+    <p class="cl-prose">
+      The near-universal pattern is to split that network into a
+      <strong>public subnet</strong> &mdash; reachable from the internet,
+      holding only the front door &mdash; and <strong>private subnets</strong>
+      where application servers and databases live, unreachable from outside.
+      Between every hop stand <strong>security groups</strong>: per-server
+      firewalls that only pass traffic you explicitly allow. Send a request
+      through the stack below and watch each checkpoint.
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls" role="group" aria-label="Network demo controls">
+        <button type="button" id="cl-net-run" class="cl-btn cl-btn-primary">Send a request</button>
+        <button type="button" id="cl-net-attack" class="cl-btn cl-btn-ghost">Try to reach the database directly</button>
+      </div>
+      <canvas id="cl-net-canvas" class="cl-canvas cl-canvas-tall"
+              aria-label="Animated request path: a user resolves a name via DNS, then the request passes through a load balancer in the public subnet, a web server and application server in a private subnet, and a database in a second private subnet, with a security-group checkpoint at every hop. A direct attempt to reach the database from the internet is blocked."></canvas>
+      <p class="cl-panel-status" id="cl-net-status" aria-live="polite"></p>
+    </div>
+
+    <div class="cl-defs" data-cl-reveal>
+      <div class="cl-def"><h3>DNS</h3><p>The internet&rsquo;s phone book: turns <code>app.example.com</code> into an IP address. Cloud DNS services also steer users to the nearest healthy region.</p></div>
+      <div class="cl-def"><h3>Load balancer</h3><p>The front door. Accepts all incoming traffic, spreads it across healthy servers, and quietly stops sending to any that fail its health checks.</p></div>
+      <div class="cl-def"><h3>Security groups</h3><p>Firewalls attached to each server: &ldquo;the database accepts port 5432, only from the app tier, and nothing else.&rdquo; Deny is the default.</p></div>
+      <div class="cl-def"><h3>Public vs private subnets</h3><p>Public subnets can route to the internet; private ones can&rsquo;t be reached from it. The blast radius of a mistake shrinks with every layer an attacker can&rsquo;t touch.</p></div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 — STORAGE
+  ================================================================ -->
+  <section class="cl-section" id="storage" aria-labelledby="storage-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">08</span> Where data lives</p>
+      <h2 id="storage-h">Storage: four shapes of data</h2>
+      <p class="cl-lede">
+        &ldquo;Store my data in the cloud&rdquo; hides a real decision. Cloud
+        platforms offer several distinct kinds of storage, each with its own
+        physics, price, and sweet spot &mdash; an extension of the
+        <a href="/memory/">memory hierarchy</a> beyond a single machine.
+      </p>
+    </div>
+
+    <div class="cl-storegrid" data-cl-reveal>
+      <div class="cl-store-card" data-kind="object" tabindex="-1">
+        <h3>Object storage</h3>
+        <p class="cl-store-eg">S3 &middot; Azure Blob &middot; Cloud Storage</p>
+        <p>A bottomless bucket of files addressed by name over HTTP. No
+        folders, no file locking &mdash; just put, get, delete. Typically
+        replicated across <em>three availability zones</em>, giving famous
+        &ldquo;eleven nines&rdquo; durability claims. Cheap, effectively
+        infinite, a few milliseconds per access.</p>
+        <p class="cl-store-use">Best for: images, video, backups, logs, data lakes, static websites.</p>
+      </div>
+      <div class="cl-store-card" data-kind="block" tabindex="-1">
+        <h3>Block storage</h3>
+        <p class="cl-store-eg">EBS &middot; Azure Managed Disks &middot; Persistent Disk</p>
+        <p>A virtual hard drive attached to one VM &mdash; the cloud version
+        of the SSD in your laptop. Fast, low-latency, survives the VM being
+        stopped or replaced. What your operating system and database actually
+        write to.</p>
+        <p class="cl-store-use">Best for: boot disks, database volumes, anything needing a real filesystem.</p>
+      </div>
+      <div class="cl-store-card" data-kind="file" tabindex="-1">
+        <h3>File storage</h3>
+        <p class="cl-store-eg">EFS &middot; Azure Files &middot; Filestore</p>
+        <p>A shared network drive many machines mount at once, with familiar
+        directories and permissions. Slower than block storage, but shared
+        state without custom code.</p>
+        <p class="cl-store-use">Best for: shared assets across a fleet, lift-and-shift apps that expect a filesystem, home directories.</p>
+      </div>
+      <div class="cl-store-card" data-kind="db" tabindex="-1">
+        <h3>Databases</h3>
+        <p class="cl-store-eg">RDS &middot; Azure SQL &middot; Cloud SQL &middot; DynamoDB &middot; BigQuery</p>
+        <p>Not raw storage but a managed service <em>on top of it</em>:
+        queries, indexes, transactions, automated backups, and replication to
+        a standby in another zone. Relational for structured records;
+        key-value and document stores for internet-scale lookup tables;
+        warehouses for analytics.</p>
+        <p class="cl-store-use">Best for: anything you query &mdash; users, orders, inventory, events.</p>
+      </div>
+    </div>
+
+    <p class="cl-prose">
+      The fastest way to internalize the difference is to match workloads to
+      storage. Try it:
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls cl-wrap" role="group" aria-label="Pick a workload to see which storage fits">
+        <button type="button" class="cl-btn cl-btn-ghost cl-store-q" data-target="object">Millions of user-uploaded photos</button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-store-q" data-target="block">A PostgreSQL server&rsquo;s disk</button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-store-q" data-target="db">Customer orders you need to query</button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-store-q" data-target="file">Assets shared by 20 render servers</button>
+      </div>
+      <p class="cl-panel-status" id="cl-store-status" aria-live="polite"></p>
+    </div>
+
+    <p class="cl-prose">
+      One principle explains most cloud durability numbers:
+      <strong>replication</strong>. Object stores and managed databases don&rsquo;t
+      keep your data on one very good disk &mdash; they keep it on several
+      ordinary disks in several buildings, and repair copies automatically
+      when hardware dies. Durability is a property of the <em>system</em>,
+      not the device.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       09 — AUTO SCALING & LOAD BALANCING
+  ================================================================ -->
+  <section class="cl-section" id="scaling" aria-labelledby="scaling-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">09</span> Elasticity</p>
+      <h2 id="scaling-h">Auto scaling &amp; load balancing</h2>
+      <p class="cl-lede">
+        This is the cloud&rsquo;s signature move: capacity that follows
+        demand. A <strong>load balancer</strong> spreads traffic across a
+        fleet of identical servers; an <strong>auto scaling</strong> policy
+        watches utilization and changes the size of the fleet &mdash; no
+        human in the loop.
+      </p>
+    </div>
+
+    <p class="cl-prose">
+      Drag the slider from a quiet hundred users to a viral million and
+      watch the system respond: instances boot when utilization climbs,
+      drain and terminate when it falls. Each on-screen server may represent
+      many real instances at the high end &mdash; the counter tells the
+      truth.
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-sliders">
+        <div class="cl-slider cl-slider-wide">
+          <label for="cl-scale-users">Concurrent users</label>
+          <input type="range" id="cl-scale-users" min="2" max="6" step="0.01" value="2.3">
+          <output id="cl-scale-users-out">200</output>
+        </div>
+      </div>
+      <div class="cl-panel-controls" role="group" aria-label="Scaling demo controls">
+        <button type="button" id="cl-scale-spike" class="cl-btn cl-btn-ghost">Simulate a traffic spike</button>
+      </div>
+      <canvas id="cl-scale-canvas" class="cl-canvas cl-canvas-tall"
+              aria-label="Live simulation: a load balancer distributes user traffic across a fleet of server instances. As the user count rises, new instances boot and join the fleet; as it falls, instances drain and terminate. Each instance shows its current utilization."></canvas>
+      <div class="cl-statrow">
+        <div class="cl-stat"><span class="cl-stat-label">Running instances</span><span class="cl-stat-val" id="cl-scale-instances">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Fleet utilization</span><span class="cl-stat-val" id="cl-scale-util">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Cost right now</span><span class="cl-stat-val" id="cl-scale-cost">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">If sized for peak 24/7</span><span class="cl-stat-val" id="cl-scale-fixed">&ndash;</span></div>
+      </div>
+      <p class="cl-panel-status" id="cl-scale-status" aria-live="polite"></p>
+      <p class="cl-caption">Illustrative numbers: each instance handles ~2,000 concurrent users at a target 70% utilization, at $0.10 per instance-hour. Real policies also react to request latency, queue depth, or custom metrics.</p>
+    </div>
+
+    <p class="cl-prose">
+      Two details make this work in practice. <strong>Health checks:</strong>
+      the load balancer constantly probes every instance and silently stops
+      routing to any that fail &mdash; which is also how zero-downtime
+      deployments work (new instances join, old ones drain, users never
+      notice). And <strong>statelessness:</strong> instances can only be
+      disposable if no irreplaceable data lives on them &mdash; state
+      belongs in the databases and object stores from the previous chapter.
+      Elasticity isn&rsquo;t one feature; it&rsquo;s an architecture.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       10 — SERVERLESS
+  ================================================================ -->
+  <section class="cl-section" id="serverless" aria-labelledby="serverless-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">10</span> No servers?</p>
+      <h2 id="serverless-h">Serverless computing</h2>
+      <p class="cl-lede">
+        Auto scaling still leaves you managing a fleet. Serverless asks:
+        what if the fleet size were zero until the moment a request arrives?
+        You upload a <strong>function</strong> &mdash; just code &mdash; and
+        the platform runs it on demand, scales it to thousands of parallel
+        copies, and bills you only for the milliseconds it actually runs.
+      </p>
+    </div>
+
+    <p class="cl-prose">
+      Servers still exist, of course &mdash; you just never see them. Fire
+      single requests and bursts at the function below and watch execution
+      environments appear, stay warm briefly for reuse, and vanish. The
+      first request to hit a cold environment pays a <strong>cold
+      start</strong> &mdash; the platform has to set up the runtime before
+      your code runs.
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls" role="group" aria-label="Serverless demo controls">
+        <button type="button" id="cl-fn-one" class="cl-btn cl-btn-primary">Send one request</button>
+        <button type="button" id="cl-fn-burst" class="cl-btn cl-btn-ghost">Send a burst of 20</button>
+      </div>
+      <canvas id="cl-fn-canvas" class="cl-canvas"
+              aria-label="Live simulation: incoming requests trigger function execution environments that appear on demand, run briefly, stay warm for a few seconds for reuse, and then disappear. Cold starts are marked on the first use of each environment."></canvas>
+      <div class="cl-statrow">
+        <div class="cl-stat"><span class="cl-stat-label">Invocations</span><span class="cl-stat-val" id="cl-fn-invocations">0</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Cold starts</span><span class="cl-stat-val" id="cl-fn-cold">0</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Compute billed</span><span class="cl-stat-val" id="cl-fn-billed">0.0 s</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">A VM would have billed</span><span class="cl-stat-val" id="cl-fn-vm">&ndash;</span></div>
+      </div>
+      <p class="cl-panel-status" id="cl-fn-status" aria-live="polite"></p>
+    </div>
+
+    <div class="cl-defs" data-cl-reveal>
+      <div class="cl-def"><h3>Event-driven</h3><p>Functions are triggered by events: an HTTP request, a file landing in object storage, a message on a queue, a timer. Glue code for the cloud.</p></div>
+      <div class="cl-def"><h3>Stateless</h3><p>Each invocation starts fresh &mdash; anything worth keeping goes to a database or object store. That constraint is exactly what lets the platform scale copies freely.</p></div>
+      <div class="cl-def"><h3>Pay-per-use</h3><p>An API that gets 10 requests a day costs effectively nothing. The trade: cold-start latency, execution time limits, and less control over the runtime.</p></div>
+      <div class="cl-def"><h3>Versus VMs</h3><p>A VM is always on, always billed, fully yours to configure. Functions fit spiky and event-shaped work; steady heavy traffic often still favors VMs or containers.</p></div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       11 — SECURITY
+  ================================================================ -->
+  <section class="cl-section" id="security" aria-labelledby="security-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">11</span> Defense</p>
+      <h2 id="security-h">Cloud security &amp; the shared responsibility model</h2>
+      <p class="cl-lede">
+        Cloud providers run some of the most attacked &mdash; and most
+        defended &mdash; infrastructure on Earth. But &ldquo;the cloud is
+        secure&rdquo; does not mean <em>your app</em> is secure. Security is
+        explicitly split: the provider secures the cloud itself;
+        <strong>you secure what you build in it.</strong>
+      </p>
+    </div>
+
+    <p class="cl-prose">
+      Where exactly the line sits depends on how much of the stack you rent.
+      Switch between service models below &mdash; the boundary moves, but it
+      never disappears. Misconfigured storage buckets and leaked credentials,
+      not hypervisor exploits, cause the overwhelming majority of real cloud
+      breaches &mdash; and those are all on the customer&rsquo;s side of the
+      line.
+    </p>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls" role="group" aria-label="Choose a service model">
+        <button type="button" class="cl-btn cl-btn-ghost cl-sec-model" data-model="iaas" aria-pressed="true">IaaS<span class="cl-btn-sub">rent VMs</span></button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-sec-model" data-model="paas" aria-pressed="false">PaaS<span class="cl-btn-sub">rent a platform</span></button>
+        <button type="button" class="cl-btn cl-btn-ghost cl-sec-model" data-model="saas" aria-pressed="false">SaaS<span class="cl-btn-sub">rent an app</span></button>
+      </div>
+      <ol class="cl-sec-layers" id="cl-sec-layers">
+        <li data-layer="identity"><span class="cl-sec-name">Identity, users &amp; access policies</span><span class="cl-sec-who"></span></li>
+        <li data-layer="data"><span class="cl-sec-name">Data &amp; its classification</span><span class="cl-sec-who"></span></li>
+        <li data-layer="app"><span class="cl-sec-name">Application code &amp; configuration</span><span class="cl-sec-who"></span></li>
+        <li data-layer="runtime"><span class="cl-sec-name">Runtime &amp; middleware</span><span class="cl-sec-who"></span></li>
+        <li data-layer="os"><span class="cl-sec-name">Guest operating system &amp; patches</span><span class="cl-sec-who"></span></li>
+        <li data-layer="hv"><span class="cl-sec-name">Hypervisor &amp; host systems</span><span class="cl-sec-who"></span></li>
+        <li data-layer="net"><span class="cl-sec-name">Physical network</span><span class="cl-sec-who"></span></li>
+        <li data-layer="dc"><span class="cl-sec-name">Data centers &amp; hardware</span><span class="cl-sec-who"></span></li>
+      </ol>
+      <p class="cl-panel-status" id="cl-sec-status" aria-live="polite"></p>
+    </div>
+
+    <p class="cl-prose">
+      On the customer&rsquo;s side of the line, a handful of practices do
+      most of the work:
+    </p>
+
+    <div class="cl-defs cl-defs-3" data-cl-reveal>
+      <div class="cl-def"><h3>Identity &amp; Access Management</h3><p>Every person and program gets an identity, and every action is checked against policy. The golden rule is <strong>least privilege</strong>: grant the minimum access that works, nothing more.</p></div>
+      <div class="cl-def"><h3>Multi-factor authentication</h3><p>A password alone shouldn&rsquo;t open anything important. MFA turns a stolen credential from a catastrophe into an inconvenience.</p></div>
+      <div class="cl-def"><h3>Encryption in transit</h3><p>TLS/HTTPS on every connection &mdash; the handshakes, certificates, and ciphers dissected in the <a href="/cryptography/">cryptography exhibit</a> &mdash; so traffic can&rsquo;t be read or altered en route.</p></div>
+      <div class="cl-def"><h3>Encryption at rest</h3><p>Disks, object stores, and database volumes encrypted with managed keys, so a stolen drive is just noise. Providers make this a checkbox; the customer&rsquo;s job is to leave it checked.</p></div>
+      <div class="cl-def"><h3>Zero trust</h3><p>Never assume the internal network is safe. Authenticate every request, every service, every time &mdash; &ldquo;inside the firewall&rdquo; stops being a security boundary.</p></div>
+      <div class="cl-def"><h3>Backups, logging &amp; monitoring</h3><p>Immutable backups tested by actually restoring them; audit logs of who did what; alerts on the unexpected. Boring, decisive, and the difference between an incident and a headline.</p></div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 — A REQUEST'S JOURNEY
+  ================================================================ -->
+  <section class="cl-section" id="architecture" aria-labelledby="architecture-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">12</span> Putting it together</p>
+      <h2 id="architecture-h">A request&rsquo;s journey through a real architecture</h2>
+      <p class="cl-lede">
+        Every concept so far &mdash; CDN, load balancer, auto scaling,
+        cache, database, object storage &mdash; assembled into the
+        architecture behind a typical modern web application. Trace a
+        request through it, then click any component to inspect it.
+      </p>
+    </div>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-panel-controls" role="group" aria-label="Architecture demo controls">
+        <button type="button" id="cl-arch-run" class="cl-btn cl-btn-primary">Trace a request</button>
+        <button type="button" id="cl-arch-reset" class="cl-btn cl-btn-ghost">Reset caches</button>
+      </div>
+      <div class="cl-arch" id="cl-arch">
+        <div class="cl-arch-tier">
+          <button type="button" class="cl-arch-node" data-node="browser">Browser</button>
+          <button type="button" class="cl-arch-node" data-node="cdn">CDN edge</button>
+          <button type="button" class="cl-arch-node" data-node="lb">Load balancer</button>
+        </div>
+        <div class="cl-arch-tier">
+          <div class="cl-arch-group">
+            <span class="cl-arch-group-label">Auto scaling group</span>
+            <button type="button" class="cl-arch-node" data-node="app1">App server 1</button>
+            <button type="button" class="cl-arch-node" data-node="app2">App server 2</button>
+            <button type="button" class="cl-arch-node" data-node="app3">App server 3</button>
+          </div>
+        </div>
+        <div class="cl-arch-tier">
+          <button type="button" class="cl-arch-node" data-node="cache">Cache</button>
+          <button type="button" class="cl-arch-node" data-node="db">Database</button>
+          <button type="button" class="cl-arch-node" data-node="s3">Object storage</button>
+        </div>
+      </div>
+      <div class="cl-arch-detail" id="cl-arch-detail" aria-live="polite">
+        <p>Click any component to inspect it, or trace a request to watch the whole pipeline work.</p>
+      </div>
+      <p class="cl-panel-status" id="cl-arch-status" aria-live="polite"></p>
+      <p class="cl-caption">Trace it twice: the first request warms the CDN and cache; the second shows why hit-rates dominate real-world performance.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 — REAL-WORLD USE CASES
+  ================================================================ -->
+  <section class="cl-section" id="usecases" aria-labelledby="usecases-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">13</span> In the wild</p>
+      <h2 id="usecases-h">Real-world use cases</h2>
+      <p class="cl-lede">
+        The same building blocks compose into radically different systems.
+        These sketches describe <em>common architectural patterns</em> for
+        each kind of workload &mdash; not any company&rsquo;s confidential
+        internals.
+      </p>
+    </div>
+
+    <div class="cl-usegrid" data-cl-reveal>
+      <details class="cl-use">
+        <summary>Small business website</summary>
+        <p><strong>Likely ingredients:</strong> static site in object storage
+        behind a CDN, a managed database, maybe one small VM or a few
+        functions for forms.</p>
+        <p><strong>Why cloud helps:</strong> near-zero cost at low traffic,
+        no hardware to maintain, and the site survives a mention on national
+        TV without changes.</p>
+        <p><strong>Scale needs:</strong> tiny &mdash; which is exactly the
+        point: the same platform serves both ends of this list.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Netflix-style video streaming</summary>
+        <p><strong>Likely ingredients:</strong> massive object storage for
+        video masters, huge CDN capacity for delivery, fleets of encoding
+        workers, data pipelines for recommendations.</p>
+        <p><strong>Why cloud helps:</strong> encoding is spiky (new releases),
+        viewing is global, and per-country capacity planning would be
+        brutal. Netflix famously runs on a public cloud <em>plus</em> its
+        own purpose-built CDN appliances inside ISPs.</p>
+        <p><strong>Scale needs:</strong> a large share of global downstream
+        internet traffic at peak.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Spotify-style music service</summary>
+        <p><strong>Likely ingredients:</strong> object storage for audio, CDN
+        for delivery, streaming data pipelines for play events, ML training
+        for personalized playlists.</p>
+        <p><strong>Why cloud helps:</strong> the interesting problems are
+        data problems &mdash; managed analytics and ML infrastructure lets
+        engineers work on recommendations, not rack maintenance.</p>
+        <p><strong>Scale needs:</strong> hundreds of millions of users, tens
+        of billions of daily events.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Uber-style ride hailing</summary>
+        <p><strong>Likely ingredients:</strong> real-time location streams,
+        geospatial matching services, event queues, regional deployments for
+        latency, surge pricing analytics.</p>
+        <p><strong>Why cloud helps:</strong> demand is extremely spiky (rain,
+        concerts, New Year&rsquo;s Eve) and city-by-city expansion means
+        capacity needs appear overnight in new geographies.</p>
+        <p><strong>Scale needs:</strong> millions of concurrent location
+        updates with tight latency budgets.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Airbnb-style marketplace</summary>
+        <p><strong>Likely ingredients:</strong> search and ranking services,
+        object storage + CDN for listing photos, relational databases for
+        bookings and payments, fraud-detection ML.</p>
+        <p><strong>Why cloud helps:</strong> bookings are transactional and
+        must not be lost; photo storage grows without bound; traffic peaks
+        seasonally.</p>
+        <p><strong>Scale needs:</strong> global reads, strongly consistent
+        writes for the money paths.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Online banking</summary>
+        <p><strong>Likely ingredients:</strong> often <em>hybrid</em>: core
+        ledgers on-premises or in a private cloud for regulatory reasons,
+        customer-facing apps and analytics in a public cloud, heavy IAM,
+        encryption, and audit logging everywhere.</p>
+        <p><strong>Why cloud helps:</strong> mobile banking traffic scales
+        like any consumer app, while compliance workloads (fraud scoring,
+        reporting) burst well on elastic compute.</p>
+        <p><strong>Scale needs:</strong> moderate traffic, extreme
+        correctness, availability, and auditability.</p>
+      </details>
+      <details class="cl-use">
+        <summary>AI platforms</summary>
+        <p><strong>Likely ingredients:</strong> clusters of GPU-equipped
+        instances &mdash; the accelerators from the
+        <a href="/gpu/">GPU exhibit</a> &mdash; fast object storage for
+        training data, high-bandwidth interconnects, and inference fleets
+        that auto scale with usage.</p>
+        <p><strong>Why cloud helps:</strong> GPU supercomputers are among the
+        most capital-intensive machines ever built; renting them turned
+        model training from a national-lab project into a startup activity.</p>
+        <p><strong>Scale needs:</strong> thousands of accelerators for
+        training runs; latency-sensitive inference at global scale.</p>
+      </details>
+      <details class="cl-use">
+        <summary>E-commerce</summary>
+        <p><strong>Likely ingredients:</strong> the full canonical stack from
+        chapter 12 &mdash; CDN, auto scaling web tier, cache, relational
+        database &mdash; plus search, payments, and inventory services.</p>
+        <p><strong>Why cloud helps:</strong> Black Friday. Traffic can be
+        10&ndash;50&times; baseline for a few hours a year; elasticity is
+        the difference between record sales and a very public outage.</p>
+        <p><strong>Scale needs:</strong> extreme peaks, strict cart/checkout
+        correctness.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Healthcare systems</summary>
+        <p><strong>Likely ingredients:</strong> compliant storage for patient
+        records (encryption, access logging, regional data residency),
+        imaging archives in object storage, ML for diagnostics support.</p>
+        <p><strong>Why cloud helps:</strong> providers offer certified
+        compliance baselines (HIPAA-eligible services and equivalents) that
+        small clinics could never build alone &mdash; though configuration
+        responsibility stays with the customer.</p>
+        <p><strong>Scale needs:</strong> modest traffic, very high privacy
+        and durability bars.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Online gaming</summary>
+        <p><strong>Likely ingredients:</strong> regional fleets of game
+        servers close to players for low latency, matchmaking services,
+        global state in fast key-value stores, spiky launch-day scaling.</p>
+        <p><strong>Why cloud helps:</strong> a hit game&rsquo;s launch is the
+        most hostile traffic pattern in software &mdash; millions of players
+        in hours, then a long decay. Elastic regional capacity is the only
+        sane answer.</p>
+        <p><strong>Scale needs:</strong> single-digit-millisecond latency
+        budgets, brutal launch spikes.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Blockchain infrastructure</summary>
+        <p><strong>Likely ingredients:</strong> full nodes, indexers, and RPC
+        API services for networks like <a href="/bitcoin/">Bitcoin</a> and
+        other <a href="/blockchain/">blockchains</a> often run on cloud VMs;
+        mining pool coordinators and analytics pipelines too.</p>
+        <p><strong>Why cloud helps:</strong> nodes are ordinary always-on
+        workloads with growing disks &mdash; classic cloud territory.</p>
+        <p><strong>The tension:</strong> these networks exist to be
+        <em>decentralized</em> &mdash; if most nodes ran in one
+        provider&rsquo;s cloud, that provider would become the very central
+        point of failure the design tries to avoid. Many operators
+        deliberately run nodes on independent hardware for exactly that
+        reason.</p>
+      </details>
+      <details class="cl-use">
+        <summary>Scientific computing</summary>
+        <p><strong>Likely ingredients:</strong> burst clusters of thousands
+        of spot-priced VMs for simulations, object storage data lakes,
+        workflow orchestrators.</p>
+        <p><strong>Why cloud helps:</strong> a research team can rent a
+        top-500-class cluster for an afternoon, answer a question, and
+        return it &mdash; a purchase impossible to justify for occasional
+        use.</p>
+        <p><strong>Scale needs:</strong> enormous but brief.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       14 — MISCONCEPTIONS
+  ================================================================ -->
+  <section class="cl-section" id="myths" aria-labelledby="myths-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">14</span> Reality check</p>
+      <h2 id="myths-h">Common misconceptions</h2>
+      <p class="cl-lede">
+        Cloud discourse is full of slogans. Each one below holds a grain of
+        truth &mdash; click to see where it breaks down.
+      </p>
+    </div>
+
+    <div class="cl-mythgrid" data-cl-reveal>
+      <div class="cl-myth">
+        <button type="button" class="cl-myth-btn" aria-expanded="false">&ldquo;The cloud is just someone else&rsquo;s computer.&rdquo;</button>
+        <div class="cl-myth-verdict" hidden>
+          <p><span class="cl-verdict cl-verdict-partly">Partly true</span>
+          Physically, yes &mdash; and it&rsquo;s healthy to remember that.
+          But the phrase hides what you&rsquo;re actually buying: global
+          failover, eleven-nines storage, managed databases, and
+          sixty-second provisioning. Nobody&rsquo;s spare computer does that.</p>
+        </div>
+      </div>
+      <div class="cl-myth">
+        <button type="button" class="cl-myth-btn" aria-expanded="false">&ldquo;The cloud is always cheaper.&rdquo;</button>
+        <div class="cl-myth-verdict" hidden>
+          <p><span class="cl-verdict cl-verdict-false">False</span>
+          Elastic and spiky workloads: usually yes. Large, steady, predictable
+          workloads: often no &mdash; several companies have famously saved
+          millions by moving stable fleets back to owned hardware. The honest
+          answer is &ldquo;cheaper per unit of <em>flexibility</em>, not per
+          CPU-hour.&rdquo;</p>
+        </div>
+      </div>
+      <div class="cl-myth">
+        <button type="button" class="cl-myth-btn" aria-expanded="false">&ldquo;The cloud is automatically secure.&rdquo;</button>
+        <div class="cl-myth-verdict" hidden>
+          <p><span class="cl-verdict cl-verdict-false">False</span>
+          The provider secures the infrastructure &mdash; and does it
+          extraordinarily well. Your bucket permissions, IAM policies, and
+          leaked API keys are yours, and they cause the vast majority of real
+          cloud breaches. See the shared responsibility model above.</p>
+        </div>
+      </div>
+      <div class="cl-myth">
+        <button type="button" class="cl-myth-btn" aria-expanded="false">&ldquo;Every company should move everything to the cloud.&rdquo;</button>
+        <div class="cl-myth-verdict" hidden>
+          <p><span class="cl-verdict cl-verdict-false">False</span>
+          Data-residency law, latency to a factory floor, existing hardware
+          investments, or plain economics can all argue for keeping some
+          workloads on-premises. That&rsquo;s why <strong>hybrid cloud</strong>
+          (mixing both) is a mainstream architecture, not a compromise.</p>
+        </div>
+      </div>
+      <div class="cl-myth">
+        <button type="button" class="cl-myth-btn" aria-expanded="false">&ldquo;Multi-cloud is always better.&rdquo;</button>
+        <div class="cl-myth-verdict" hidden>
+          <p><span class="cl-verdict cl-verdict-partly">It depends</span>
+          Using several providers can reduce lock-in and satisfy regulators
+          &mdash; at the price of doubled expertise, lowest-common-denominator
+          services, and complex networking. For many teams, depth on one
+          platform beats shallow presence on three.</p>
+        </div>
+      </div>
+      <div class="cl-myth">
+        <button type="button" class="cl-myth-btn" aria-expanded="false">&ldquo;Containers replace virtual machines.&rdquo;</button>
+        <div class="cl-myth-verdict" hidden>
+          <p><span class="cl-verdict cl-verdict-false">False</span>
+          They stack. In public clouds your containers almost always run
+          <em>inside</em> VMs &mdash; the hypervisor provides the hard
+          multi-tenant boundary; containers provide packaging and density on
+          top of it.</p>
+        </div>
+      </div>
+      <div class="cl-myth">
+        <button type="button" class="cl-myth-btn" aria-expanded="false">&ldquo;Serverless means no servers exist.&rdquo;</button>
+        <div class="cl-myth-verdict" hidden>
+          <p><span class="cl-verdict cl-verdict-partly">Obviously not</span>
+          Your code runs on very real servers &mdash; provisioned, patched,
+          and scaled by the provider in the seconds around each invocation.
+          &ldquo;Serverless&rdquo; describes your <em>experience</em>
+          (no servers to manage), not the physics.</p>
+        </div>
+      </div>
+      <div class="cl-myth">
+        <button type="button" class="cl-myth-btn" aria-expanded="false">&ldquo;Public cloud means my data is public.&rdquo;</button>
+        <div class="cl-myth-verdict" hidden>
+          <p><span class="cl-verdict cl-verdict-false">False</span>
+          &ldquo;Public&rdquo; describes who can <em>rent</em> the
+          infrastructure (anyone), not who can read your data. Tenants are
+          isolated by the virtualization and encryption covered above. A
+          <strong>private cloud</strong> is the same technology operated for
+          a single organization.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       15 — ARCHITECTURE BUILDER (CAPSTONE)
+  ================================================================ -->
+  <section class="cl-section" id="builder" aria-labelledby="builder-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">15</span> Capstone</p>
+      <h2 id="builder-h">Build your own cloud architecture</h2>
+      <p class="cl-lede">
+        You&rsquo;ve seen every component. Now assemble them. Toggle
+        building blocks into your architecture, pick a traffic level, and
+        run the simulation &mdash; it will throw users, a traffic spike,
+        and a server failure at whatever you build, then score the result.
+      </p>
+    </div>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-build-palette" role="group" aria-label="Architecture components">
+        <button type="button" class="cl-build-add" data-comp="cdn" aria-pressed="false">CDN</button>
+        <button type="button" class="cl-build-add" data-comp="lb" aria-pressed="false">Load balancer</button>
+        <button type="button" class="cl-build-add" data-comp="vm" aria-pressed="false">Virtual machines</button>
+        <button type="button" class="cl-build-add" data-comp="k8s" aria-pressed="false">Containers</button>
+        <button type="button" class="cl-build-add" data-comp="fn" aria-pressed="false">Functions</button>
+        <button type="button" class="cl-build-add" data-comp="autoscale" aria-pressed="false">Auto scaling</button>
+        <button type="button" class="cl-build-add" data-comp="cache" aria-pressed="false">Cache</button>
+        <button type="button" class="cl-build-add" data-comp="db" aria-pressed="false">Database</button>
+        <button type="button" class="cl-build-add" data-comp="dbha" aria-pressed="false">DB standby (multi-AZ)</button>
+        <button type="button" class="cl-build-add" data-comp="s3" aria-pressed="false">Object storage</button>
+        <button type="button" class="cl-build-add" data-comp="mon" aria-pressed="false">Monitoring</button>
+        <button type="button" class="cl-build-add" data-comp="iam" aria-pressed="false">IAM &amp; MFA</button>
+      </div>
+      <div class="cl-sliders">
+        <div class="cl-slider">
+          <label for="cl-build-traffic">Traffic</label>
+          <input type="range" id="cl-build-traffic" min="0" max="2" step="1" value="1">
+          <output id="cl-build-traffic-out">Growing &middot; ~20k users</output>
+        </div>
+      </div>
+      <div class="cl-panel-controls" role="group" aria-label="Simulation controls">
+        <button type="button" id="cl-build-run" class="cl-btn cl-btn-primary">Run simulation</button>
+        <button type="button" id="cl-build-preset" class="cl-btn cl-btn-ghost">Load a solid starting point</button>
+      </div>
+      <div class="cl-build-diagram" id="cl-build-diagram" aria-label="Your architecture diagram"></div>
+      <div class="cl-statrow">
+        <div class="cl-stat"><span class="cl-stat-label">Median latency</span><span class="cl-stat-val" id="cl-build-latency">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Est. monthly cost</span><span class="cl-stat-val" id="cl-build-cost">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Survived the failure?</span><span class="cl-stat-val" id="cl-build-ha">&ndash;</span></div>
+        <div class="cl-stat"><span class="cl-stat-label">Score</span><span class="cl-stat-val" id="cl-build-score">&ndash;</span></div>
+      </div>
+      <ol class="cl-build-log" id="cl-build-log" aria-live="polite"></ol>
+      <p class="cl-panel-status" id="cl-build-status" aria-live="polite"></p>
+      <p class="cl-caption">A conceptual simulator with illustrative costs and latencies &mdash; it rewards the architectural patterns taught on this page, not any vendor&rsquo;s pricing sheet.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       KEEP EXPLORING
+  ================================================================ -->
+  <section class="cl-section cl-section-outro" id="next" aria-labelledby="next-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker">Keep exploring</p>
+      <h2 id="next-h">One connected story</h2>
+      <p class="cl-lede">
+        The cloud is the top floor of a very tall building. Every layer below
+        it has its own exhibit.
+      </p>
+    </div>
+    <div class="cl-nextgrid" data-cl-reveal>
+      <a class="cl-next" href="/cpu/">
+        <span class="cl-next-tag">Inside a Modern CPU</span>
+        <p>Every VM, container, and function on this page ultimately executes on the processors dissected here.</p>
+      </a>
+      <a class="cl-next" href="/memory/">
+        <span class="cl-next-tag">Inside Computer Memory</span>
+        <p>Cloud RAM, SSDs, and storage tiers are the memory hierarchy &mdash; stretched across buildings.</p>
+      </a>
+      <a class="cl-next" href="/gpu/">
+        <span class="cl-next-tag">Inside a Modern GPU</span>
+        <p>The accelerators behind the cloud&rsquo;s AI platforms and rendering farms.</p>
+      </a>
+      <a class="cl-next" href="/cryptography/">
+        <span class="cl-next-tag">Understanding Cryptography</span>
+        <p>TLS, certificates, and encryption at rest &mdash; the mathematics securing every request on this page.</p>
+      </a>
+      <a class="cl-next" href="/blockchain/">
+        <span class="cl-next-tag">Understanding Blockchain</span>
+        <p>A deliberately <em>de</em>centralized architecture &mdash; the fascinating counterpoint to the cloud&rsquo;s model.</p>
+      </a>
+      <a class="cl-next" href="/bitcoin/">
+        <span class="cl-next-tag">Understanding Bitcoin</span>
+        <p>Nodes, mining, and consensus &mdash; workloads that can run on clouds but derive their security from not depending on one.</p>
+      </a>
+    </div>
+  </section>
+</div>
