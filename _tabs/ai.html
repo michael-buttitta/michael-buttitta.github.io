@@ -1,0 +1,1106 @@
+---
+layout: gpu
+title: AI
+icon: fas fa-brain
+order: 10
+description: >-
+  An interactive visual guide to artificial intelligence — what AI actually is,
+  70 years of history, symbolic AI, search, machine learning, deep learning,
+  reinforcement learning, generative AI, everyday applications, honest
+  limitations, and where the field is heading, explained with live simulations.
+extra_css:
+  - /assets/css/ai.css
+extra_js:
+  - /assets/js/ai.js
+---
+
+<div id="ai-experience">
+  <noscript>
+    <p class="ai-noscript">
+      The live simulations on this page &mdash; the pathfinding demo, the
+      trainable classifier, the reinforcement-learning gridworld &mdash; need
+      JavaScript. All of the explanations below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="ai-rail" aria-label="Chapters">
+    <a class="ai-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="ai-rail-dot" href="#intelligence" data-label="What is intelligence?"><span></span></a>
+    <a class="ai-rail-dot" href="#history" data-label="A brief history"><span></span></a>
+    <a class="ai-rail-dot" href="#map" data-label="The map of AI"><span></span></a>
+    <a class="ai-rail-dot" href="#rules" data-label="Rule-based AI"><span></span></a>
+    <a class="ai-rail-dot" href="#search" data-label="Search &amp; planning"><span></span></a>
+    <a class="ai-rail-dot" href="#ml" data-label="Machine learning"><span></span></a>
+    <a class="ai-rail-dot" href="#deep" data-label="Deep learning"><span></span></a>
+    <a class="ai-rail-dot" href="#rl" data-label="Reinforcement learning"><span></span></a>
+    <a class="ai-rail-dot" href="#generative" data-label="Generative AI"><span></span></a>
+    <a class="ai-rail-dot" href="#everyday" data-label="AI in everyday life"><span></span></a>
+    <a class="ai-rail-dot" href="#limits" data-label="Limitations"><span></span></a>
+    <a class="ai-rail-dot" href="#future" data-label="The future"><span></span></a>
+    <a class="ai-rail-dot" href="#explorer" data-label="AI Explorer"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="ai-hero" id="top">
+    <canvas id="ai-hero-canvas" aria-hidden="true"></canvas>
+    <div class="ai-hero-inner">
+      <p class="ai-kicker">An interactive exhibit</p>
+      <h1 class="ai-hero-title">Understanding Artificial Intelligence</h1>
+      <p class="ai-hero-sub">
+        Explore how computers evolved from following explicit instructions to
+        recognizing patterns, making decisions, and generating entirely new
+        content.
+      </p>
+      <div class="ai-hero-cta">
+        <a class="ai-btn ai-btn-primary" id="ai-hero-cta" href="#intelligence">Begin exploring</a>
+        <span class="ai-hero-hint">14 chapters &middot; live simulations &middot; no hype</span>
+      </div>
+    </div>
+    <div class="ai-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       01 — WHAT IS INTELLIGENCE?
+  ================================================================ -->
+  <section class="ai-section" id="intelligence" aria-labelledby="intelligence-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">01</span> First principles</p>
+      <h2 id="intelligence-h">What does it mean to be intelligent?</h2>
+      <p class="ai-lede">
+        Before asking whether a machine can be intelligent, we have to decide
+        what intelligence <em>is</em>. Researchers usually break it into
+        capabilities: <strong>learning</strong> from experience,
+        <strong>reasoning</strong> from evidence, <strong>planning</strong>
+        ahead, <strong>solving problems</strong>, <strong>perceiving</strong>
+        the world, and <strong>adapting</strong> when it changes. Artificial
+        intelligence is the engineering project of reproducing
+        <em>selected</em> aspects of that list &mdash; not the project of
+        building a human mind.
+      </p>
+    </div>
+
+    <p class="ai-prose">
+      That word <em>selected</em> carries a lot of weight. A pocket calculator
+      out-computes every human alive, yet nobody calls it intelligent, because
+      raw computation is not the same thing as intelligence. A chess engine
+      plans brilliantly inside 64 squares and is helpless outside them. Pick a
+      system below and see which capabilities it genuinely has &mdash; the
+      pattern that emerges is the single most important idea on this page:
+      today&rsquo;s AI is <strong>narrow</strong>, superhuman at specific
+      tasks, rather than <strong>general</strong>, capable across all of them
+      the way people are.
+    </p>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-panel-controls" role="group" aria-label="Choose a system to evaluate">
+        <button type="button" class="ai-chip is-active" data-ai-sys="calc">Calculator</button>
+        <button type="button" class="ai-chip" data-ai-sys="chess">Chess engine</button>
+        <button type="button" class="ai-chip" data-ai-sys="spam">Spam filter</button>
+        <button type="button" class="ai-chip" data-ai-sys="car">Driver assistance</button>
+        <button type="button" class="ai-chip" data-ai-sys="llm">Chatbot (LLM)</button>
+        <button type="button" class="ai-chip" data-ai-sys="human">Human</button>
+      </div>
+      <ul class="ai-intel-grid" id="ai-intel-grid" aria-live="polite"></ul>
+      <p class="ai-panel-status" id="ai-intel-status" aria-live="polite"></p>
+      <p class="ai-caption">
+        Judgments are simplified on purpose &mdash; the point is the
+        <em>shape</em> of each profile, not a precise score. Note that
+        &ldquo;creativity&rdquo; gets a qualified check for generative systems:
+        they recombine patterns from training data in genuinely novel ways,
+        which may or may not meet your definition of the word. Consciousness is
+        listed to make a point: no AI system has it, none is close, and
+        <strong>none of the capabilities above require it</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       02 — A BRIEF HISTORY OF AI
+  ================================================================ -->
+  <section class="ai-section" id="history" aria-labelledby="history-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">02</span> Seven decades</p>
+      <h2 id="history-h">A brief history of AI</h2>
+      <p class="ai-lede">
+        AI is not new. The field was named in 1956, boomed twice, collapsed
+        twice, and has been compounding since the early 2010s. The curve below
+        tracks the field&rsquo;s momentum &mdash; funding, activity, and
+        expectations &mdash; through both <strong>AI winters</strong>. Click
+        any milestone to place it on the curve and read what actually
+        happened.
+      </p>
+    </div>
+
+    <div class="ai-panel" data-ai-reveal>
+      <canvas id="ai-hype-canvas" class="ai-canvas ai-canvas-short"
+              aria-label="A stylized curve of AI research momentum from 1950 to 2025: an optimistic rise through the 1960s, a first winter in the mid-1970s, an expert-systems boom around 1985, a second winter through the 1990s, and a steep sustained climb after 2012. Selecting a milestone below highlights its year on the curve."></canvas>
+      <p class="ai-caption">A stylized momentum curve &mdash; illustrative, not a plot of any single dataset. The shaded bands are the two AI winters.</p>
+    </div>
+
+    <ol class="ai-timeline" id="ai-timeline" data-ai-reveal>
+      <li class="ai-tl-item" data-year="1950">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">1950</span>
+          <span class="ai-tl-title">Turing asks the question</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>Alan Turing&rsquo;s paper <em>Computing Machinery and
+          Intelligence</em> opens with &ldquo;Can machines think?&rdquo; and
+          immediately replaces it with a testable alternative: can a machine
+          hold a conversation indistinguishable from a person&rsquo;s? The
+          <strong>Turing Test</strong> reframed a philosophical argument as an
+          engineering target &mdash; and the field has been arguing about
+          whether it&rsquo;s the <em>right</em> target ever since.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="1956">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">1956</span>
+          <span class="ai-tl-title">Dartmouth: the field gets a name</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>A summer workshop at Dartmouth College &mdash; organized by John
+          McCarthy, Marvin Minsky, Claude Shannon, and Nathaniel Rochester
+          &mdash; coins the term <strong>artificial intelligence</strong> and
+          declares the founding bet: &ldquo;every aspect of learning or any
+          other feature of intelligence can in principle be so precisely
+          described that a machine can be made to simulate it.&rdquo; The
+          attendees expected major progress in a generation. They were off by
+          several.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="1965">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">1958&ndash;66</span>
+          <span class="ai-tl-title">Symbolic AI &amp; the perceptron</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>Two rival traditions are born almost together.
+          <strong>Symbolic AI</strong> encodes knowledge as logic and rules
+          &mdash; programs like Logic Theorist prove mathematical theorems.
+          Frank Rosenblatt&rsquo;s <strong>perceptron</strong> (1958) instead
+          <em>learns</em> from examples, an ancestor of every neural network.
+          ELIZA (1966) fools people into confiding in a script that mostly
+          rephrases their words &mdash; the first demonstration that
+          <em>appearing</em> intelligent is easier than being intelligent.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="1974">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">1974&ndash;80</span>
+          <span class="ai-tl-title">The first AI winter</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>Promises collide with reality: machine translation flops,
+          perceptrons are proven unable to solve simple problems (Minsky and
+          Papert&rsquo;s <em>Perceptrons</em>, 1969), and the 1973 Lighthill
+          Report tells the British government the field has failed its
+          objectives. Funding evaporates. The lesson that outlived the winter:
+          toy demos that work in the lab routinely fail to
+          <strong>scale</strong> to the messy real world.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="1985">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">1980&ndash;87</span>
+          <span class="ai-tl-title">Expert systems boom</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>AI returns as a business. <strong>Expert systems</strong> &mdash;
+          thousands of hand-written IF&ndash;THEN rules capturing a
+          specialist&rsquo;s knowledge &mdash; genuinely work in narrow
+          domains: MYCIN suggests antibiotic doses, XCON configures DEC
+          computers and saves the company millions per year. Japan launches
+          the Fifth Generation project; corporations build
+          &ldquo;knowledge engineering&rdquo; departments.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="1992">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">1987&ndash;95</span>
+          <span class="ai-tl-title">The second AI winter</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>Expert systems hit their ceiling: rules are expensive to write,
+          brittle at the edges, and a nightmare to maintain as the world
+          changes. The specialized hardware market collapses, the Fifth
+          Generation project winds down short of its goals, and
+          &ldquo;AI&rdquo; becomes a word researchers avoid putting in grant
+          applications &mdash; useful work continues under names like
+          &ldquo;machine learning&rdquo; and &ldquo;pattern
+          recognition.&rdquo;</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="1997">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">1997</span>
+          <span class="ai-tl-title">Deep Blue beats Kasparov</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>IBM&rsquo;s Deep Blue defeats world chess champion Garry Kasparov
+          &mdash; a landmark for <strong>search</strong>: examining hundreds of
+          millions of positions per second, guided by hand-tuned evaluation
+          heuristics. Notably, it involved almost no learning. Chess fell to
+          brute-force search plus human-crafted knowledge; the games machines
+          couldn&rsquo;t win that way (like Go) would need something else
+          entirely.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="2005">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">1995&ndash;2010</span>
+          <span class="ai-tl-title">The statistical turn</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>Machine learning quietly becomes the workhorse of the web:
+          spam filters, search ranking, product recommendations, fraud
+          detection, ad targeting. The winning recipe is
+          <strong>data + statistics</strong> rather than hand-written rules.
+          Three ingredients accumulate that will detonate the next era: the
+          internet&rsquo;s oceans of data, cheap parallel compute (GPUs), and
+          steadily better learning algorithms.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="2012">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">2012</span>
+          <span class="ai-tl-title">ImageNet &amp; the deep learning moment</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>On the million-image ImageNet benchmark, a deep neural network
+          called <strong>AlexNet</strong> &mdash; trained on two consumer GPUs
+          &mdash; crushes the field, dropping the error rate by a margin the
+          community had taken a decade to achieve incrementally. The message:
+          given enough data and compute, networks that <em>learn their own
+          features</em> beat systems built from hand-engineered ones. Vision,
+          speech, and translation all fall in quick succession.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="2016">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">2016</span>
+          <span class="ai-tl-title">AlphaGo</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>Go has more board positions than atoms in the observable
+          universe &mdash; brute-force search alone cannot crack it. DeepMind&rsquo;s
+          AlphaGo combines deep neural networks (to judge positions and
+          suggest moves) with search and <strong>reinforcement learning</strong>
+          (improving by playing itself), and defeats champion Lee Sedol 4&ndash;1.
+          Move 37 of game two &mdash; a move human experts initially called a
+          mistake &mdash; becomes shorthand for machine strategies no person
+          taught.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="2017">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">2017</span>
+          <span class="ai-tl-title">The transformer</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>A Google paper titled <em>Attention Is All You Need</em>
+          introduces the <strong>transformer</strong> &mdash; a neural network
+          architecture that processes whole sequences in parallel and learns
+          which parts of the input to &ldquo;attend&rdquo; to. It scales
+          beautifully with data and compute, and becomes the substrate of
+          essentially every modern language model, plus much of vision, audio,
+          and biology AI.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="2022">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">2020&ndash;22</span>
+          <span class="ai-tl-title">Generative AI goes public</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>Scaling transformers into <strong>large language models</strong>
+          (GPT-3, 2020) produces systems that write essays, code, and
+          conversation. <strong>Diffusion models</strong> turn text prompts
+          into photorealistic images. When chat interfaces put these models in
+          everyone&rsquo;s hands in late 2022, AI stops being an industry tool
+          and becomes a consumer phenomenon &mdash; reaching a hundred million
+          users faster than any prior technology.</p>
+        </div>
+      </li>
+      <li class="ai-tl-item" data-year="2024">
+        <button type="button" class="ai-tl-btn" aria-expanded="false">
+          <span class="ai-tl-year">2023&ndash;now</span>
+          <span class="ai-tl-title">Multimodal &amp; agentic systems</span>
+        </button>
+        <div class="ai-tl-body" hidden>
+          <p>Frontier models become <strong>multimodal</strong> &mdash; one
+          system reads text, sees images, hears audio &mdash; and increasingly
+          <strong>agentic</strong>: using tools, browsing, writing and running
+          code, taking multi-step actions toward a goal. Alongside the
+          capability race runs a parallel effort on evaluation, safety, and
+          alignment &mdash; because deploying systems this capable responsibly
+          is now an engineering discipline of its own.</p>
+        </div>
+      </li>
+    </ol>
+
+    <p class="ai-prose">
+      Why the boom&ndash;bust rhythm? Each boom was powered by a technique that
+      genuinely worked &mdash; and each winter arrived when that
+      technique&rsquo;s <em>ceiling</em> was mistaken for a temporary hurdle.
+      The current era differs in one measurable way: modern methods have kept
+      improving as data and compute grow, and they generate revenue at scale,
+      which past booms never did. Whether today&rsquo;s techniques have their
+      own ceiling &mdash; and where it is &mdash; is one of the field&rsquo;s
+      genuinely open questions.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       03 — THE MAP OF AI
+  ================================================================ -->
+  <section class="ai-section" id="map" aria-labelledby="map-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">03</span> The umbrella</p>
+      <h2 id="map-h">The many approaches to AI</h2>
+      <p class="ai-lede">
+        &ldquo;AI&rdquo; is not one technology &mdash; it is an umbrella over
+        many families of techniques, some sixty years old and still essential.
+        Click any branch to see what problems it tackles and where you met it
+        today. One relationship matters more than all the others:
+        <strong>machine learning is one family inside AI, deep learning is a
+        subset of machine learning, and large language models are one
+        application of deep learning.</strong>
+      </p>
+    </div>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-map" role="group" aria-label="Branches of artificial intelligence">
+        <div class="ai-map-root">Artificial Intelligence</div>
+        <div class="ai-map-branches">
+          <button type="button" class="ai-map-node" data-ai-branch="symbolic">Symbolic AI</button>
+          <button type="button" class="ai-map-node is-nested" data-ai-branch="ml">Machine Learning
+            <span class="ai-map-sub">&supe; Deep Learning &supe; LLMs</span>
+          </button>
+          <button type="button" class="ai-map-node" data-ai-branch="search">Search &amp; Planning</button>
+          <button type="button" class="ai-map-node" data-ai-branch="vision">Computer Vision</button>
+          <button type="button" class="ai-map-node" data-ai-branch="nlp">Natural Language Processing</button>
+          <button type="button" class="ai-map-node" data-ai-branch="robotics">Robotics</button>
+          <button type="button" class="ai-map-node" data-ai-branch="knowledge">Knowledge Representation</button>
+          <button type="button" class="ai-map-node" data-ai-branch="rl">Reinforcement Learning</button>
+        </div>
+      </div>
+      <div class="ai-map-detail" id="ai-map-detail" aria-live="polite">
+        <p class="ai-map-hint">Select a branch above to explore it.</p>
+      </div>
+    </div>
+
+    <p class="ai-prose">
+      The branches blur in practice &mdash; a self-driving stack uses vision
+      <em>and</em> planning <em>and</em> learned models; a modern chatbot is
+      deep learning trained on language and often wrapped in search over your
+      documents. The map is a way to organize understanding, not a wall
+      between departments. The next five chapters walk the most important
+      branches in the order history discovered them.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       04 — RULE-BASED AI
+  ================================================================ -->
+  <section class="ai-section" id="rules" aria-labelledby="rules-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">04</span> The first way</p>
+      <h2 id="rules-h">Rule-based AI: intelligence as logic</h2>
+      <p class="ai-lede">
+        The earliest working AI systems encoded a human expert&rsquo;s
+        knowledge as explicit <strong>IF&ndash;THEN rules</strong>. An
+        <strong>inference engine</strong> matches your facts against the
+        rules, fires the ones that apply, adds their conclusions as new facts,
+        and repeats &mdash; chaining rules together until it reaches a
+        decision. No statistics, no training data: pure logic, written by
+        hand.
+      </p>
+    </div>
+
+    <p class="ai-prose">
+      Try the miniature triage advisor below &mdash; a toy cousin of MYCIN,
+      the 1970s system that recommended antibiotic treatments. Toggle the
+      facts a patient reports, run the engine, and watch rules fire and chain.
+      Then press <em>&ldquo;add a curveball&rdquo;</em> to meet the
+      architecture&rsquo;s famous weakness.
+    </p>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-rules-layout">
+        <div class="ai-rules-facts">
+          <h3 class="ai-panel-h">Reported facts</h3>
+          <div class="ai-rules-checks" id="ai-rules-facts" role="group" aria-label="Patient facts"></div>
+          <div class="ai-panel-controls">
+            <button type="button" id="ai-rules-run" class="ai-btn ai-btn-primary">Run inference</button>
+            <button type="button" id="ai-rules-curve" class="ai-btn ai-btn-ghost">Add a curveball</button>
+          </div>
+        </div>
+        <div class="ai-rules-engine">
+          <h3 class="ai-panel-h">Rule base</h3>
+          <ol class="ai-rules-list" id="ai-rules-list"></ol>
+        </div>
+      </div>
+      <ol class="ai-rules-log" id="ai-rules-log" aria-live="polite"></ol>
+      <p class="ai-panel-status" id="ai-rules-status" aria-live="polite"></p>
+      <p class="ai-caption">A deliberately tiny toy &mdash; real expert systems held thousands of rules, and real medicine belongs to doctors. The teaching point is the <em>mechanism</em>: facts in, rules fire, conclusions chain.</p>
+    </div>
+
+    <div class="ai-cols2" data-ai-reveal>
+      <div class="ai-col ai-col-good">
+        <h3>Why rules were loved</h3>
+        <ul>
+          <li><strong>Explainable</strong> &mdash; the system can print exactly which rules fired and why. Auditors, doctors, and regulators can read the reasoning line by line.</li>
+          <li><strong>Predictable</strong> &mdash; the same facts always produce the same answer. No randomness, no drift.</li>
+          <li><strong>Reliable in narrow domains</strong> &mdash; where the world fits the rulebook (tax codes, equipment configuration, eligibility checks), they still quietly run today.</li>
+        </ul>
+      </div>
+      <div class="ai-col ai-col-bad">
+        <h3>Why they hit a ceiling</h3>
+        <ul>
+          <li><strong>Brittle</strong> &mdash; one fact outside the rulebook and the system doesn&rsquo;t degrade gracefully; it simply has nothing to say (you just saw this).</li>
+          <li><strong>Hard to scale</strong> &mdash; every rule is written, tested, and maintained by hand, and rules interact in exploding combinations.</li>
+          <li><strong>Knowledge is tacit</strong> &mdash; experts recognize things they cannot articulate as rules. Try writing IF&ndash;THEN conditions that recognize a cat in a photo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="ai-prose">
+      That last bullet is the pivot for everything that follows: if experts
+      can&rsquo;t write the rules down, maybe the machine should
+      <strong>learn the rules from examples</strong> instead. Hold that
+      thought through the next chapter &mdash; first, one classical technique
+      earned a permanent place in the toolbox.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       05 — SEARCH & PLANNING
+  ================================================================ -->
+  <section class="ai-section" id="search" aria-labelledby="search-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">05</span> The classical workhorse</p>
+      <h2 id="search-h">Search &amp; planning: exploring possibilities</h2>
+      <p class="ai-lede">
+        Many problems share one shape: a starting state, a goal, and a space
+        of possible moves between them. Routes on a map, chess positions,
+        puzzle states, robot motions, airline schedules.
+        <strong>Search</strong> is the art of exploring that space without
+        drowning in it &mdash; and it remains one of AI&rsquo;s most-used
+        techniques, seventy years on.
+      </p>
+    </div>
+
+    <p class="ai-prose">
+      The maze below is a state space you can see. Choose a strategy and run
+      it: <strong>breadth-first search</strong> ripples outward and guarantees
+      the shortest path but explores enormously; <strong>depth-first
+      search</strong> commits to one corridor at a time, cheap on memory but
+      blind to path quality; <strong>greedy search</strong> chases whatever
+      looks closest to the goal and can be fooled;
+      <strong>A*</strong> combines the distance already traveled with a
+      <em>heuristic</em> estimate of the distance remaining &mdash; the best
+      of both, and the algorithm inside every navigation app. Click the maze
+      to add or remove walls.
+    </p>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-panel-controls" role="group" aria-label="Pathfinding controls">
+        <label class="ai-select-label" for="ai-search-algo">Strategy</label>
+        <select id="ai-search-algo" class="ai-select">
+          <option value="bfs">Breadth-first search</option>
+          <option value="dfs">Depth-first search</option>
+          <option value="greedy">Greedy best-first</option>
+          <option value="astar" selected>A*</option>
+        </select>
+        <button type="button" id="ai-search-run" class="ai-btn ai-btn-primary">Run</button>
+        <button type="button" id="ai-search-compare" class="ai-btn ai-btn-ghost">Race all four</button>
+        <button type="button" id="ai-search-maze" class="ai-btn ai-btn-ghost">New maze</button>
+      </div>
+      <canvas id="ai-search-canvas" class="ai-canvas ai-canvas-tall"
+              aria-label="Interactive pathfinding grid. A start cell and a goal cell sit in a maze of walls. Running a search animates the cells each algorithm explores and then traces the path it found. Clicking cells toggles walls."></canvas>
+      <div class="ai-statrow" id="ai-search-stats">
+        <div class="ai-stat"><span class="ai-stat-label">Cells explored</span><span class="ai-stat-val" id="ai-search-explored">&ndash;</span></div>
+        <div class="ai-stat"><span class="ai-stat-label">Path length</span><span class="ai-stat-val" id="ai-search-plen">&ndash;</span></div>
+        <div class="ai-stat"><span class="ai-stat-label">Shortest possible</span><span class="ai-stat-val" id="ai-search-opt">&ndash;</span></div>
+      </div>
+      <p class="ai-panel-status" id="ai-search-status" aria-live="polite"></p>
+      <p class="ai-caption">
+        <strong>Planning</strong> is search&rsquo;s ambitious sibling: instead
+        of one path through a maze, find a <em>sequence of actions</em> that
+        transforms the world from its current state into a goal state &mdash;
+        the mathematics behind logistics scheduling, factory automation, and
+        robot task planning. Deep Blue beat Kasparov with search; AlphaGo
+        paired search <em>with</em> learned intuition. The technique never
+        left &mdash; it just gained partners.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 — MACHINE LEARNING
+  ================================================================ -->
+  <section class="ai-section" id="ml" aria-labelledby="ml-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">06</span> The great shift</p>
+      <h2 id="ml-h">Machine learning: programs that write their own rules</h2>
+      <p class="ai-lede">
+        Machine learning inverts the rule-based recipe. Instead of a human
+        writing rules and the machine applying them to data, the human
+        supplies <strong>data plus the right answers</strong>, and a
+        <strong>learning algorithm</strong> finds the rule &mdash; a
+        <strong>model</strong> &mdash; that connects them. The model is then
+        used to make <strong>predictions</strong> about examples it has never
+        seen.
+      </p>
+    </div>
+
+    <div class="ai-flow" data-ai-reveal aria-label="The machine learning pipeline">
+      <div class="ai-flow-step" data-ai-flowstep="0"><span class="ai-flow-tag">Data</span><p>Labeled examples &mdash; emails marked spam or not, photos with captions, past loans with outcomes.</p></div>
+      <div class="ai-flow-arrow" aria-hidden="true"></div>
+      <div class="ai-flow-step" data-ai-flowstep="1"><span class="ai-flow-tag">Learning algorithm</span><p>Adjusts the model to shrink its errors on the training examples, pass after pass.</p></div>
+      <div class="ai-flow-arrow" aria-hidden="true"></div>
+      <div class="ai-flow-step" data-ai-flowstep="2"><span class="ai-flow-tag">Model</span><p>The learned rule &mdash; here a boundary line; in a deep network, billions of tuned parameters.</p></div>
+      <div class="ai-flow-arrow" aria-hidden="true"></div>
+      <div class="ai-flow-step" data-ai-flowstep="3"><span class="ai-flow-tag">Predictions</span><p>The model classifies new, unseen examples. This is <em>inference</em> &mdash; training&rsquo;s cheap sibling.</p></div>
+    </div>
+
+    <p class="ai-prose">
+      Train a real one. Each point below is an animal described by two
+      measurements; color marks the species. The learning algorithm (a
+      <strong>perceptron</strong>, the 1958 original) starts with a random
+      boundary and nudges it every time it misclassifies a training point.
+      Add your own points &mdash; including confusing ones on the wrong side
+      &mdash; retrain, and watch how the quality of the data shapes the
+      quality of the model.
+    </p>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-panel-controls" role="group" aria-label="Classifier controls">
+        <button type="button" id="ai-ml-train" class="ai-btn ai-btn-primary">Train</button>
+        <span class="ai-seg" role="group" aria-label="Class of point to add on click">
+          <button type="button" class="ai-seg-btn is-active" id="ai-ml-addcat" aria-pressed="true">Add <span class="ai-dot ai-dot-sky"></span> cat</button>
+          <button type="button" class="ai-seg-btn" id="ai-ml-adddog" aria-pressed="false">Add <span class="ai-dot ai-dot-amber"></span> dog</button>
+        </span>
+        <button type="button" id="ai-ml-reset" class="ai-btn ai-btn-ghost">Reset data</button>
+      </div>
+      <canvas id="ai-ml-canvas" class="ai-canvas"
+              aria-label="Interactive scatter plot of two classes of points with axes for weight and ear length. Pressing Train animates a decision boundary line rotating and shifting as a perceptron learns to separate the classes. Clicking adds new training points."></canvas>
+      <div class="ai-statrow">
+        <div class="ai-stat"><span class="ai-stat-label">Pipeline stage</span><span class="ai-stat-val" id="ai-ml-stage">Data</span></div>
+        <div class="ai-stat"><span class="ai-stat-label">Training passes</span><span class="ai-stat-val" id="ai-ml-epochs">&ndash;</span></div>
+        <div class="ai-stat"><span class="ai-stat-label">Training accuracy</span><span class="ai-stat-val" id="ai-ml-acc">&ndash;</span></div>
+      </div>
+      <p class="ai-panel-status" id="ai-ml-status" aria-live="polite"></p>
+      <p class="ai-caption">Two lessons hide here. First: the algorithm never knew what a cat <em>is</em> &mdash; it found a statistical boundary, nothing more. Second: feed it mislabeled or unrepresentative data and it learns the errors just as faithfully. Every headline about AI bias is this picture at scale.</p>
+    </div>
+
+    <p class="ai-prose">
+      Why was this shift so consequential? Because data is abundant where
+      expertise is scarce. Companies had millions of labeled examples &mdash;
+      transactions marked fraudulent, emails marked spam &mdash; long before
+      anyone could write rules covering them. Machine learning turned data
+      itself into the programmer. Its limit: with simple models, humans still
+      had to hand-design the <em>measurements</em> (the features). Choosing
+      &ldquo;weight&rdquo; and &ldquo;ear length&rdquo; above was feature
+      engineering &mdash; and for images, audio, and language, nobody could
+      design features good enough. That is the wall deep learning broke.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       07 — DEEP LEARNING
+  ================================================================ -->
+  <section class="ai-section" id="deep" aria-labelledby="deep-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">07</span> Layers upon layers</p>
+      <h2 id="deep-h">Deep learning: features that learn themselves</h2>
+      <p class="ai-lede">
+        A <strong>neural network</strong> is a stack of simple units, each
+        computing a weighted sum of its inputs and passing the result on.
+        Stack enough <strong>layers</strong> and something remarkable
+        happens: the network learns its own features. Early layers detect
+        edges and textures; middle layers combine them into shapes and parts;
+        late layers recognize whole objects. Nobody designs this hierarchy
+        &mdash; it <em>emerges</em> from training on examples.
+      </p>
+    </div>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-panel-controls" role="group" aria-label="Network demo controls">
+        <span class="ai-seg" role="group" aria-label="Choose an input">
+          <button type="button" class="ai-seg-btn is-active" data-ai-digit="0" aria-pressed="true">Input: cat</button>
+          <button type="button" class="ai-seg-btn" data-ai-digit="1" aria-pressed="false">Input: dog</button>
+          <button type="button" class="ai-seg-btn" data-ai-digit="2" aria-pressed="false">Input: bird</button>
+        </span>
+        <button type="button" id="ai-deep-run" class="ai-btn ai-btn-primary">Send it through</button>
+      </div>
+      <canvas id="ai-deep-canvas" class="ai-canvas ai-canvas-tall"
+              aria-label="Animated diagram of a deep neural network. An input image on the left flows through columns of neurons labeled edges, shapes, and parts, with activations lighting up layer by layer, until output neurons on the right show a confidence score for each class."></canvas>
+      <p class="ai-panel-status" id="ai-deep-status" aria-live="polite"></p>
+      <p class="ai-caption">A cartoon of the real thing &mdash; production vision models have millions of units, and their &ldquo;features&rdquo; are messier than <em>edges &rarr; shapes &rarr; parts</em>. But the principle shown &mdash; increasingly abstract features, learned not designed &mdash; is exactly why deep learning works.</p>
+    </div>
+
+    <p class="ai-prose">
+      Three doors opened at once around 2012, and deep learning walked through
+      all of them. <strong>Vision:</strong> networks that learn edges-to-objects
+      hierarchies surpassed two decades of hand-crafted features almost
+      overnight. <strong>Speech:</strong> recognition error rates fell so far
+      that dictation became a default interface. <strong>Translation and
+      language:</strong> instead of grammar rules, networks learned the
+      statistics of how sentences correspond &mdash; and with the transformer
+      architecture, how every word in a passage relates to every other. The
+      recipe scaled with an appetite no previous technique had shown: more
+      data, more layers, more compute kept yielding more capability.
+    </p>
+
+    <p class="ai-prose">
+      That appetite is why this story is also a hardware story. Training a
+      network means millions of small multiplications that can all happen at
+      once &mdash; exactly the workload
+      <a href="/gpu/">graphics processors were built for</a>. Feeding those
+      processors means moving oceans of training data through the
+      <a href="/memory/">memory hierarchy</a>, and training the largest models
+      means renting <a href="/cloud/">thousands of cloud machines</a> that
+      work in concert. Deep learning didn&rsquo;t just borrow the
+      computer&rsquo;s infrastructure &mdash; it bent the industry&rsquo;s
+      roadmap around itself.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       08 — REINFORCEMENT LEARNING
+  ================================================================ -->
+  <section class="ai-section" id="rl" aria-labelledby="rl-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">08</span> Learning by doing</p>
+      <h2 id="rl-h">Reinforcement learning: trial, error, reward</h2>
+      <p class="ai-lede">
+        Nobody labels examples for a toddler learning to walk. The child
+        <strong>acts</strong>, the world <strong>responds</strong>, and
+        falling over teaches. Reinforcement learning follows the same loop: an
+        <strong>agent</strong> takes an <strong>action</strong> in an
+        <strong>environment</strong>, receives a <strong>reward</strong> or a
+        penalty, and updates its behavior to earn more reward over time. No
+        answer key &mdash; just consequences.
+      </p>
+    </div>
+
+    <p class="ai-prose">
+      The robot below knows nothing: not where the charging station is, not
+      that the pits are dangerous, not even what &ldquo;forward&rdquo; means.
+      It learns a <em>value</em> for every move in every cell purely from
+      rewards (+10 for the charger, &minus;10 for a pit, a tiny cost for each
+      step). Early on it wanders randomly &mdash; that&rsquo;s
+      <strong>exploration</strong>. As estimates firm up, it increasingly
+      <strong>exploits</strong> what it knows. Watch the arrows: they are the
+      learned policy, and they visibly improve.
+    </p>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-panel-controls" role="group" aria-label="Reinforcement learning controls">
+        <button type="button" id="ai-rl-train" class="ai-btn ai-btn-primary">Train</button>
+        <button type="button" id="ai-rl-reset" class="ai-btn ai-btn-ghost">Forget everything</button>
+        <label class="ai-select-label" for="ai-rl-speed">Speed</label>
+        <input type="range" id="ai-rl-speed" min="0" max="2" step="1" value="1" aria-label="Training speed">
+      </div>
+      <canvas id="ai-rl-canvas" class="ai-canvas ai-canvas-tall"
+              aria-label="A grid world where a robot agent learns to reach a charging station while avoiding pits. Cells gradually color by learned value and show arrows for the best learned action. A small chart tracks reward per episode improving as training proceeds."></canvas>
+      <div class="ai-statrow">
+        <div class="ai-stat"><span class="ai-stat-label">Episodes</span><span class="ai-stat-val" id="ai-rl-episodes">0</span></div>
+        <div class="ai-stat"><span class="ai-stat-label">Exploration rate</span><span class="ai-stat-val" id="ai-rl-eps">100%</span></div>
+        <div class="ai-stat"><span class="ai-stat-label">Recent avg. reward</span><span class="ai-stat-val" id="ai-rl-reward">&ndash;</span></div>
+      </div>
+      <p class="ai-panel-status" id="ai-rl-status" aria-live="polite"></p>
+      <p class="ai-caption">This is real Q-learning, not a scripted animation &mdash; reset it and it genuinely relearns from scratch, sometimes down a different corridor. Scale the same loop up with deep networks estimating the values and you have the family that mastered Go and Atari, trains robot hands, tunes data-center cooling, and &mdash; as <em>reinforcement learning from human feedback</em> &mdash; helps align chatbots with what people actually want.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 — GENERATIVE AI
+  ================================================================ -->
+  <section class="ai-section" id="generative" aria-labelledby="generative-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">09</span> The new chapter</p>
+      <h2 id="generative-h">Generative AI: from predicting to creating</h2>
+      <p class="ai-lede">
+        Every model so far <em>predicted an existing label</em>: spam or not,
+        cat or dog, which move is best. Generative AI turns prediction into
+        <strong>creation</strong>: predict the next word, then the next, then
+        the next &mdash; and a paragraph appears that never existed before.
+        The same trick with pixels, audio samples, or code tokens yields
+        images, voices, and software.
+      </p>
+    </div>
+
+    <div class="ai-cols2" data-ai-reveal>
+      <div class="ai-col">
+        <h3>Traditional prediction</h3>
+        <p class="ai-col-flow">Input <span aria-hidden="true">&rarr;</span> Model <span aria-hidden="true">&rarr;</span> <strong>one of N known labels</strong></p>
+        <p>&ldquo;Is this review positive or negative?&rdquo; The output space is small and fixed. The model chooses.</p>
+      </div>
+      <div class="ai-col">
+        <h3>Generative AI</h3>
+        <p class="ai-col-flow">Input <span aria-hidden="true">&rarr;</span> Model <span aria-hidden="true">&rarr;</span> <strong>new content, piece by piece</strong></p>
+        <p>&ldquo;Write a review of this cafe.&rdquo; The output space is effectively infinite. The model composes &mdash; one predicted fragment at a time.</p>
+      </div>
+    </div>
+
+    <p class="ai-prose">
+      The demo below is a <strong>deliberately tiny</strong> autoregressive
+      text generator &mdash; it picks each next word from probabilities
+      learned from a few paragraphs, where a large language model picks each
+      next token using billions of parameters trained on much of the written
+      internet. What it shares with the real thing is the loop: look at the
+      text so far, form a probability over what comes next
+      (watch the bars), sample one option, repeat. The
+      <strong>temperature</strong> slider is the same control real systems
+      expose: low temperature always takes the top choice (safe, repetitive);
+      high temperature gambles on long shots (creative, and quickly
+      incoherent).
+    </p>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-panel-controls" role="group" aria-label="Text generator controls">
+        <button type="button" id="ai-gen-run" class="ai-btn ai-btn-primary">Generate</button>
+        <label class="ai-select-label" for="ai-gen-temp">Temperature</label>
+        <input type="range" id="ai-gen-temp" min="0" max="100" step="5" value="40" aria-label="Sampling temperature">
+        <output id="ai-gen-temp-out">0.8</output>
+      </div>
+      <p class="ai-gen-out" id="ai-gen-out" aria-live="polite"><span class="ai-gen-placeholder">Press Generate to write a sentence, one predicted word at a time&hellip;</span></p>
+      <div class="ai-gen-probs" id="ai-gen-probs" aria-label="Probability of each candidate next word"></div>
+      <p class="ai-panel-status" id="ai-gen-status" aria-live="polite"></p>
+      <p class="ai-caption">An honest cartoon: this toy memorized word-pair statistics from a few sentences, so it rambles. The gap between it and a modern LLM is scale and architecture &mdash; not a different kind of loop.</p>
+    </div>
+
+    <p class="ai-prose">
+      Not all generation is next-piece prediction. <strong>Diffusion
+      models</strong> &mdash; behind most AI image tools &mdash; work in
+      reverse: start from pure noise and remove it step by step, steering each
+      step toward the text prompt, until an image condenses out. Drag the
+      slider to walk the denoising process yourself.
+    </p>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-diffusion-row">
+        <canvas id="ai-diff-canvas" class="ai-diff-canvas"
+                aria-label="A pixel grid that starts as random noise and, as the slider moves, progressively denoises into a clear smiling face pattern, illustrating how diffusion models generate images."></canvas>
+        <div class="ai-diff-controls">
+          <label for="ai-diff-slider">Denoising steps</label>
+          <input type="range" id="ai-diff-slider" min="0" max="100" step="1" value="0">
+          <output id="ai-diff-out">step 0 &mdash; pure noise</output>
+          <button type="button" id="ai-diff-play" class="ai-btn ai-btn-ghost">Play</button>
+        </div>
+      </div>
+      <p class="ai-caption">
+        <strong>Multimodal systems</strong> close the loop: one model maps
+        text, images, and audio into a shared internal representation, so it
+        can describe a photo, answer questions about a chart, or turn a sketch
+        into code. Autoregression, diffusion, multimodality &mdash; different
+        mechanisms, one idea: <em>learn the structure of a medium deeply
+        enough and you can produce new examples of it.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 — AI IN EVERYDAY LIFE
+  ================================================================ -->
+  <section class="ai-section" id="everyday" aria-labelledby="everyday-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">10</span> Already everywhere</p>
+      <h2 id="everyday-h">AI in everyday life</h2>
+      <p class="ai-lede">
+        You used AI a dozen times today without a chatbot in sight. Most of it
+        is the quiet kind &mdash; ranking, filtering, matching, flagging
+        &mdash; running behind interfaces you&rsquo;d never call
+        &ldquo;intelligent.&rdquo; Tap any card for the techniques inside, why
+        AI earns its keep there, and what still goes wrong.
+      </p>
+    </div>
+
+    <div class="ai-life-grid" id="ai-life-grid" data-ai-reveal role="list"></div>
+    <p class="ai-panel-status" id="ai-life-status" aria-live="polite"></p>
+  </section>
+
+  <!-- ================================================================
+       11 — LIMITATIONS
+  ================================================================ -->
+  <section class="ai-section" id="limits" aria-labelledby="limits-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">11</span> The honest chapter</p>
+      <h2 id="limits-h">What AI can&rsquo;t do (yet, or at all)</h2>
+      <p class="ai-lede">
+        Every technique on this page has sharp edges, and pretending otherwise
+        is how AI gets misused. None of these limitations cancels the
+        capabilities you&rsquo;ve seen &mdash; and none of the capabilities
+        cancels these limitations. Both lists are true at once.
+      </p>
+    </div>
+
+    <div class="ai-limits" data-ai-reveal>
+      <div class="ai-limit">
+        <button type="button" class="ai-limit-btn" aria-expanded="false">Hallucination: fluent &ne; true</button>
+        <div class="ai-limit-body" hidden>
+          <p>A language model is trained to produce <em>plausible</em>
+          continuations, and truth is only correlated with plausibility. When
+          the model lacks knowledge, it doesn&rsquo;t fall silent &mdash; it
+          produces something that sounds right, with the same confident tone
+          either way: invented citations, plausible-but-wrong numbers,
+          confident nonsense. Mitigations (retrieving real documents, citing
+          sources, tool use) reduce the rate substantially; nothing yet
+          eliminates it. Rule of thumb: the more checkable a claim, the more
+          it should be checked.</p>
+        </div>
+      </div>
+      <div class="ai-limit">
+        <button type="button" class="ai-limit-btn" aria-expanded="false">Bias: models inherit their data</button>
+        <div class="ai-limit-body" hidden>
+          <p>You watched the perceptron in chapter 6 learn mislabeled points
+          without complaint. Scale that up: models trained on historical
+          hiring, lending, or policing data learn the historical patterns
+          &mdash; including the unjust ones &mdash; and then apply them at
+          machine speed with a veneer of objectivity. Countermeasures exist
+          (auditing, balanced datasets, fairness constraints) but they are
+          engineering disciplines, not checkboxes, and they require knowing
+          what to look for.</p>
+        </div>
+      </div>
+      <div class="ai-limit">
+        <button type="button" class="ai-limit-btn" aria-expanded="false">Data quality bounds everything</button>
+        <div class="ai-limit-body" hidden>
+          <p>&ldquo;Garbage in, garbage out&rdquo; predates AI by decades and
+          governs it completely. Models interpolate brilliantly within their
+          training distribution and degrade &mdash; sometimes silently &mdash;
+          outside it. A medical imaging model trained at one hospital can
+          stumble on another hospital&rsquo;s scanners; a fraud model decays
+          as fraudsters adapt. Much of production &ldquo;AI engineering&rdquo;
+          is actually data engineering and monitoring for drift.</p>
+        </div>
+      </div>
+      <div class="ai-limit">
+        <button type="button" class="ai-limit-btn" aria-expanded="false">Pattern matching, not understanding</button>
+        <div class="ai-limit-body" hidden>
+          <p>The perceptron never knew what a cat is; the same caution applies
+          up the stack. Models can manipulate symbols impressively while
+          lacking grounded models of the world &mdash; failing at simple
+          physical reasoning, arithmetic edge cases, or novel situations a
+          child would handle. Where the line sits between &ldquo;very deep
+          pattern matching&rdquo; and &ldquo;understanding&rdquo; is a live
+          scientific debate; that the systems fail differently than humans do
+          is not.</p>
+        </div>
+      </div>
+      <div class="ai-limit">
+        <button type="button" class="ai-limit-btn" aria-expanded="false">Reasoning has ragged edges</button>
+        <div class="ai-limit-body" hidden>
+          <p>Modern models plan and reason far better than their critics
+          expected and far worse than their marketing implies &mdash; often
+          both in the same session. Performance drops on problems requiring
+          many rigorous steps, exact constraint tracking, or knowing when to
+          say &ldquo;this is unsolvable.&rdquo; Techniques like chain-of-thought
+          reasoning, tool use, and verification loops help materially, which is
+          precisely why serious deployments wrap models in scaffolding rather
+          than trusting a single raw response.</p>
+        </div>
+      </div>
+      <div class="ai-limit">
+        <button type="button" class="ai-limit-btn" aria-expanded="false">Energy, compute, and cost</button>
+        <div class="ai-limit-body" hidden>
+          <p>Training a frontier model consumes megawatt-scale power for
+          months across <a href="/cloud/">thousands of accelerators</a>, and
+          serving millions of users costs real energy per response. The
+          industry response &mdash; more efficient chips, smaller specialized
+          models, on-device inference &mdash; is genuine, but so is the trend
+          line: capability has so far scaled with compute. Efficiency and
+          capability are now the field&rsquo;s twin engineering races.</p>
+        </div>
+      </div>
+      <div class="ai-limit">
+        <button type="button" class="ai-limit-btn" aria-expanded="false">Privacy is a design problem</button>
+        <div class="ai-limit-body" hidden>
+          <p>Models are trained on data, remember statistical traces of it,
+          and receive whatever users type into them &mdash; three separate
+          privacy surfaces. Good deployments treat each one deliberately:
+          minimizing and anonymizing training data, <a href="/cryptography/">encrypting
+          data in transit and at rest</a>, and setting clear retention rules
+          for user inputs. The techniques exist; applying them is a choice
+          that has to be made, not assumed.</p>
+        </div>
+      </div>
+      <div class="ai-limit">
+        <button type="button" class="ai-limit-btn" aria-expanded="false">Human oversight isn&rsquo;t optional</button>
+        <div class="ai-limit-body" hidden>
+          <p>Every limitation above shares one mitigation: a human who stays
+          responsible. High-stakes uses &mdash; medicine, law, lending, safety
+          systems &mdash; work best with AI as a drafting and screening layer
+          whose outputs humans review, and worst as an unsupervised decision
+          maker. This isn&rsquo;t AI pessimism; it&rsquo;s the same discipline
+          engineering applies to any powerful component with known failure
+          modes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 — THE FUTURE
+  ================================================================ -->
+  <section class="ai-section" id="future" aria-labelledby="future-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">12</span> Open frontiers</p>
+      <h2 id="future-h">Where the field is heading</h2>
+      <p class="ai-lede">
+        Prediction has a poor track record in AI &mdash; both the &ldquo;solved
+        in a decade&rdquo; camp and the &ldquo;impossible in principle&rdquo;
+        camp have been embarrassed repeatedly. What follows are not forecasts
+        but <strong>active research directions</strong>: places where real
+        work, real money, and real open problems currently live.
+      </p>
+    </div>
+
+    <div class="ai-cards3" data-ai-reveal>
+      <div class="ai-card">
+        <h3>Agents that act</h3>
+        <p>From answering questions to completing tasks: systems that browse,
+        write and run code, use tools, and carry out multi-step work with
+        checkpoints. The open problems are reliability over long chains of
+        actions and knowing when to stop and ask.</p>
+      </div>
+      <div class="ai-card">
+        <h3>Robotics&rsquo; second act</h3>
+        <p>Learned models are replacing scripted motions &mdash; robots that
+        acquire manipulation skills from demonstration and trial. The gap
+        between a lab demo and a kitchen remains wide; the gap is narrowing
+        measurably.</p>
+      </div>
+      <div class="ai-card">
+        <h3>Scientific discovery</h3>
+        <p>Protein structure prediction already reshaped biology. Materials
+        discovery, weather modeling, and drug design are following &mdash; AI
+        as an instrument for science, with verification still owned by
+        experiment.</p>
+      </div>
+      <div class="ai-card">
+        <h3>Personalized education</h3>
+        <p>A patient tutor for every learner, adapting pace and explanation
+        style &mdash; the oldest dream in educational technology, newly
+        plausible. The open questions are pedagogy and honest measurement of
+        outcomes, not interface polish.</p>
+      </div>
+      <div class="ai-card">
+        <h3>Healthcare with oversight</h3>
+        <p>Imaging triage, documentation relief, and literature synthesis are
+        deploying now &mdash; the pattern that works keeps clinicians deciding
+        while AI drafts and flags. Regulation and validation pipelines are
+        maturing alongside.</p>
+      </div>
+      <div class="ai-card">
+        <h3>On-device AI</h3>
+        <p>Small, efficient models running on phones and laptops &mdash;
+        private by physics, instant by proximity. The craft: distilling
+        large-model capability into a footprint measured in
+        <a href="/memory/">gigabytes of RAM</a>, not racks.</p>
+      </div>
+      <div class="ai-card">
+        <h3>Multimodal everything</h3>
+        <p>Text, vision, audio, and action converging into single models that
+        perceive and communicate across media. The research edge: keeping
+        grounding and reliability while the input space explodes.</p>
+      </div>
+      <div class="ai-card">
+        <h3>Human&ndash;AI collaboration</h3>
+        <p>Interfaces where people steer and machines amplify &mdash; pair
+        programming, drafting, design exploration. The measurable goal is not
+        replacing judgment but compressing the distance between intent and
+        result.</p>
+      </div>
+      <div class="ai-card">
+        <h3>Safety &amp; alignment</h3>
+        <p>Making systems honest, controllable, and steerable as capability
+        grows &mdash; evaluation science, interpretability (opening the black
+        box), and alignment techniques. Less a brake on the field than the
+        engineering that lets it ship.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 — AI EXPLORER (CAPSTONE)
+  ================================================================ -->
+  <section class="ai-section" id="explorer" aria-labelledby="explorer-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker"><span class="ai-kicker-num">13</span> Capstone</p>
+      <h2 id="explorer-h">AI Explorer: match the problem to the approach</h2>
+      <p class="ai-lede">
+        You now know five families of techniques. Real engineering is choosing
+        among them. Pick a problem, set the constraints you&rsquo;re working
+        under, and see how the fit of each approach shifts &mdash; then read
+        <em>why</em>. There is rarely one right answer; there are always
+        trade-offs.
+      </p>
+    </div>
+
+    <div class="ai-panel" data-ai-reveal>
+      <div class="ai-panel-controls" role="group" aria-label="Choose a problem">
+        <button type="button" class="ai-chip is-active" data-ai-problem="images">Classify images</button>
+        <button type="button" class="ai-chip" data-ai-problem="movies">Recommend movies</button>
+        <button type="button" class="ai-chip" data-ai-problem="translate">Translate text</button>
+        <button type="button" class="ai-chip" data-ai-problem="maze">Navigate a warehouse</button>
+        <button type="button" class="ai-chip" data-ai-problem="generate">Draft documents</button>
+        <button type="button" class="ai-chip" data-ai-problem="loans">Approve loans</button>
+      </div>
+      <div class="ai-explorer-constraints" role="group" aria-label="Constraints">
+        <label class="ai-check"><input type="checkbox" id="ai-exp-explain"> Decisions must be explainable</label>
+        <label class="ai-check"><input type="checkbox" id="ai-exp-smalldata"> Very little training data</label>
+        <label class="ai-check"><input type="checkbox" id="ai-exp-edge"> Must run on a tiny device</label>
+      </div>
+      <div class="ai-explorer-bars" id="ai-exp-bars" aria-live="polite"></div>
+      <div class="ai-explorer-verdict" id="ai-exp-verdict" aria-live="polite"></div>
+      <p class="ai-caption">Scores are didactic, not benchmarks &mdash; they encode the rules of thumb practitioners actually use: rules and search when the problem is crisply specifiable, learning when it isn&rsquo;t; simple models when data is scarce or answers must be explained; deep learning when perception or language is involved and data is plentiful.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       KEEP EXPLORING
+  ================================================================ -->
+  <section class="ai-section ai-section-outro" id="next" aria-labelledby="next-h">
+    <div class="ai-section-head">
+      <p class="ai-kicker">Keep exploring</p>
+      <h2 id="next-h">One connected story</h2>
+      <p class="ai-lede">
+        AI is software with an enormous appetite for hardware. Every layer it
+        runs on has its own exhibit.
+      </p>
+    </div>
+    <div class="ai-nextgrid" data-ai-reveal>
+      <a class="ai-next" href="/gpu/">
+        <span class="ai-next-tag">Inside a Modern GPU</span>
+        <p>The parallel processors whose thousands of cores made deep learning practical &mdash; the hardware half of the 2012 breakthrough.</p>
+      </a>
+      <a class="ai-next" href="/cpu/">
+        <span class="ai-next-tag">Inside a Modern CPU</span>
+        <p>Where the code around every model runs &mdash; and how processors execute the instructions AI workloads compile down to.</p>
+      </a>
+      <a class="ai-next" href="/memory/">
+        <span class="ai-next-tag">Inside Computer Memory</span>
+        <p>Model parameters and training datasets live in the RAM&ndash;SSD hierarchy; moving them is often AI&rsquo;s real bottleneck.</p>
+      </a>
+      <a class="ai-next" href="/cloud/">
+        <span class="ai-next-tag">Understanding Cloud Computing</span>
+        <p>Training runs span thousands of machines and deployment serves millions of users &mdash; both are cloud engineering stories.</p>
+      </a>
+      <a class="ai-next" href="/cryptography/">
+        <span class="ai-next-tag">Understanding Cryptography</span>
+        <p>Encrypting datasets, securing model endpoints, protecting user prompts &mdash; the mathematics guarding AI systems and their data.</p>
+      </a>
+      <a class="ai-next" href="/blockchain/">
+        <span class="ai-next-tag">Understanding Blockchain</span>
+        <p>A different trust architecture &mdash; occasionally proposed for tracking AI-generated content provenance, and a fascinating design contrast.</p>
+      </a>
+    </div>
+  </section>
+</div>
