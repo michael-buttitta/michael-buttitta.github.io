@@ -23,6 +23,7 @@ tabs:
   archives: Archives
   about: About
   # Custom tabs (not in the gem's locale file)
+  map: Technology Map
   consulting: Consulting
   gpu: Inside a GPU
   bitcoin: Understanding Bitcoin

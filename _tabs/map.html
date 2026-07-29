@@ -1,0 +1,239 @@
+---
+layout: gpu
+title: Map
+icon: fas fa-diagram-project
+order: 2
+description: >-
+  The Technology Map — an interactive knowledge graph connecting every
+  exhibit on this site. Explore how CPUs, memory, GPUs, operating systems,
+  the internet, the cloud, AI, cryptography, blockchain, and Bitcoin all
+  fit together, and follow structured learning paths through them.
+extra_css:
+  - /assets/css/map.css
+extra_js:
+  - /assets/js/knowledge-graph.js
+  - /assets/js/map.js
+---
+
+<div id="map-experience">
+  <noscript>
+    <p class="tm-noscript">
+      The interactive map needs JavaScript, but everything it links to is
+      listed below under <a href="#tm-index">&ldquo;All topics&rdquo;</a> —
+      every exhibit works without the map.
+    </p>
+  </noscript>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="tm-hero" id="top">
+    <div class="tm-hero-inner">
+      <p class="tm-kicker">The Technology Map</p>
+      <h1 class="tm-hero-title">One living map of computing</h1>
+      <p class="tm-hero-sub">
+        Every exhibit on this site is part of one connected system. Hover a
+        topic to see what it touches, click it to see why, and follow a
+        learning path from your first instruction to machines that learn.
+      </p>
+    </div>
+  </header>
+
+  <!-- ================================================================
+       INTERACTIVE MAP
+  ================================================================ -->
+  <section class="tm-map-section" aria-label="Interactive technology map">
+    <div class="tm-toolbar">
+      <div class="tm-search-wrap">
+        <input id="tm-search" class="tm-search" type="search"
+               placeholder="Search topics&hellip;" aria-label="Search topics"
+               autocomplete="off">
+        <span id="tm-search-count" class="tm-search-count" aria-live="polite"></span>
+      </div>
+      <div class="tm-filters" id="tm-filters" role="group" aria-label="Filter by category">
+        <!-- category chips rendered by map.js (doubles as the legend) -->
+      </div>
+      <div class="tm-zoom" role="group" aria-label="Zoom controls">
+        <button type="button" class="tm-zoom-btn" id="tm-zoom-out" aria-label="Zoom out">&minus;</button>
+        <button type="button" class="tm-zoom-btn" id="tm-zoom-in" aria-label="Zoom in">+</button>
+        <button type="button" class="tm-zoom-btn tm-zoom-reset" id="tm-zoom-reset" aria-label="Reset view">Reset</button>
+      </div>
+    </div>
+
+    <div class="tm-stage" id="tm-stage">
+      <!-- SVG graph built by map.js -->
+      <div class="tm-tooltip" id="tm-tooltip" role="tooltip" hidden></div>
+
+      <aside class="tm-panel" id="tm-panel" aria-label="Topic details" hidden>
+        <button type="button" class="tm-panel-close" id="tm-panel-close" aria-label="Close details">&times;</button>
+        <div class="tm-panel-body" id="tm-panel-body"></div>
+      </aside>
+    </div>
+
+    <p class="tm-hint">
+      Drag to pan &middot; scroll or pinch to zoom &middot; hover a
+      connection to see how two ideas relate &middot; click a topic for the
+      full story
+    </p>
+  </section>
+
+  <!-- JS fills this with a "continue where you left off" card -->
+  <section class="tm-continue" id="tm-continue" aria-label="Continue exploring" hidden></section>
+
+  <!-- ================================================================
+       LEARNING PATHS
+  ================================================================ -->
+  <section class="tm-paths-section" aria-label="Learning paths">
+    <h2 class="tm-h2">Learning paths</h2>
+    <p class="tm-section-sub">
+      Three guided routes through the map. Your progress is tracked in your
+      browser only &mdash; nothing leaves this page.
+    </p>
+
+    <div class="tm-paths">
+      <article class="tm-path" data-path="foundations">
+        <header class="tm-path-head">
+          <h3 class="tm-path-name">Foundations of Computing</h3>
+          <span class="tm-path-progress" data-progress></span>
+        </header>
+        <p class="tm-path-hook">From a single instruction to planet-scale services.</p>
+        <ol class="tm-path-steps">
+          <li><a href="/cpu/" data-topic="cpu"><span class="tm-step-dot" aria-hidden="true"></span>CPU</a></li>
+          <li><a href="/memory/" data-topic="memory"><span class="tm-step-dot" aria-hidden="true"></span>Memory</a></li>
+          <li><a href="/gpu/" data-topic="gpu"><span class="tm-step-dot" aria-hidden="true"></span>GPU</a></li>
+          <li><a href="/operating-systems/" data-topic="os"><span class="tm-step-dot" aria-hidden="true"></span>Operating Systems</a></li>
+          <li><a href="/internet/" data-topic="internet"><span class="tm-step-dot" aria-hidden="true"></span>Internet</a></li>
+          <li><a href="/cloud/" data-topic="cloud"><span class="tm-step-dot" aria-hidden="true"></span>Cloud</a></li>
+        </ol>
+      </article>
+
+      <article class="tm-path" data-path="security">
+        <header class="tm-path-head">
+          <h3 class="tm-path-name">Security &amp; Trust</h3>
+          <span class="tm-path-progress" data-progress></span>
+        </header>
+        <p class="tm-path-hook">From the mathematics of secrets to digital money.</p>
+        <ol class="tm-path-steps">
+          <li><a href="/cryptography/" data-topic="cryptography"><span class="tm-step-dot" aria-hidden="true"></span>Cryptography</a></li>
+          <li><a href="/blockchain/" data-topic="blockchain"><span class="tm-step-dot" aria-hidden="true"></span>Blockchain</a></li>
+          <li><a href="/bitcoin/" data-topic="bitcoin"><span class="tm-step-dot" aria-hidden="true"></span>Bitcoin</a></li>
+        </ol>
+      </article>
+
+      <article class="tm-path" data-path="intelligence">
+        <header class="tm-path-head">
+          <h3 class="tm-path-name">The Road to AI</h3>
+          <span class="tm-path-progress" data-progress></span>
+        </header>
+        <p class="tm-path-hook">The hardware and infrastructure behind machines that learn.</p>
+        <ol class="tm-path-steps">
+          <li><a href="/cpu/" data-topic="cpu"><span class="tm-step-dot" aria-hidden="true"></span>CPU</a></li>
+          <li><a href="/gpu/" data-topic="gpu"><span class="tm-step-dot" aria-hidden="true"></span>GPU</a></li>
+          <li><a href="/cloud/" data-topic="cloud"><span class="tm-step-dot" aria-hidden="true"></span>Cloud</a></li>
+          <li><a href="/ai/" data-topic="ai"><span class="tm-step-dot" aria-hidden="true"></span>AI</a></li>
+        </ol>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       ALL TOPICS (static index: works without JS, visible to search engines)
+  ================================================================ -->
+  <section class="tm-index-section" id="tm-index" aria-label="All topics">
+    <h2 class="tm-h2">All topics</h2>
+
+    <h3 class="tm-index-cat" style="--cat: #2DD4BF">Hardware</h3>
+    <div class="tm-index-grid">
+      <a class="tm-card" href="/cpu/" style="--cat: #2DD4BF">
+        <span class="tm-card-icon"><i class="fas fa-microchip" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Inside a CPU</span>
+        <span class="tm-card-tag">The engine that executes every instruction your computer runs.</span>
+      </a>
+      <a class="tm-card" href="/memory/" style="--cat: #2DD4BF">
+        <span class="tm-card-icon"><i class="fas fa-memory" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Inside Memory</span>
+        <span class="tm-card-tag">How computers remember &mdash; from registers to SSDs.</span>
+      </a>
+      <a class="tm-card" href="/gpu/" style="--cat: #2DD4BF">
+        <span class="tm-card-icon"><i class="fas fa-layer-group" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Inside a Modern GPU</span>
+        <span class="tm-card-tag">Thousands of small cores working in parallel.</span>
+      </a>
+    </div>
+
+    <h3 class="tm-index-cat" style="--cat: #A78BFA">Systems &amp; Software</h3>
+    <div class="tm-index-grid">
+      <a class="tm-card" href="/operating-systems/" style="--cat: #A78BFA">
+        <span class="tm-card-icon"><i class="fas fa-cogs" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Understanding Operating Systems</span>
+        <span class="tm-card-tag">The conductor coordinating hardware and software.</span>
+      </a>
+      <a class="tm-card" href="/cloud/" style="--cat: #A78BFA">
+        <span class="tm-card-icon"><i class="fas fa-cloud" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Understanding Cloud Computing</span>
+        <span class="tm-card-tag">Other people&rsquo;s computers, industrialized at planet scale.</span>
+      </a>
+    </div>
+
+    <h3 class="tm-index-cat" style="--cat: #38BDF8">Networks</h3>
+    <div class="tm-index-grid">
+      <a class="tm-card" href="/internet/" style="--cat: #38BDF8">
+        <span class="tm-card-icon"><i class="fas fa-globe" aria-hidden="true"></i></span>
+        <span class="tm-card-name">How the Internet Works</span>
+        <span class="tm-card-tag">One web request, from your keyboard to a data center and back.</span>
+      </a>
+    </div>
+
+    <h3 class="tm-index-cat" style="--cat: #FBBF24">Security &amp; Trust</h3>
+    <div class="tm-index-grid">
+      <a class="tm-card" href="/cryptography/" style="--cat: #FBBF24">
+        <span class="tm-card-icon"><i class="fas fa-key" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Understanding Cryptography</span>
+        <span class="tm-card-tag">The mathematics of secrets, signatures, and trust.</span>
+      </a>
+      <a class="tm-card" href="/blockchain/" style="--cat: #FBBF24">
+        <span class="tm-card-icon"><i class="fas fa-cubes" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Understanding Blockchain</span>
+        <span class="tm-card-tag">A tamper-evident ledger no single party controls.</span>
+      </a>
+      <a class="tm-card" href="/bitcoin/" style="--cat: #FBBF24">
+        <span class="tm-card-icon"><i class="fab fa-bitcoin" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Understanding Bitcoin</span>
+        <span class="tm-card-tag">Digital money with no bank in the middle.</span>
+      </a>
+    </div>
+
+    <h3 class="tm-index-cat" style="--cat: #FB7185">Intelligence</h3>
+    <div class="tm-index-grid">
+      <a class="tm-card" href="/ai/" style="--cat: #FB7185">
+        <span class="tm-card-icon"><i class="fas fa-robot" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Understanding Artificial Intelligence</span>
+        <span class="tm-card-tag">Machines that learn patterns instead of following rules.</span>
+      </a>
+    </div>
+
+    <h3 class="tm-index-cat" style="--cat: #64748B">On the roadmap</h3>
+    <div class="tm-index-grid">
+      <span class="tm-card tm-card-planned" style="--cat: #64748B">
+        <span class="tm-card-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Machine Learning</span>
+        <span class="tm-card-tag">How models actually learn from data.</span>
+      </span>
+      <span class="tm-card tm-card-planned" style="--cat: #64748B">
+        <span class="tm-card-icon"><i class="fas fa-database" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Databases</span>
+        <span class="tm-card-tag">How the world&rsquo;s data is stored and queried.</span>
+      </span>
+      <span class="tm-card tm-card-planned" style="--cat: #64748B">
+        <span class="tm-card-icon"><i class="fas fa-project-diagram" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Algorithms</span>
+        <span class="tm-card-tag">The recipes behind every program.</span>
+      </span>
+      <span class="tm-card tm-card-planned" style="--cat: #64748B">
+        <span class="tm-card-icon"><i class="fas fa-atom" aria-hidden="true"></i></span>
+        <span class="tm-card-name">Quantum Computing</span>
+        <span class="tm-card-tag">Computing with the rules of quantum mechanics.</span>
+      </span>
+    </div>
+  </section>
+</div>

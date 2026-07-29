@@ -478,6 +478,107 @@ code.highlighter-rouge {
   font-size: 0.95rem;
 }
 
+/* ---------- Technology Map feature (home page) ---------- */
+.tmap-feature {
+  margin: 0 0 2.5rem;
+  padding: 2rem 1.6rem 1.8rem;
+  border: 1px solid var(--main-border-color);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 0%, rgba(45, 212, 191, 0.07), transparent 70%);
+}
+
+.tmap-feature .tmap-kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #2DD4BF;
+  margin-bottom: 0.4rem;
+}
+
+.tmap-feature .tmap-title {
+  font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--heading-color);
+  margin: 0 0 0.5rem;
+}
+
+.tmap-feature .tmap-sub {
+  color: var(--text-muted-color);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  max-width: 560px;
+  margin-bottom: 1.4rem;
+}
+
+.tmap-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1.5rem;
+}
+
+.tmap-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tmap-group .tmap-group-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 9.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted-color);
+}
+
+.tmap-group .tmap-group-name::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cat, #2DD4BF);
+  flex: 0 0 auto;
+}
+
+.tmap-group a {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--main-border-color);
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text-color) !important;
+  text-decoration: none !important;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tmap-group a:hover {
+  border-color: var(--cat, #2DD4BF);
+  transform: translateY(-1px);
+}
+
+.tmap-cta {
+  display: inline-block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #2DD4BF !important;
+  text-decoration: none !important;
+}
+
+.tmap-cta:hover { text-decoration: underline !important; }
+
+@media (max-width: 576px) {
+  .tmap-feature { padding: 1.5rem 1.1rem 1.4rem; }
+  .tmap-group .tmap-group-name { min-width: 100%; }
+}
+
 /* ---------- About page sections ---------- */
 .about-section-label {
   font-size: 0.7rem;

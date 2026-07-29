@@ -1,0 +1,300 @@
+/* ============================================================================
+   knowledge-nav.css — the "Where this fits" section that knowledge-nav.js
+   injects at the end of every interactive exhibit page.
+   Scoped under .kn-root; palette matches the site's fintech skin.
+   ========================================================================== */
+
+.kn-root {
+  --kn-bg: #0f172a;
+  --kn-card: #16213a;
+  --kn-card-2: #1e293b;
+  --kn-border: rgba(148, 163, 184, 0.16);
+  --kn-text: #e2e8f0;
+  --kn-muted: #94a3b8;
+  --kn-teal: #2dd4bf;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--kn-text);
+  max-width: 980px;
+  margin: 4rem auto 2.5rem;
+  padding: 2rem 1.4rem 2.2rem;
+  border: 1px solid var(--kn-border);
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(45, 212, 191, 0.06), transparent 70%),
+    var(--kn-card);
+}
+
+.kn-root .kn-kicker {
+  margin: 0 0 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--kn-teal);
+  text-align: center;
+}
+.kn-root .kn-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: #f1f5f9;
+}
+.kn-root .kn-sub {
+  margin: 0 auto 1.8rem;
+  max-width: 520px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--kn-muted);
+  text-align: center;
+}
+
+/* ------------------------------------------- dependency mini-diagram --- */
+.kn-dep {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.2rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.kn-dep-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.kn-dep-svg path {
+  fill: none;
+  stroke: rgba(45, 212, 191, 0.35);
+  stroke-width: 1.6;
+}
+.kn-col {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.kn-col-before { align-items: flex-end; }
+.kn-col-after { align-items: flex-start; }
+.kn-col-label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--kn-muted);
+  margin-bottom: 0.15rem;
+}
+.kn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--kn-border);
+  background: var(--kn-card-2);
+  color: var(--kn-text);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.kn-pill:hover {
+  border-color: var(--kn-teal);
+  transform: translateY(-1px);
+  color: var(--kn-text);
+}
+.kn-pill .kn-pill-check {
+  color: var(--kn-teal);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.kn-pill-note {
+  font-size: 0.78rem;
+  color: var(--kn-muted);
+  font-style: italic;
+}
+.kn-current {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 0.9rem 1.5rem;
+  border-radius: 14px;
+  border: 1.5px solid var(--kn-teal);
+  background: rgba(45, 212, 191, 0.08);
+  box-shadow: 0 0 24px rgba(45, 212, 191, 0.12);
+}
+.kn-current .kn-current-label {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kn-teal);
+  margin-bottom: 0.2rem;
+}
+.kn-current .kn-current-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------- connection cards --- */
+.kn-h3 {
+  margin: 0 0 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--kn-muted);
+}
+.kn-conns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1.9rem;
+}
+.kn-conn {
+  display: block;
+  padding: 0.75rem 0.95rem;
+  border-radius: 12px;
+  border: 1px solid var(--kn-border);
+  background: var(--kn-card-2);
+  color: var(--kn-muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+a.kn-conn:hover {
+  border-color: var(--kn-teal);
+  transform: translateY(-2px);
+  color: var(--kn-muted);
+}
+.kn-conn .kn-conn-name {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--kn-text);
+  margin-bottom: 0.15rem;
+}
+a.kn-conn:hover .kn-conn-name { color: var(--kn-teal); }
+.kn-conn.kn-conn-planned { border-style: dashed; opacity: 0.75; }
+
+/* ------------------------------------------------------ path steppers --- */
+.kn-paths { margin-bottom: 1.9rem; }
+.kn-path {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: 12px;
+  border: 1px solid var(--kn-border);
+  background: var(--kn-card-2);
+}
+.kn-path + .kn-path { margin-top: 0.6rem; }
+.kn-path-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--kn-text);
+  min-width: 150px;
+}
+.kn-path-name .kn-path-count {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--kn-muted);
+}
+.kn-path-steps {
+  display: flex;
+  align-items: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: 0.2rem 0 0;
+  flex: 1;
+  min-width: 220px;
+}
+.kn-path-steps li {
+  position: relative;
+  flex: 1;
+  text-align: center;
+}
+.kn-path-steps li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: calc(50% + 10px);
+  right: calc(-50% + 10px);
+  height: 2px;
+  background: rgba(148, 163, 184, 0.22);
+}
+.kn-path-steps li.is-explored:not(:last-child)::after {
+  background: rgba(45, 212, 191, 0.55);
+}
+.kn-path-steps a {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.28rem;
+  text-decoration: none;
+  color: var(--kn-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+.kn-path-steps a:hover { color: var(--kn-teal); }
+.kn-path-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(148, 163, 184, 0.5);
+  background: var(--kn-bg);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.kn-path-steps li.is-explored .kn-path-dot {
+  border-color: var(--kn-teal);
+  background: var(--kn-teal);
+}
+.kn-path-steps li.is-current .kn-path-dot {
+  border-color: #f1f5f9;
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.6);
+}
+.kn-path-steps li.is-current a { color: #f1f5f9; }
+
+/* ---------------------------------------------------------------- CTA --- */
+.kn-cta-row { text-align: center; }
+.kn-map-cta {
+  display: inline-block;
+  padding: 0.62rem 1.3rem;
+  border-radius: 10px;
+  background: linear-gradient(120deg, #2dd4bf, #14b8a6);
+  color: #0f172a;
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.kn-map-cta:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  color: #0f172a;
+}
+
+/* -------------------------------------------------------------- mobile --- */
+@media (max-width: 700px) {
+  .kn-root { padding: 1.5rem 1rem 1.7rem; }
+  .kn-dep {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 0.9rem;
+  }
+  .kn-dep-svg { display: none; }
+  .kn-col-before,
+  .kn-col-after { align-items: center; }
+  .kn-current .kn-current-name { white-space: normal; }
+  .kn-path-name { min-width: 0; width: 100%; }
+}

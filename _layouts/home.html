@@ -22,11 +22,61 @@ layout: default
   </p>
 
   <div class="hero-ctas">
-    <a href="{{ '/about/' | relative_url }}" class="hero-cta-primary">About me</a>
+    <a href="{{ '/map/' | relative_url }}" class="hero-cta-primary">Explore the Technology Map</a>
+    <a href="{{ '/about/' | relative_url }}" class="hero-cta-secondary">About me</a>
     <!-- Consulting CTA removed while /consulting/ is published: false — restoring the
          tab means restoring this button too (html-proofer fails on a dead link). -->
 
   </div>
+</section>
+
+<!-- ============================================================
+  Technology Map feature — the site's central navigation experience.
+  The map page (/map/) renders the full interactive knowledge graph;
+  this section is a hand-curated teaser (static HTML: no JS required,
+  html-proofer-visible links). Topic list mirrors assets/js/knowledge-graph.js.
+============================================================ -->
+<section class="tmap-feature" aria-label="The Technology Map">
+  <div class="tmap-feature-head">
+    <p class="tmap-kicker">Interactive exhibits</p>
+    <h2 class="tmap-title">One living map of computing</h2>
+    <p class="tmap-sub">
+      Ten interactive exhibits, one connected system — every topic links to the
+      ideas it's built on and the ones it unlocks.
+    </p>
+  </div>
+
+  <div class="tmap-groups">
+    <div class="tmap-group" style="--cat: #2DD4BF">
+      <span class="tmap-group-name">Hardware</span>
+      <a href="{{ '/cpu/' | relative_url }}">CPU</a>
+      <a href="{{ '/memory/' | relative_url }}">Memory</a>
+      <a href="{{ '/gpu/' | relative_url }}">GPU</a>
+    </div>
+    <div class="tmap-group" style="--cat: #A78BFA">
+      <span class="tmap-group-name">Systems</span>
+      <a href="{{ '/operating-systems/' | relative_url }}">Operating Systems</a>
+      <a href="{{ '/cloud/' | relative_url }}">Cloud</a>
+    </div>
+    <div class="tmap-group" style="--cat: #38BDF8">
+      <span class="tmap-group-name">Networks</span>
+      <a href="{{ '/internet/' | relative_url }}">Internet</a>
+    </div>
+    <div class="tmap-group" style="--cat: #FBBF24">
+      <span class="tmap-group-name">Security &amp; Trust</span>
+      <a href="{{ '/cryptography/' | relative_url }}">Cryptography</a>
+      <a href="{{ '/blockchain/' | relative_url }}">Blockchain</a>
+      <a href="{{ '/bitcoin/' | relative_url }}">Bitcoin</a>
+    </div>
+    <div class="tmap-group" style="--cat: #FB7185">
+      <span class="tmap-group-name">Intelligence</span>
+      <a href="{{ '/ai/' | relative_url }}">AI</a>
+    </div>
+  </div>
+
+  <a class="tmap-cta" href="{{ '/map/' | relative_url }}">
+    See how it all connects &rarr;
+  </a>
 </section>
 
 {% assign all_pinned = site.posts | where: 'pin', 'true' %}
