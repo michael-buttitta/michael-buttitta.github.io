@@ -33,6 +33,7 @@ tabs:
   cloud: Understanding the Cloud
   ai: Understanding AI
   internet: How the Internet Works
+  os: Understanding Operating Systems
 
 # the text displayed in the search bar & search results
 search:

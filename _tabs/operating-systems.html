@@ -1,0 +1,904 @@
+---
+layout: gpu
+title: OS
+icon: fas fa-cogs
+order: 12
+description: >-
+  An interactive visual guide to operating systems — boot your machine step
+  by step, schedule processes on a CPU, translate virtual addresses, walk a
+  file system, and run your own OS control center, all with live simulations.
+extra_css:
+  - /assets/css/operating-systems.css
+extra_js:
+  - /assets/js/operating-systems.js
+---
+
+<div id="os-experience">
+  <noscript>
+    <p class="os-noscript">
+      The live simulations on this page &mdash; the boot sequence, the CPU
+      scheduler, the memory and file-system playgrounds, the OS control
+      center &mdash; need JavaScript. All of the explanations below still
+      read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="os-rail" aria-label="Chapters">
+    <a class="os-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="os-rail-dot" href="#whatis" data-label="What is an OS?"><span></span></a>
+    <a class="os-rail-dot" href="#boot" data-label="Boot process"><span></span></a>
+    <a class="os-rail-dot" href="#kernel" data-label="The kernel"><span></span></a>
+    <a class="os-rail-dot" href="#processes" data-label="Processes &amp; threads"><span></span></a>
+    <a class="os-rail-dot" href="#scheduling" data-label="CPU scheduling"><span></span></a>
+    <a class="os-rail-dot" href="#contextswitch" data-label="Context switching"><span></span></a>
+    <a class="os-rail-dot" href="#memory" data-label="Memory management"><span></span></a>
+    <a class="os-rail-dot" href="#virtualmem" data-label="Virtual memory"><span></span></a>
+    <a class="os-rail-dot" href="#files" data-label="File systems"><span></span></a>
+    <a class="os-rail-dot" href="#drivers" data-label="Device drivers"><span></span></a>
+    <a class="os-rail-dot" href="#syscalls" data-label="System calls"><span></span></a>
+    <a class="os-rail-dot" href="#security" data-label="Security"><span></span></a>
+    <a class="os-rail-dot" href="#modern" data-label="Modern OSes"><span></span></a>
+    <a class="os-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
+    <a class="os-rail-dot" href="#simulator" data-label="Control center"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="os-hero" id="top">
+    <canvas id="os-hero-canvas" aria-hidden="true"></canvas>
+    <div class="os-hero-inner">
+      <p class="os-kicker">An interactive exhibit</p>
+      <h1 class="os-hero-title">Understanding Operating Systems</h1>
+      <p class="os-hero-sub">
+        Discover how software coordinates billions of hardware operations
+        every second to make your computer feel effortless.
+      </p>
+      <div class="os-hero-cta">
+        <a class="os-btn os-btn-primary" href="#whatis">Begin exploring</a>
+        <span class="os-hero-hint">15 chapters &middot; live simulations &middot; one conductor</span>
+      </div>
+      <div class="os-hero-boot" aria-hidden="true">
+        <span class="os-hero-boot-ok">[ OK ]</span>&nbsp;<span id="os-hero-bootline">Reached target: Graphical Interface</span><span class="os-hero-caret"></span>
+      </div>
+    </div>
+    <div class="os-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <p class="os-prose os-framing">
+    Here is the whole page in one sentence: between the applications you see
+    and the silicon you own sits one program &mdash; the operating system
+    &mdash; that decides which code runs next, which memory belongs to whom,
+    where every file physically lives, and whether any given request should
+    be allowed at all. Windows, macOS, Linux, Android, and iOS are all
+    answers to the same question. Every chapter below shows one part of the
+    job, and at the end you get to run the whole machine yourself.
+  </p>
+
+  <!-- ================================================================
+       01 — WHAT IS AN OPERATING SYSTEM?
+  ================================================================ -->
+  <section class="os-section" id="whatis" aria-labelledby="whatis-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">01</span> The fundamental question</p>
+      <h2 id="whatis-h">What is an operating system?</h2>
+      <p class="os-lede">
+        A computer is a pile of parts &mdash; CPU, memory, storage, GPU,
+        network card &mdash; each of which does exactly what it is told and
+        nothing more. Applications, meanwhile, all want those parts at the
+        same time. Something has to sit in the middle. Toggle the world
+        below between <strong>no operating system</strong> and
+        <strong>with an operating system</strong> and watch what changes.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Choose a world">
+        <button type="button" class="os-chip is-active" data-os-world="chaos">Without an OS</button>
+        <button type="button" class="os-chip" data-os-world="os">With an OS</button>
+      </div>
+      <canvas id="os-world-canvas" class="os-canvas" role="img"
+        aria-label="Animation comparing applications accessing hardware directly, causing collisions and corruption, versus applications going through an operating system that queues and coordinates every request."></canvas>
+      <p class="os-panel-status" id="os-world-status" aria-live="polite"></p>
+      <p class="os-caption">
+        Without a coordinator, three programs writing to the same memory or
+        disk at once corrupt each other &mdash; the flashes are collisions.
+        With one, every request is checked, queued, and dispatched in order.
+        Early personal computers really did work the first way: one program
+        owned the whole machine, and a bug in it froze everything.
+      </p>
+    </div>
+
+    <p class="os-prose">
+      That is the definition worth keeping: <strong>an operating system is
+      the program that manages all other programs and all of the
+      hardware.</strong> It multiplexes the CPU so dozens of applications
+      appear to run at once, hands out memory so they cannot trample each
+      other, turns &ldquo;save this file&rdquo; into disk blocks, and
+      polices who may do what. The rest of this page is simply that job
+      description, one responsibility at a time.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       02 — BOOT PROCESS
+  ================================================================ -->
+  <section class="os-section" id="boot" aria-labelledby="boot-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">02</span> From power button to desktop</p>
+      <h2 id="boot-h">The boot process</h2>
+      <p class="os-lede">
+        When you press the power button, the operating system is not running
+        yet &mdash; it is just bytes on a disk. Getting from dead silicon to
+        a desktop is a relay race where each runner is only smart enough to
+        find and start the next one. Step through it.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <ol class="os-boot-chain" aria-hidden="true">
+        <li class="os-boot-node" data-boot-step="0"><span class="os-boot-ico">&#9211;</span>Power on</li>
+        <li class="os-boot-node" data-boot-step="1"><span class="os-boot-ico">&#9881;</span>Firmware</li>
+        <li class="os-boot-node" data-boot-step="2"><span class="os-boot-ico">&#8631;</span>Boot loader</li>
+        <li class="os-boot-node" data-boot-step="3"><span class="os-boot-ico">&#9670;</span>Kernel</li>
+        <li class="os-boot-node" data-boot-step="4"><span class="os-boot-ico">&#9096;</span>Drivers</li>
+        <li class="os-boot-node" data-boot-step="5"><span class="os-boot-ico">&#9885;</span>Services</li>
+        <li class="os-boot-node" data-boot-step="6"><span class="os-boot-ico">&#9919;</span>Login</li>
+        <li class="os-boot-node" data-boot-step="7"><span class="os-boot-ico">&#9974;</span>Desktop</li>
+      </ol>
+
+      <div class="os-boot-body">
+        <div class="os-boot-screen" id="os-boot-screen" role="img"
+          aria-label="A simulated monitor showing what is on screen during the selected boot phase."></div>
+        <div class="os-boot-desc">
+          <h3 class="os-boot-title" id="os-boot-title">Power on</h3>
+          <p id="os-boot-text" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="os-panel-controls">
+        <button type="button" class="os-btn" id="os-boot-prev">&larr; Back</button>
+        <button type="button" class="os-btn os-btn-primary" id="os-boot-next">Next phase &rarr;</button>
+        <button type="button" class="os-btn os-btn-ghost" id="os-boot-play">Auto-play</button>
+        <span class="os-panel-status" id="os-boot-status" aria-live="polite"></span>
+      </div>
+      <p class="os-caption">
+        A simplified but honest sequence. Real firmware (UEFI on modern
+        machines, BIOS historically) also trains memory, enumerates devices,
+        and can verify signatures before handing off &mdash; the
+        <strong>Secure Boot</strong> idea revisited in
+        <a href="#security">chapter 12</a>. On phones the same relay runs
+        with different names.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       03 — THE KERNEL
+  ================================================================ -->
+  <section class="os-section" id="kernel" aria-labelledby="kernel-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">03</span> The core of the core</p>
+      <h2 id="kernel-h">The kernel</h2>
+      <p class="os-lede">
+        Strip away the desktop, the icons, and the bundled apps, and what
+        remains is the <strong>kernel</strong>: the one program with full
+        authority over the hardware. Everything you see runs
+        <em>above</em> it, in user space; the machine itself sits
+        <em>below</em> it. Click any subsystem to see what it does, then
+        send a request across the boundary.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-kernel-map">
+        <div class="os-kmap-row os-kmap-user" aria-hidden="true">
+          <span class="os-kmap-app">Browser</span>
+          <span class="os-kmap-app">Editor</span>
+          <span class="os-kmap-app">Game</span>
+          <span class="os-kmap-app">Terminal</span>
+          <span class="os-kmap-label">User space &middot; limited privileges</span>
+        </div>
+        <div class="os-kmap-boundary" aria-hidden="true">
+          <span class="os-kmap-dot" id="os-kmap-dot"></span>
+          <span>system call boundary</span>
+        </div>
+        <div class="os-kmap-kernel">
+          <span class="os-kmap-label">Kernel space &middot; full privileges</span>
+          <div class="os-kmap-mods" role="group" aria-label="Kernel subsystems">
+            <button type="button" class="os-kmod is-active" data-kmod="sched">Scheduler</button>
+            <button type="button" class="os-kmod" data-kmod="mem">Memory manager</button>
+            <button type="button" class="os-kmod" data-kmod="vfs">File systems</button>
+            <button type="button" class="os-kmod" data-kmod="net">Network stack</button>
+            <button type="button" class="os-kmod" data-kmod="drv">Device drivers</button>
+            <button type="button" class="os-kmod" data-kmod="sec">Security</button>
+          </div>
+        </div>
+        <div class="os-kmap-row os-kmap-hw" aria-hidden="true">
+          <span class="os-kmap-app">CPU</span>
+          <span class="os-kmap-app">RAM</span>
+          <span class="os-kmap-app">SSD</span>
+          <span class="os-kmap-app">GPU</span>
+          <span class="os-kmap-app">NIC</span>
+          <span class="os-kmap-label">Hardware</span>
+        </div>
+      </div>
+      <p class="os-kmod-info" id="os-kernel-info" aria-live="polite"></p>
+      <div class="os-panel-controls">
+        <button type="button" class="os-btn os-btn-primary" id="os-kernel-send">Send a system call</button>
+        <span class="os-panel-status" id="os-kernel-status" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <p class="os-prose">
+      Why the two-floor building? Modern CPUs have <strong>privilege
+      levels</strong> baked into the silicon: kernel code runs in a mode
+      that may touch any memory and any device register; application code
+      runs in a restricted mode where those instructions simply fault. The
+      only doorway between the floors is the controlled
+      <a href="#syscalls">system call</a>. That single architectural choice
+      is why a crashing game takes down the game &mdash; not the machine
+      &mdash; and it leans directly on hardware features covered in
+      <a href="/cpu/">Inside a Modern CPU</a>.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       04 — PROCESSES & THREADS
+  ================================================================ -->
+  <section class="os-section" id="processes" aria-labelledby="processes-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">04</span> Programs in motion</p>
+      <h2 id="processes-h">Processes &amp; threads</h2>
+      <p class="os-lede">
+        A program on disk is a recipe; a <strong>process</strong> is that
+        recipe being cooked &mdash; code plus its own private memory, open
+        files, and at least one <strong>thread</strong> of execution.
+        Launch some applications, then expand one to see the threads
+        working inside it.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Launch applications">
+        <button type="button" class="os-btn" data-os-launch="browser">Launch Browser</button>
+        <button type="button" class="os-btn" data-os-launch="music">Launch Music Player</button>
+        <button type="button" class="os-btn" data-os-launch="game">Launch Game</button>
+        <button type="button" class="os-btn" data-os-launch="terminal">Launch Terminal</button>
+      </div>
+      <div class="os-proc-list" id="os-proc-list" aria-live="polite"></div>
+      <p class="os-panel-status" id="os-proc-status" aria-live="polite"></p>
+      <p class="os-caption">
+        Each process gets an ID and its own isolated address space &mdash;
+        the browser cannot read the game&rsquo;s memory, which is why one
+        crash stays contained. Threads inside a process are lighter: they
+        <em>share</em> that memory, so the game&rsquo;s physics thread and
+        render thread can hand data to each other instantly &mdash; and can
+        also run on different CPU cores at literally the same time.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       05 — CPU SCHEDULING
+  ================================================================ -->
+  <section class="os-section" id="scheduling" aria-labelledby="scheduling-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">05</span> Who runs next?</p>
+      <h2 id="scheduling-h">CPU scheduling</h2>
+      <p class="os-lede">
+        One CPU core executes one thread at a time, yet your machine juggles
+        hundreds. The <strong>scheduler</strong> decides who runs next and
+        for how long &mdash; and that policy shapes how fast the computer
+        <em>feels</em>. Run the same five processes under three classic
+        policies and compare the results.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Choose a scheduling policy">
+        <button type="button" class="os-chip is-active" data-os-policy="fcfs">First Come, First Served</button>
+        <button type="button" class="os-chip" data-os-policy="rr">Round Robin</button>
+        <button type="button" class="os-chip" data-os-policy="prio">Priority</button>
+        <span class="os-sched-quantum" id="os-sched-quantumwrap" hidden>
+          <label class="os-range-label" for="os-sched-quantum">Time slice: <span id="os-sched-quantumval">30</span> ms</label>
+          <input type="range" id="os-sched-quantum" min="10" max="120" step="10" value="30">
+        </span>
+      </div>
+      <canvas id="os-sched-canvas" class="os-canvas os-canvas-tall" role="img"
+        aria-label="Animated scheduling timeline: five processes with different burst lengths and priorities move between the ready queue, the CPU, and completion, drawing a Gantt chart as the chosen policy runs."></canvas>
+      <div class="os-panel-controls">
+        <button type="button" class="os-btn os-btn-primary" id="os-sched-run">Run workload</button>
+        <button type="button" class="os-btn os-btn-ghost" id="os-sched-reset">Reset</button>
+        <span class="os-panel-status" id="os-sched-status" aria-live="polite"></span>
+      </div>
+      <table class="os-table" id="os-sched-metrics" hidden>
+        <caption>Results for this run</caption>
+        <tbody></tbody>
+      </table>
+      <p class="os-caption">
+        Watch the mouse-click process: under First Come, First Served it
+        waits behind the long video encode; under Round Robin it gets a turn
+        almost immediately. That is the classic trade &mdash; FCFS is simple
+        and fair by arrival, Round Robin buys responsiveness with extra
+        switching, and Priority serves the important first but can starve
+        the unimportant. Real schedulers (Linux&rsquo;s EEVDF, Windows&rsquo;
+        multilevel feedback queues) blend all three ideas.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 — CONTEXT SWITCHING
+  ================================================================ -->
+  <section class="os-section" id="contextswitch" aria-labelledby="contextswitch-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">06</span> The illusion of simultaneity</p>
+      <h2 id="contextswitch-h">Context switching</h2>
+      <p class="os-lede">
+        Multitasking on one core is a magic trick: the CPU runs one thread,
+        freezes it mid-thought, runs another, and switches back before you
+        notice. The frozen &ldquo;thought&rdquo; &mdash; register values,
+        program counter, stack pointer &mdash; is saved into the
+        process&rsquo;s control block and restored later, byte for byte.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <canvas id="os-ctx-canvas" class="os-canvas" role="img"
+        aria-label="Animation of a CPU core alternating between two processes: on each switch the core's registers are saved to one process control block and reloaded from the other."></canvas>
+      <div class="os-panel-controls">
+        <label class="os-range-label" for="os-ctx-rate">Switches per second: <span id="os-ctx-rateval">2</span></label>
+        <input type="range" id="os-ctx-rate" min="0" max="4" step="1" value="1"
+          aria-label="Context switch frequency, from about one per second to a thousand per second">
+        <span class="os-panel-status" id="os-ctx-overhead" aria-live="polite"></span>
+      </div>
+      <p class="os-caption">
+        Push the slider right and the two apps blur into
+        &ldquo;simultaneous&rdquo; &mdash; but the orange slivers of
+        switching overhead eat a growing share of the core. A real switch
+        costs on the order of microseconds (plus cache warm-up afterwards),
+        and a busy machine does thousands per second: cheap enough to feel
+        free, never actually free. Multiple cores help &mdash; but each core
+        still runs exactly one thread at any instant.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 — MEMORY MANAGEMENT
+  ================================================================ -->
+  <section class="os-section" id="memory" aria-labelledby="memory-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">07</span> Handing out RAM</p>
+      <h2 id="memory-h">Memory management</h2>
+      <p class="os-lede">
+        Every process wants memory, and none of them may touch anyone
+        else&rsquo;s. The OS keeps the ledger: which pages of RAM are free,
+        which belong to whom, and which are shared. Launch and quit
+        applications below, then try the attack.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Allocate and free memory">
+        <button type="button" class="os-btn" data-os-mem="browser">Launch Browser</button>
+        <button type="button" class="os-btn" data-os-mem="game">Launch Game</button>
+        <button type="button" class="os-btn" data-os-mem="editor">Launch Editor</button>
+        <button type="button" class="os-btn os-btn-ghost" id="os-mem-close">Quit oldest app</button>
+        <button type="button" class="os-btn os-btn-danger" id="os-mem-rogue">Rogue write attempt</button>
+      </div>
+      <div class="os-mem-grid" id="os-mem-grid" role="img"
+        aria-label="A grid of RAM pages colored by owner: kernel pages, per-application pages, shared library pages, and free pages. Launching apps claims pages; quitting frees them; a rogue write to another process's page is blocked."></div>
+      <div class="os-mem-legend" id="os-mem-legend" aria-hidden="true"></div>
+      <p class="os-panel-status" id="os-mem-status" aria-live="polite"></p>
+      <p class="os-caption">
+        Notice two things. Freed pages leave <em>holes</em>, and new
+        allocations happily fill scattered holes &mdash; a taste of why the
+        OS allocates in fixed-size pages rather than one big slab. And the
+        striped pages are <strong>shared</strong>: one copy of a common
+        library mapped read-only into several processes at once. The rogue
+        write is refused in hardware &mdash; that&rsquo;s a segmentation
+        fault, the wall that makes process isolation real.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 — VIRTUAL MEMORY
+  ================================================================ -->
+  <section class="os-section" id="virtualmem" aria-labelledby="virtualmem-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">08</span> The grand illusion</p>
+      <h2 id="virtualmem-h">Virtual memory</h2>
+      <p class="os-lede">
+        Here is the twist: processes never see real RAM addresses at all.
+        Each one lives in its own <strong>virtual</strong> address space
+        &mdash; a private, seemingly contiguous stretch of memory starting
+        at zero &mdash; and a <strong>page table</strong> maps every virtual
+        page to wherever it actually is: some frame of physical RAM, or
+        parked on disk. Touch a page and follow the translation.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Choose a process and a page to access">
+        <button type="button" class="os-chip is-active" data-os-vmproc="a">Process A</button>
+        <button type="button" class="os-chip" data-os-vmproc="b">Process B</button>
+        <span class="os-vm-pages" role="group" aria-label="Access a virtual page">
+          <button type="button" class="os-btn" data-os-vmpage="0">Access page 0</button>
+          <button type="button" class="os-btn" data-os-vmpage="1">Access page 1</button>
+          <button type="button" class="os-btn" data-os-vmpage="2">Access page 2</button>
+          <button type="button" class="os-btn" data-os-vmpage="3">Access page 3</button>
+        </span>
+      </div>
+      <canvas id="os-vm-canvas" class="os-canvas os-canvas-tall" role="img"
+        aria-label="Animated address translation: a virtual address from the chosen process flows through its page table to a physical RAM frame, or triggers a page fault that loads the page from disk first."></canvas>
+      <ol class="os-log" id="os-vm-log" aria-live="polite"></ol>
+      <p class="os-caption">
+        Both processes happily use &ldquo;page 0&rdquo; &mdash; and land in
+        different physical frames. Pages marked <em>on disk</em> were
+        swapped out to make room; touching one raises a <strong>page
+        fault</strong>, the OS reads it back in (evicting someone else),
+        and the program never knows it happened &mdash; except in lost
+        microseconds. This is also why &ldquo;using more RAM than you
+        have&rdquo; works, just slowly. The full memory hierarchy story
+        lives in <a href="/memory/">Inside Computer Memory</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 — FILE SYSTEMS
+  ================================================================ -->
+  <section class="os-section" id="files" aria-labelledby="files-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">09</span> Where your stuff actually lives</p>
+      <h2 id="files-h">File systems</h2>
+      <p class="os-lede">
+        A drive doesn&rsquo;t know what a &ldquo;file&rdquo; is &mdash; it
+        stores numbered blocks of bytes. The <strong>file system</strong> is
+        the OS&rsquo;s scheme for turning those blocks into names, folders,
+        sizes, owners, and timestamps. Explore the tree, then cut the power
+        mid-write and see why journaling exists.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-fs-wrap">
+        <ul class="os-fs-tree" id="os-fs-tree" aria-label="A small file system tree. Select a file to inspect it."></ul>
+        <div class="os-fs-side">
+          <div class="os-fs-detail" id="os-fs-detail" aria-live="polite">
+            <p class="os-fs-hint">Select a file to see its metadata and where its blocks sit on disk.</p>
+          </div>
+          <div class="os-fs-blocks" id="os-fs-blocks" role="img"
+            aria-label="A map of disk blocks; blocks belonging to the selected file light up, showing that one file can be scattered across the disk."></div>
+        </div>
+      </div>
+      <div class="os-panel-controls">
+        <label class="os-check"><input type="checkbox" id="os-fs-journal" checked> Journaling on</label>
+        <button type="button" class="os-btn os-btn-danger" id="os-fs-crashbtn">Cut power mid-write</button>
+        <span class="os-panel-status" id="os-fs-status" aria-live="polite"></span>
+      </div>
+      <p class="os-caption">
+        The metadata panel is the point: the file system stores far more
+        than contents. Permissions gate access (<a href="#security">chapter
+        12</a>), and the journal is a write-ahead diary &mdash; the intent
+        is recorded before blocks change, so after a crash the OS replays or
+        discards the entry instead of leaving the disk half-updated.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <table class="os-table">
+        <caption>Three file systems, one idea</caption>
+        <thead>
+          <tr><th scope="col">File system</th><th scope="col">Home turf</th><th scope="col">Notable traits (high level)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>NTFS</strong></td>
+            <td>Windows</td>
+            <td>Journaling; fine-grained access-control lists; compression and encryption built in; decades of compatibility.</td>
+          </tr>
+          <tr>
+            <td><strong>APFS</strong></td>
+            <td>macOS, iOS</td>
+            <td>Copy-on-write design; instant snapshots and clones; native encryption; tuned for SSDs.</td>
+          </tr>
+          <tr>
+            <td><strong>ext4</strong></td>
+            <td>Linux</td>
+            <td>Journaling; extents for large files; robust and widely deployed from phones to servers.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="os-caption">
+        Different engineering cultures, same contract: names in, blocks out,
+        without lying to you after a crash. How the blocks themselves are
+        stored &mdash; flash cells, wear leveling, controllers &mdash; is
+        the territory of <a href="/memory/">Inside Computer Memory</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 — DEVICE DRIVERS
+  ================================================================ -->
+  <section class="os-section" id="drivers" aria-labelledby="drivers-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">10</span> Speaking every dialect</p>
+      <h2 id="drivers-h">Device drivers</h2>
+      <p class="os-lede">
+        Thousands of keyboards, printers, GPUs, and Wi-Fi chips exist, each
+        with its own registers and quirks &mdash; and your applications
+        know none of it. A <strong>driver</strong> is the translator: the OS
+        defines one standard interface per device class, and each driver
+        maps it onto one specific piece of hardware. Pick a device and
+        follow a request down the stack.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Choose a device">
+        <button type="button" class="os-chip is-active" data-os-dev="keyboard">Keyboard</button>
+        <button type="button" class="os-chip" data-os-dev="mouse">Mouse</button>
+        <button type="button" class="os-chip" data-os-dev="printer">Printer</button>
+        <button type="button" class="os-chip" data-os-dev="gpu">GPU</button>
+        <button type="button" class="os-chip" data-os-dev="wifi">Wi-Fi adapter</button>
+      </div>
+      <div class="os-drv-path" aria-hidden="true">
+        <span class="os-drv-node" data-drv-node="0">Application</span>
+        <span class="os-drv-arrow">&darr;</span>
+        <span class="os-drv-node" data-drv-node="1">Operating system<em id="os-drv-iface">generic input API</em></span>
+        <span class="os-drv-arrow">&darr;</span>
+        <span class="os-drv-node" data-drv-node="2">Driver<em id="os-drv-name">USB HID keyboard driver</em></span>
+        <span class="os-drv-arrow">&darr;</span>
+        <span class="os-drv-node" data-drv-node="3">Hardware<em id="os-drv-hw">key matrix scan</em></span>
+      </div>
+      <div class="os-panel-controls">
+        <button type="button" class="os-btn os-btn-primary" id="os-drv-send">Send a request</button>
+        <span class="os-panel-status" id="os-drv-status" aria-live="polite"></span>
+      </div>
+      <p class="os-caption">
+        The keyboard also shows the reverse direction: hardware raises an
+        <strong>interrupt</strong> &mdash; a hardware signal that makes the
+        CPU pause what it&rsquo;s doing and run the driver&rsquo;s handler
+        &mdash; which is how a keypress gets noticed within microseconds
+        without the OS constantly polling. Because the interface stays
+        fixed, one OS supports thousands of devices by swapping drivers, and
+        a new GPU needs a new driver, not a new Windows. The GPU
+        driver&rsquo;s remarkable job gets its own chapter in
+        <a href="/gpu/">Inside a Modern GPU</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       11 — SYSTEM CALLS
+  ================================================================ -->
+  <section class="os-section" id="syscalls" aria-labelledby="syscalls-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">11</span> The doorway to the kernel</p>
+      <h2 id="syscalls-h">System calls</h2>
+      <p class="os-lede">
+        User programs cannot touch disks, screens, or network cards directly
+        &mdash; the CPU&rsquo;s restricted mode forbids it. Instead they
+        <em>ask</em>: a <strong>system call</strong> is a controlled jump
+        into the kernel, which validates the request, does the privileged
+        work, and returns a result. Pick a request and watch it cross the
+        boundary.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Choose a request">
+        <button type="button" class="os-chip is-active" data-os-sys="read">Read a file</button>
+        <button type="button" class="os-chip" data-os-sys="write">Write a file</button>
+        <button type="button" class="os-chip" data-os-sys="spawn">Create a process</button>
+        <button type="button" class="os-chip" data-os-sys="connect">Open a connection</button>
+      </div>
+      <div class="os-sys-stage" aria-hidden="true">
+        <span class="os-sys-node" data-sys-node="0">Application<em>user mode</em></span>
+        <span class="os-sys-node" data-sys-node="1">System call<em>mode switch</em></span>
+        <span class="os-sys-node" data-sys-node="2">Kernel<em>kernel mode</em></span>
+        <span class="os-sys-node" data-sys-node="3" id="os-sys-target">Storage<em>hardware</em></span>
+        <span class="os-sys-node" data-sys-node="4">Result<em>back to user mode</em></span>
+      </div>
+      <div class="os-panel-controls">
+        <button type="button" class="os-btn os-btn-primary" id="os-sys-run">Make the call</button>
+        <span class="os-panel-status" id="os-sys-status" aria-live="polite"></span>
+      </div>
+      <ol class="os-log" id="os-sys-log" aria-live="polite"></ol>
+      <p class="os-caption">
+        Every &ldquo;open,&rdquo; every packet sent, every process spawned
+        takes this trip &mdash; a busy program makes thousands of system
+        calls per second. The kernel checks permissions on the way in, which
+        is exactly where the rules from <a href="#security">chapter 12</a>
+        get enforced. The connection request continues into the
+        kernel&rsquo;s network stack, whose onward journey is the whole of
+        <a href="/internet/">How the Internet Works</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 — SECURITY & PERMISSIONS
+  ================================================================ -->
+  <section class="os-section" id="security" aria-labelledby="security-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">12</span> The bouncer at every door</p>
+      <h2 id="security-h">Security &amp; permissions</h2>
+      <p class="os-lede">
+        Because every request funnels through the kernel, the kernel is the
+        natural place to ask: <em>should this be allowed?</em> Accounts,
+        permissions, and sandboxes are all answers. Try the same actions as
+        three different users and read the verdicts.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Choose who you are">
+        <button type="button" class="os-chip" data-os-user="guest">Guest</button>
+        <button type="button" class="os-chip is-active" data-os-user="standard">Standard user</button>
+        <button type="button" class="os-chip" data-os-user="admin">Administrator</button>
+      </div>
+      <div class="os-panel-controls" role="group" aria-label="Try an action">
+        <button type="button" class="os-btn" data-os-act="own">Edit your document</button>
+        <button type="button" class="os-btn" data-os-act="other">Read another user&rsquo;s files</button>
+        <button type="button" class="os-btn" data-os-act="sysfile">Modify a system file</button>
+        <button type="button" class="os-btn" data-os-act="install">Install a driver</button>
+        <button type="button" class="os-btn" data-os-act="camera">App requests the camera</button>
+      </div>
+      <ol class="os-log os-sec-log" id="os-sec-log" aria-live="polite"></ol>
+      <p class="os-caption">
+        Layers, not one wall: <strong>accounts</strong> separate people,
+        <strong>file permissions</strong> say who may read or change what,
+        <strong>administrator elevation</strong> makes dangerous actions
+        deliberate, and <strong>sandboxes</strong> shrink what an app can
+        even ask for &mdash; a sandboxed app requesting the camera triggers
+        that familiar permission prompt. Beneath it all,
+        <strong>Secure Boot</strong> verifies each boot stage&rsquo;s
+        signature before running it, and <strong>code signing</strong>
+        extends the same idea to apps and drivers. The signature math &mdash;
+        and how the OS guards stored keys and encrypted disks &mdash; is the
+        subject of <a href="/cryptography/">Understanding Cryptography</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 — MODERN OPERATING SYSTEMS
+  ================================================================ -->
+  <section class="os-section" id="modern" aria-labelledby="modern-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">13</span> The family portrait</p>
+      <h2 id="modern-h">Modern operating systems</h2>
+      <p class="os-lede">
+        Every chapter so far applies to all of them: same concepts,
+        different engineering choices and priorities. Pick one &mdash;
+        there&rsquo;s no &ldquo;best,&rdquo; only best-for-what.
+      </p>
+    </div>
+
+    <div class="os-panel" data-os-reveal>
+      <div class="os-panel-controls" role="group" aria-label="Choose an operating system">
+        <button type="button" class="os-chip is-active" data-os-osname="windows">Windows</button>
+        <button type="button" class="os-chip" data-os-osname="macos">macOS</button>
+        <button type="button" class="os-chip" data-os-osname="linux">Linux</button>
+        <button type="button" class="os-chip" data-os-osname="android">Android</button>
+        <button type="button" class="os-chip" data-os-osname="ios">iOS</button>
+      </div>
+      <div class="os-modern-card" id="os-modern-card" aria-live="polite"></div>
+      <p class="os-caption">
+        Two threads run through the whole family. Android runs on the Linux
+        kernel, and iOS shares its XNU core with macOS &mdash; kernel
+        families outlive the products built on them. And all five draw the
+        same line between kernel space and user space, schedule with
+        priorities, page memory, and gate everything through system calls.
+        Learn the concepts once and every OS becomes familiar. The same is
+        true one level up: every cloud server, virtual machine, and
+        container in <a href="/cloud/">Understanding the Cloud</a> is one of
+        these operating systems doing everything on this page.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       14 — MISCONCEPTIONS
+  ================================================================ -->
+  <section class="os-section" id="myths" aria-labelledby="myths-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">14</span> Setting the record straight</p>
+      <h2 id="myths-h">Common misconceptions</h2>
+      <p class="os-lede">
+        Seven things people believe about operating systems that
+        aren&rsquo;t quite true &mdash; each one a quick expand.
+      </p>
+    </div>
+
+    <div class="os-myths" data-os-reveal>
+      <details class="os-myth">
+        <summary>The operating system is the desktop.</summary>
+        <p>The desktop, taskbar, and windows are one replaceable program among
+        many &mdash; a shell running in user space. The OS is mostly the invisible
+        machinery underneath: kernel, scheduler, memory manager, file systems,
+        drivers. Linux makes this vivid by letting you swap desktops entirely, or
+        run with none, on the same OS &mdash; and every server does exactly that.</p>
+      </details>
+      <details class="os-myth">
+        <summary>More RAM always makes a computer faster.</summary>
+        <p>More RAM helps until your working set fits &mdash; then extra gigabytes
+        mostly sit as file cache. If a machine is slow because it&rsquo;s constantly
+        swapping to disk, RAM is a cure; if it&rsquo;s slow because of a saturated
+        CPU, a slow disk, or a misbehaving program, more RAM changes little. The
+        bottleneck decides, and the bottleneck moves.</p>
+      </details>
+      <details class="os-myth">
+        <summary>Closing an app immediately frees all its memory.</summary>
+        <p>The OS does reclaim the process&rsquo;s private pages when it exits
+        &mdash; but apps often don&rsquo;t fully exit (background helpers, tray
+        processes), shared libraries stay resident for their other users, and
+        caches are kept deliberately because free RAM doing nothing is wasted RAM.
+        A &ldquo;memory used&rdquo; number staying high after closing an app is
+        usually the OS being smart, not leaky.</p>
+      </details>
+      <details class="os-myth">
+        <summary>The CPU runs every application simultaneously.</summary>
+        <p>Each CPU core runs exactly one thread at any instant. With eight cores,
+        eight threads truly run at once; the other hundreds are paused, waiting
+        their turn. Fast context switching &mdash; thousands per second &mdash;
+        creates the illusion of everything running together. It is time-sharing,
+        performed so quickly you can&rsquo;t perceive the gaps.</p>
+      </details>
+      <details class="os-myth">
+        <summary>Drivers are applications.</summary>
+        <p>Drivers are privileged kernel-side components, not programs you run
+        from a menu. Most load automatically when hardware appears and have no
+        window or icon. The distinction matters: a buggy application crashes
+        itself, while a buggy driver runs with kernel privileges and can crash the
+        whole machine &mdash; which is why a bad graphics or storage driver can
+        blue-screen a PC and why modern OSes push drivers through signing and
+        testing programs.</p>
+      </details>
+      <details class="os-myth">
+        <summary>Restarting always fixes the underlying problem.</summary>
+        <p>A restart throws away all accumulated state &mdash; leaked memory,
+        wedged processes, stuck locks &mdash; and rebuilds the world from disk.
+        That genuinely clears many symptoms, which is why it works so often. But
+        the bug that produced the bad state is still there; if the same leak or
+        race happens again, so will the problem. Restarting is a reset, not a
+        repair.</p>
+      </details>
+      <details class="os-myth">
+        <summary>Linux is only for programmers.</summary>
+        <p>You have probably used Linux today without noticing: Android is built
+        on the Linux kernel, and so are most web servers, smart TVs, routers, and
+        cloud machines. Desktop distributions like Ubuntu and Mint install with a
+        point-and-click interface comparable to Windows or macOS. The
+        programmer-only reputation is decades out of date &mdash; Linux is simply
+        most often used where nobody sees it.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       15 — SIMULATOR: OS CONTROL CENTER
+  ================================================================ -->
+  <section class="os-section" id="simulator" aria-labelledby="simulator-h">
+    <div class="os-section-head">
+      <p class="os-kicker"><span class="os-kicker-num">15</span> The whole story at once</p>
+      <h2 id="simulator-h">The OS control center</h2>
+      <p class="os-lede">
+        Everything from the previous fourteen chapters in one running
+        machine. Launch applications, allocate memory, generate load, break
+        things &mdash; and watch how the operating system keeps its
+        composure. The dashboard is live from the moment you arrive.
+      </p>
+    </div>
+
+    <div class="os-panel os-cc" data-os-reveal>
+      <div class="os-cc-meters">
+        <div class="os-cc-meter"><span class="os-cc-meter-label">CPU</span><div class="os-cc-bar"><span id="os-cc-cpubar"></span></div><span class="os-cc-meter-val" id="os-cc-cpuval">0%</span></div>
+        <div class="os-cc-meter"><span class="os-cc-meter-label">Memory</span><div class="os-cc-bar"><span id="os-cc-membar"></span></div><span class="os-cc-meter-val" id="os-cc-memval">0 GB</span></div>
+        <div class="os-cc-meter"><span class="os-cc-meter-label">Disk</span><div class="os-cc-bar"><span id="os-cc-diskbar"></span></div><span class="os-cc-meter-val" id="os-cc-diskval">0 GB</span></div>
+        <div class="os-cc-meter"><span class="os-cc-meter-label">Network</span><div class="os-cc-bar"><span id="os-cc-netbar"></span></div><span class="os-cc-meter-val" id="os-cc-netval">0 Mbps</span></div>
+        <div class="os-cc-stat"><span id="os-cc-ctxval">0</span><em>context switches /s</em></div>
+        <div class="os-cc-stat"><span id="os-cc-intval">0</span><em>interrupts /s</em></div>
+      </div>
+
+      <canvas id="os-cc-canvas" class="os-canvas" role="img"
+        aria-label="A rolling graph of simulated CPU and memory utilization over the last minute."></canvas>
+
+      <div class="os-cc-cols">
+        <div class="os-cc-actions">
+          <p class="os-cc-subhead">Run things</p>
+          <div class="os-panel-controls" role="group" aria-label="Normal operations">
+            <button type="button" class="os-btn" data-os-cc="browser">Launch browser</button>
+            <button type="button" class="os-btn" data-os-cc="game">Launch game</button>
+            <button type="button" class="os-btn" data-os-cc="compile">Compile a project</button>
+            <button type="button" class="os-btn" data-os-cc="alloc">Allocate 1 GB</button>
+            <button type="button" class="os-btn" data-os-cc="threads">Spawn worker threads</button>
+            <button type="button" class="os-btn" data-os-cc="files">Write files to disk</button>
+            <button type="button" class="os-btn" data-os-cc="net">Start a download</button>
+            <button type="button" class="os-btn" data-os-cc="usb">Plug in a USB drive</button>
+          </div>
+          <p class="os-cc-subhead">Break things</p>
+          <div class="os-panel-controls" role="group" aria-label="Failure scenarios">
+            <button type="button" class="os-btn os-btn-danger" data-os-cc="runaway">Runaway process</button>
+            <button type="button" class="os-btn os-btn-danger" data-os-cc="oom">Exhaust memory</button>
+            <button type="button" class="os-btn os-btn-danger" data-os-cc="diskfull">Fill the disk</button>
+            <button type="button" class="os-btn os-btn-danger" data-os-cc="unplug">Yank the USB drive</button>
+          </div>
+          <div class="os-panel-controls">
+            <button type="button" class="os-btn os-btn-ghost" id="os-cc-reboot">Reboot (reset)</button>
+          </div>
+        </div>
+
+        <div class="os-cc-right">
+          <table class="os-table os-cc-table" aria-label="Running processes">
+            <caption>Processes</caption>
+            <thead><tr><th scope="col">PID</th><th scope="col">Name</th><th scope="col">CPU</th><th scope="col">Memory</th><th scope="col">State</th></tr></thead>
+            <tbody id="os-cc-procs"></tbody>
+          </table>
+          <ol class="os-log os-cc-log" id="os-cc-log" aria-label="Operating system event log" aria-live="polite"></ol>
+        </div>
+      </div>
+    </div>
+    <p class="os-caption">
+      A conceptual model, not a kernel: four cores, eight gigabytes, and
+      simple rules stand in for the real thing. But the behaviors are the
+      honest ones &mdash; the scheduler spreads load and keeps the system
+      responsive under a runaway process, the out-of-memory killer
+      sacrifices the largest offender to save the machine, a full disk
+      fails writes loudly rather than corrupting quietly, and a yanked
+      drive raises an error instead of a crash. Graceful degradation is the
+      operating system&rsquo;s real signature move.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       KEEP EXPLORING
+  ================================================================ -->
+  <section class="os-section os-section-outro" id="next" aria-labelledby="next-h">
+    <div class="os-section-head">
+      <p class="os-kicker">Keep exploring</p>
+      <h2 id="next-h">One connected story</h2>
+      <p class="os-lede">
+        The operating system touches every layer of computing &mdash; and
+        each layer has its own exhibit.
+      </p>
+    </div>
+    <div class="os-nextgrid" data-os-reveal>
+      <a class="os-next" href="/cpu/">
+        <span class="os-next-tag">Inside a Modern CPU</span>
+        <p>The silicon the scheduler drives: cores, privilege modes, and the interrupt machinery that lets hardware tap the OS on the shoulder.</p>
+      </a>
+      <a class="os-next" href="/gpu/">
+        <span class="os-next-tag">Inside a Modern GPU</span>
+        <p>How the OS and graphics drivers coordinate thousands of cores to composite every window and frame you see.</p>
+      </a>
+      <a class="os-next" href="/memory/">
+        <span class="os-next-tag">Inside Computer Memory</span>
+        <p>RAM, caches, and SSDs &mdash; the physical hierarchy behind virtual memory, paging, and file systems.</p>
+      </a>
+      <a class="os-next" href="/internet/">
+        <span class="os-next-tag">How the Internet Works</span>
+        <p>The kernel&rsquo;s network stack builds every packet an application sends &mdash; follow one request the rest of the way.</p>
+      </a>
+      <a class="os-next" href="/cloud/">
+        <span class="os-next-tag">Understanding Cloud Computing</span>
+        <p>Hypervisors run whole operating systems as guests, and containers share one kernel &mdash; OS ideas, scaled to data centers.</p>
+      </a>
+      <a class="os-next" href="/ai/">
+        <span class="os-next-tag">Understanding AI</span>
+        <p>Training and inference lean on the OS for GPU access, memory, storage, and scheduling &mdash; AI is a demanding tenant, not magic.</p>
+      </a>
+      <a class="os-next" href="/cryptography/">
+        <span class="os-next-tag">Understanding Cryptography</span>
+        <p>Key storage, code signing, disk encryption, Secure Boot &mdash; the mathematics behind the OS&rsquo;s security promises.</p>
+      </a>
+    </div>
+  </section>
+</div>
