@@ -36,6 +36,7 @@ tabs:
   internet: How the Internet Works
   os: Understanding Operating Systems
   chatgpt: How ChatGPT Works
+  ml: Understanding Machine Learning
 
 # the text displayed in the search bar & search results
 search:

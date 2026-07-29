@@ -100,6 +100,17 @@
       prereqs: ['gpu', 'cloud']
     },
     {
+      id: 'machine-learning', name: 'Understanding Machine Learning',
+      short: 'ML', url: '/machine-learning/', cat: 'intelligence',
+      fa: '\uf201', x: 385, y: 85,
+      tagline: 'How models actually learn from data.',
+      blurb: 'Features, labels, training, loss, gradient descent, ' +
+        'overfitting, and honest evaluation \u2014 the complete pipeline from ' +
+        'data to predictions, with real models you can train, break, and ' +
+        'fix in the browser.',
+      prereqs: ['ai']
+    },
+    {
       id: 'cryptography', name: 'Understanding Cryptography',
       short: 'Cryptography', url: '/cryptography/', cat: 'security',
       fa: '\uf084', x: 1050, y: 240,
@@ -140,14 +151,15 @@
         'through the OS, the internet, TLS, a cloud load balancer, ' +
         'tokenization, transformer layers on GPUs, and token sampling, all ' +
         'the way back to a streamed answer on your screen.',
-      prereqs: ['ai', 'internet', 'cloud', 'gpu']
+      prereqs: ['ai', 'machine-learning', 'internet', 'cloud', 'gpu']
     },
 
     /* ----- Planned topics: visible on the map, not yet built ------------- */
     {
-      id: 'machine-learning', name: 'Machine Learning', short: 'ML',
-      url: null, cat: 'future', fa: '\uf201', x: 385, y: 85,
-      tagline: 'How models actually learn from data.', blurb: '', prereqs: ['ai']
+      id: 'llm', name: 'Large Language Models', short: 'LLMs',
+      url: null, cat: 'future', fa: '\uf086', x: 470, y: 25,
+      tagline: 'Transformers, tokens, and text at planetary scale.', blurb: '',
+      prereqs: ['machine-learning', 'ai']
     },
     {
       id: 'databases', name: 'Databases', short: 'Databases',
@@ -219,9 +231,18 @@
     { a: 'chatgpt', b: 'memory',
       label: 'Your prompt lives in RAM at home; model weights live in VRAM in the data center.' },
 
-    /* dashed edges to planned topics */
-    { a: 'ai', b: 'machine-learning', planned: true,
+    { a: 'ai', b: 'machine-learning',
       label: 'Machine learning is the engine room of modern AI.' },
+    { a: 'gpu', b: 'machine-learning',
+      label: 'Training is matrix math at scale — GPUs are why it finishes this decade.' },
+    { a: 'cloud', b: 'machine-learning',
+      label: 'Large models are trained on distributed cloud compute.' },
+    { a: 'chatgpt', b: 'machine-learning',
+      label: 'ChatGPT is a machine-learned model — trained once, then run for every reply.' },
+
+    /* dashed edges to planned topics */
+    { a: 'machine-learning', b: 'llm', planned: true,
+      label: 'LLMs are the training loop from this page, scaled to all of human text.' },
     { a: 'cloud', b: 'databases', planned: true,
       label: 'Every cloud application sits on top of a database.' },
     { a: 'cpu', b: 'algorithms', planned: true,
@@ -245,7 +266,7 @@
     {
       id: 'intelligence', name: 'The Road to AI',
       hook: 'The hardware and infrastructure behind machines that learn.',
-      steps: ['cpu', 'gpu', 'cloud', 'ai', 'chatgpt']
+      steps: ['cpu', 'gpu', 'cloud', 'ai', 'machine-learning', 'chatgpt']
     }
   ];
 

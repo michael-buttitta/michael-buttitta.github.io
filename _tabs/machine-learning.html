@@ -1,0 +1,1098 @@
+---
+layout: gpu
+title: ML
+icon: fas fa-chart-line
+order: 14
+description: >-
+  An interactive visual guide to machine learning — how computers learn
+  patterns from data instead of following hand-written rules. Build a dataset,
+  train a classifier, roll a ball down a loss landscape, overfit a model on
+  purpose, and run your own ML lab, all with live simulations in the browser.
+extra_css:
+  - /assets/css/machine-learning.css
+  - /assets/css/knowledge-nav.css
+extra_js:
+  - /assets/js/machine-learning.js
+  - /assets/js/knowledge-graph.js
+  - /assets/js/knowledge-nav.js
+---
+
+<div id="ml-experience">
+  <noscript>
+    <p class="ml-noscript">
+      The live simulations on this page &mdash; the trainable classifier, the
+      gradient-descent landscape, the overfitting playground, the ML Lab &mdash;
+      need JavaScript. All of the explanations below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="ml-rail" aria-label="Chapters">
+    <a class="ml-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="ml-rail-dot" href="#what" data-label="What is ML?"><span></span></a>
+    <a class="ml-rail-dot" href="#landscape" data-label="The landscape"><span></span></a>
+    <a class="ml-rail-dot" href="#data" data-label="Data"><span></span></a>
+    <a class="ml-rail-dot" href="#supervised" data-label="Supervised learning"><span></span></a>
+    <a class="ml-rail-dot" href="#unsupervised" data-label="Unsupervised learning"><span></span></a>
+    <a class="ml-rail-dot" href="#reinforcement" data-label="Reinforcement learning"><span></span></a>
+    <a class="ml-rail-dot" href="#training" data-label="Training"><span></span></a>
+    <a class="ml-rail-dot" href="#loss" data-label="Loss functions"><span></span></a>
+    <a class="ml-rail-dot" href="#gradient" data-label="Gradient descent"><span></span></a>
+    <a class="ml-rail-dot" href="#fit" data-label="Over- &amp; underfitting"><span></span></a>
+    <a class="ml-rail-dot" href="#split" data-label="Train / val / test"><span></span></a>
+    <a class="ml-rail-dot" href="#metrics" data-label="Evaluation"><span></span></a>
+    <a class="ml-rail-dot" href="#applications" data-label="Applications"><span></span></a>
+    <a class="ml-rail-dot" href="#misconceptions" data-label="Misconceptions"><span></span></a>
+    <a class="ml-rail-dot" href="#lab" data-label="ML Lab"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="ml-hero" id="top">
+    <canvas id="ml-hero-canvas" aria-hidden="true"></canvas>
+    <div class="ml-hero-inner">
+      <p class="ml-kicker">An interactive exhibit</p>
+      <h1 class="ml-hero-title">Understanding Machine Learning</h1>
+      <p class="ml-hero-sub">
+        Discover how computers learn patterns from data instead of following
+        hand-written rules &mdash; and train real models in your browser along
+        the way.
+      </p>
+      <div class="ml-hero-cta">
+        <a class="ml-btn ml-btn-primary" id="ml-hero-cta" href="#what">Start learning</a>
+        <span class="ml-hero-hint">14 chapters &middot; live models &middot; no equations required</span>
+      </div>
+    </div>
+    <div class="ml-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       THE MOTIVATING QUESTION
+  ================================================================ -->
+  <section class="ml-section ml-section-question" aria-label="The motivating question">
+    <div class="ml-question" data-ml-reveal>
+      <p class="ml-question-mark" aria-hidden="true">?</p>
+      <p class="ml-question-text">
+        How can a computer learn to recognize <strong>spam email</strong>
+        without someone writing every rule?
+      </p>
+      <p class="ml-question-sub">
+        Hold on to that question. We will come back to it in almost every
+        chapter &mdash; and by the end, you will be able to answer it in
+        detail.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       01 — WHAT IS MACHINE LEARNING?
+  ================================================================ -->
+  <section class="ml-section" id="what" aria-labelledby="what-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">01</span> First principles</p>
+      <h2 id="what-h">What is machine learning?</h2>
+      <p class="ml-lede">
+        For seventy years, programming has meant one thing: a human works out
+        the rules, writes them down as code, and the computer applies them.
+        Machine learning flips that arrangement on its head. Instead of
+        writing the rules, you show the computer <strong>examples with known
+        answers</strong> &mdash; and it works out the rules itself.
+      </p>
+    </div>
+
+    <div class="ml-paradigm" data-ml-reveal>
+      <div class="ml-paradigm-panes">
+        <div class="ml-paradigm-pane" id="ml-par-trad">
+          <p class="ml-panel-h">Traditional programming</p>
+          <div class="ml-par-flow" aria-hidden="true">
+            <span class="ml-par-chip ml-par-rules">Rules</span>
+            <span class="ml-par-plus">+</span>
+            <span class="ml-par-chip ml-par-data">Data</span>
+            <span class="ml-par-arrow">&rarr;</span>
+            <span class="ml-par-chip ml-par-out">Answers</span>
+          </div>
+          <p class="ml-par-caption">
+            A person writes <code>if sender is unknown and subject contains
+            "FREE!!!" then spam</code>. The computer applies the rule exactly,
+            forever. Great when the rules are knowable and stable.
+          </p>
+        </div>
+        <div class="ml-paradigm-pane is-ml" id="ml-par-ml">
+          <p class="ml-panel-h">Machine learning &mdash; training</p>
+          <div class="ml-par-flow" aria-hidden="true">
+            <span class="ml-par-chip ml-par-data">Data</span>
+            <span class="ml-par-plus">+</span>
+            <span class="ml-par-chip ml-par-out">Answers</span>
+            <span class="ml-par-arrow">&rarr;</span>
+            <span class="ml-par-chip ml-par-model">Learned model</span>
+          </div>
+          <div class="ml-par-flow ml-par-flow-2" aria-hidden="true">
+            <span class="ml-par-chip ml-par-data">New data</span>
+            <span class="ml-par-plus">+</span>
+            <span class="ml-par-chip ml-par-model">Learned model</span>
+            <span class="ml-par-arrow">&rarr;</span>
+            <span class="ml-par-chip ml-par-pred">Predictions</span>
+          </div>
+          <p class="ml-par-caption">
+            You show the computer 10,000 emails already labeled
+            <em>spam</em> or <em>not spam</em>. It finds the patterns itself,
+            producing a <strong>model</strong> &mdash; then applies that model
+            to email it has never seen. The second line is called
+            <strong>inference</strong>, and it is what happens every time a
+            trained model is actually used.
+          </p>
+        </div>
+      </div>
+      <div class="ml-ctrl-row">
+        <button class="ml-btn" id="ml-par-play" type="button">Animate the difference</button>
+        <span class="ml-status" id="ml-par-status" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <div class="ml-prose" data-ml-reveal>
+      <h3>When is each approach the right tool?</h3>
+      <p>
+        Traditional code wins whenever the rules are crisp and you can state
+        them: computing sales tax, sorting a list, validating a date. Machine
+        learning wins when the rules are <em>too fuzzy, too numerous, or too
+        fast-changing</em> for a human to write down: recognizing a face,
+        transcribing speech, or &mdash; our running example &mdash; deciding
+        whether an email is spam. Nobody can enumerate every spam trick, and
+        spammers invent new ones daily. But given enough labeled examples, a
+        model can keep learning the moving target.
+      </p>
+      <p>
+        And machine learning is the <em>wrong</em> tool when you have little
+        data, when you need guaranteed, explainable behavior (a bank&rsquo;s
+        interest calculation should never be &ldquo;probably right&rdquo;),
+        or when a dozen lines of ordinary code solve the problem exactly.
+        A surprising amount of real-world engineering wisdom is knowing when
+        <em>not</em> to reach for ML.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       02 — THE LANDSCAPE
+  ================================================================ -->
+  <section class="ml-section" id="landscape" aria-labelledby="landscape-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">02</span> Orientation</p>
+      <h2 id="landscape-h">The machine learning landscape</h2>
+      <p class="ml-lede">
+        &ldquo;AI&rdquo; and &ldquo;machine learning&rdquo; get used
+        interchangeably, but they are not the same thing. Each term below is a
+        <strong>subset</strong> of the one before it. Hover or tap each ring
+        to see where it sits.
+      </p>
+    </div>
+
+    <div class="ml-land" data-ml-reveal>
+      <svg id="ml-land-svg" viewBox="0 0 640 420" role="group"
+           aria-label="Nested diagram: artificial intelligence contains machine learning, which contains deep learning, which contains large language models">
+        <ellipse class="ml-land-ring" data-ring="ai" cx="320" cy="210" rx="300" ry="192"></ellipse>
+        <ellipse class="ml-land-ring" data-ring="ml" cx="350" cy="230" rx="222" ry="142"></ellipse>
+        <ellipse class="ml-land-ring" data-ring="dl" cx="385" cy="252" rx="145" ry="94"></ellipse>
+        <ellipse class="ml-land-ring" data-ring="llm" cx="420" cy="272" rx="76" ry="50"></ellipse>
+        <text class="ml-land-label" data-ring="ai" x="150" y="70">Artificial Intelligence</text>
+        <text class="ml-land-label" data-ring="ml" x="230" y="130">Machine Learning</text>
+        <text class="ml-land-label" data-ring="dl" x="310" y="190">Deep Learning</text>
+        <text class="ml-land-label" data-ring="llm" x="420" y="276" text-anchor="middle">LLMs</text>
+      </svg>
+      <div class="ml-land-info" id="ml-land-info" aria-live="polite">
+        <p class="ml-panel-h" id="ml-land-info-h">Artificial Intelligence</p>
+        <p id="ml-land-info-p">
+          The broad ambition: machines that do things we consider intelligent.
+          Includes ML, but also older rule-based systems, search, and planning
+          &mdash; the whole story is on the
+          <a href="/ai/">Understanding AI</a> exhibit.
+        </p>
+      </div>
+    </div>
+
+    <div class="ml-prose" data-ml-reveal>
+      <p>
+        So: every deep learning system is machine learning, and every machine
+        learning system is AI &mdash; but not the other way around. A chess
+        engine that searches moves is AI without ML. A spam filter using
+        decision trees is ML without deep learning. And
+        <a href="/chatgpt/">ChatGPT</a> lives in the innermost ring: a large
+        language model, produced by machine learning, running on the deep
+        learning playbook. This page is about the second ring &mdash; the
+        engine room that powers everything inside it.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       03 — DATA
+  ================================================================ -->
+  <section class="ml-section" id="data" aria-labelledby="data-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">03</span> Raw material</p>
+      <h2 id="data-h">Data: the raw material of learning</h2>
+      <p class="ml-lede">
+        A model can only be as good as the examples it learns from. Each
+        example is described by <strong>features</strong> (the measurable
+        inputs) and, for supervised learning, a <strong>label</strong> (the
+        answer we want predicted). For an email: features might be the number
+        of exclamation marks, whether the sender is known, the word
+        &ldquo;free&rdquo; count &mdash; and the label is
+        <em>spam / not spam</em>.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">Build a dataset &mdash; then ruin it</p>
+      <p class="ml-widget-note">
+        This is a tiny <strong>house price</strong> dataset: each dot is one
+        house, with one feature (floor area) and one label (sale price). A
+        model &mdash; here a simple fitted line &mdash; learns from whatever
+        you give it. The dashed curve is the <em>true</em> relationship the
+        model is trying to discover. Click the plot to add your own houses.
+      </p>
+      <canvas id="ml-data-canvas" class="ml-canvas" aria-hidden="true"></canvas>
+      <div class="ml-ctrl-row">
+        <button class="ml-btn" id="ml-data-noise" type="button">Add noise</button>
+        <button class="ml-btn" id="ml-data-outlier" type="button">Add an outlier</button>
+        <button class="ml-btn" id="ml-data-missing" type="button">Corrupt some labels</button>
+        <button class="ml-btn" id="ml-data-more" type="button">+20 clean examples</button>
+        <button class="ml-btn ml-btn-ghost" id="ml-data-reset" type="button">Reset</button>
+      </div>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Examples <output id="ml-data-n">0</output></span>
+        <span class="ml-stat">Model error vs. truth <output id="ml-data-err">&mdash;</output></span>
+        <span class="ml-stat" id="ml-data-verdict-wrap">Data quality <output id="ml-data-verdict">clean</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        Watch the fitted line: a little noise is survivable, but a few extreme
+        outliers or mislabeled examples can drag the whole model away from the
+        truth. This is the oldest law in the field:
+        <strong>garbage in &rarr; garbage out</strong>. In real projects, most
+        of the work is not modeling &mdash; it is collecting, cleaning, and
+        questioning data.
+      </p>
+    </div>
+
+    <div class="ml-prose" data-ml-reveal>
+      <p>
+        Real datasets also suffer <strong>missing values</strong> (a sensor
+        failed, a field was left blank) and <strong>biased sampling</strong>
+        (if every example came from one city, the model learns that city, not
+        the world). A spam filter trained only on English email will happily
+        wave through spam in Spanish &mdash; not because the algorithm is bad,
+        but because the data never showed it what Spanish spam looks like.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       04 — SUPERVISED LEARNING
+  ================================================================ -->
+  <section class="ml-section" id="supervised" aria-labelledby="supervised-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">04</span> Learning with answers</p>
+      <h2 id="supervised-h">Supervised learning</h2>
+      <p class="ml-lede">
+        The workhorse of the field: learning from examples that come
+        <strong>with the correct answer attached</strong>. Show the model
+        labeled emails, labeled tumors, labeled house prices &mdash; and it
+        learns a function from features to labels. Two flavors:
+        <strong>classification</strong> predicts a category (spam / not
+        spam); <strong>regression</strong> predicts a number (this house will
+        sell for $412,000).
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">Train a spam classifier by hand</p>
+      <p class="ml-widget-note">
+        Each dot is an email plotted by two features. Pick a label, click to
+        add examples, and a real logistic-regression model retrains live. The
+        shading is the model&rsquo;s <strong>confidence</strong>; the bright
+        line is its <strong>decision boundary</strong>. Notice how few
+        examples it needs before the boundary looks sensible &mdash; and how
+        one mislabeled point near the boundary bends it.
+      </p>
+      <div class="ml-ctrl-row">
+        <div class="ml-seg" role="group" aria-label="Label for new points">
+          <button class="ml-seg-btn is-active" id="ml-sup-class-a" type="button">Add spam</button>
+          <button class="ml-seg-btn" id="ml-sup-class-b" type="button">Add legit email</button>
+        </div>
+        <button class="ml-btn" id="ml-sup-sample" type="button">+15 labeled examples</button>
+        <button class="ml-btn ml-btn-ghost" id="ml-sup-clear" type="button">Clear</button>
+      </div>
+      <canvas id="ml-sup-canvas" class="ml-canvas ml-canvas-tall" aria-hidden="true"></canvas>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Labeled examples <output id="ml-sup-n">0</output></span>
+        <span class="ml-stat">Training accuracy <output id="ml-sup-acc">&mdash;</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        This widget trains a real (if tiny) model &mdash; logistic regression
+        via gradient descent, the same family of algorithm used in production
+        spam filters for years. Real emails have thousands of features rather
+        than two, but the idea is identical: find the boundary that best
+        separates the labeled examples, then use it on new email.
+      </p>
+    </div>
+
+    <div class="ml-prose" data-ml-reveal>
+      <p>
+        Everyday supervised learning: your bank flagging a fraudulent charge
+        (classification), your weather app predicting tomorrow&rsquo;s high
+        (regression), a hospital model estimating readmission risk
+        (classification with probabilities). What they share: someone,
+        somewhere, assembled a pile of examples with known outcomes. The
+        &ldquo;supervision&rdquo; is that answer key.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       05 — UNSUPERVISED LEARNING
+  ================================================================ -->
+  <section class="ml-section" id="unsupervised" aria-labelledby="unsupervised-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">05</span> Learning without answers</p>
+      <h2 id="unsupervised-h">Unsupervised learning</h2>
+      <p class="ml-lede">
+        Sometimes there is no answer key &mdash; just data. Unsupervised
+        learning finds structure on its own: which customers behave alike,
+        which songs belong together, which server logs look anomalous. The
+        algorithm is <strong>never told the right answer</strong>, because
+        nobody knows it.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">Clustering, live</p>
+      <p class="ml-widget-note">
+        These unlabeled points might be customers plotted by spending and
+        visit frequency. The k-means algorithm below is real: it guesses
+        <em>k</em> group centers, assigns each point to its nearest center,
+        moves each center to the middle of its group, and repeats. Drag the
+        slider and watch the groups reorganize.
+      </p>
+      <div class="ml-ctrl-row">
+        <label class="ml-slider-label" for="ml-unsup-k">Clusters (k)
+          <input type="range" id="ml-unsup-k" min="2" max="6" value="3" step="1">
+          <output id="ml-unsup-k-out">3</output>
+        </label>
+        <button class="ml-btn" id="ml-unsup-restart" type="button">Re-run</button>
+        <button class="ml-btn ml-btn-ghost" id="ml-unsup-newdata" type="button">New data</button>
+      </div>
+      <canvas id="ml-unsup-canvas" class="ml-canvas" aria-hidden="true"></canvas>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Iteration <output id="ml-unsup-iter">0</output></span>
+        <span class="ml-stat">Total distance to centers <output id="ml-unsup-inertia">&mdash;</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        Notice there is no &ldquo;correct&rdquo; k &mdash; you chose it. The
+        data was actually generated from three groups, so k&nbsp;=&nbsp;3 fits
+        naturally, but the algorithm will cheerfully carve the same points
+        into 2 or 6. Unsupervised learning discovers <em>a</em> structure, not
+        <em>the</em> structure; a human still has to judge whether it means
+        anything.
+      </p>
+    </div>
+
+    <div class="ml-prose" data-ml-reveal>
+      <p>
+        The other big unsupervised idea is <strong>dimensionality
+        reduction</strong>: squeezing data with thousands of features down to
+        a few that preserve most of the interesting variation &mdash; like
+        summarizing every movie by two numbers (&ldquo;how arty, how
+        action-y&rdquo;) instead of a thousand attributes. It powers
+        visualization, compression, and the recommendation engines that
+        notice you and a stranger have suspiciously similar taste.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 — REINFORCEMENT LEARNING
+  ================================================================ -->
+  <section class="ml-section" id="reinforcement" aria-labelledby="reinforcement-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">06</span> Learning by trying</p>
+      <h2 id="reinforcement-h">Reinforcement learning</h2>
+      <p class="ml-lede">
+        The third paradigm has no dataset at all. An <strong>agent</strong>
+        acts in an environment, receives <strong>rewards</strong> or
+        penalties, and gradually updates its <strong>policy</strong> &mdash;
+        its habit of what to do in each situation. Action &rarr; reward &rarr;
+        updated policy, thousands of times over.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">An agent learns a maze</p>
+      <p class="ml-widget-note">
+        This agent knows nothing about the maze &mdash; not even that the goal
+        exists. It only feels a small penalty per step, a large penalty in the
+        red trap, and a large reward at the green goal. The colored arrows
+        show its current policy forming as it explores (a real Q-learning
+        implementation, the same algorithm family covered in the
+        <a href="/ai/">AI exhibit</a>).
+      </p>
+      <div class="ml-ctrl-row">
+        <button class="ml-btn ml-btn-primary" id="ml-rl-train" type="button">Train</button>
+        <button class="ml-btn" id="ml-rl-step" type="button">Run one episode</button>
+        <button class="ml-btn ml-btn-ghost" id="ml-rl-reset" type="button">Reset</button>
+      </div>
+      <canvas id="ml-rl-canvas" class="ml-canvas ml-canvas-tall" aria-hidden="true"></canvas>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Episodes <output id="ml-rl-episodes">0</output></span>
+        <span class="ml-stat">Last episode reward <output id="ml-rl-reward">&mdash;</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        Early episodes are random flailing; late episodes walk straight to the
+        goal. This trial-and-error family trained game-playing systems like
+        AlphaGo, tunes recommendation feeds, and &mdash; as reinforcement
+        learning from human feedback &mdash; helped shape how
+        <a href="/chatgpt/">ChatGPT</a> responds. That is the high-level view;
+        we will stay at it and get back to learning from data.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 — TRAINING
+  ================================================================ -->
+  <section class="ml-section" id="training" aria-labelledby="training-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">07</span> The loop</p>
+      <h2 id="training-h">Training: how a model actually improves</h2>
+      <p class="ml-lede">
+        &ldquo;Learning&rdquo; sounds mysterious, but the mechanism is a plain
+        loop: <strong>predict &rarr; measure the error &rarr; nudge the model
+        to shrink it &rarr; repeat</strong>. Every mistake feeds a number
+        called the loss, and every iteration adjusts the model&rsquo;s
+        parameters slightly downhill. Watch it happen, one step at a time.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">Watch a model train</p>
+      <p class="ml-widget-note">
+        The model here is a straight line trying to fit the dots (predicting
+        price from floor area, say). Thin red stems are its current errors.
+        On the right, the <strong>loss curve</strong> &mdash; total error over
+        time &mdash; is the heartbeat monitor every ML engineer stares at.
+        Slow it down and step through single iterations to see each nudge.
+      </p>
+      <div class="ml-ctrl-row">
+        <button class="ml-btn ml-btn-primary" id="ml-train-play" type="button">Train</button>
+        <button class="ml-btn" id="ml-train-step" type="button">Single step</button>
+        <button class="ml-btn ml-btn-ghost" id="ml-train-reset" type="button">Reset</button>
+        <label class="ml-slider-label" for="ml-train-speed">Speed
+          <input type="range" id="ml-train-speed" min="1" max="60" value="12" step="1">
+        </label>
+      </div>
+      <div class="ml-duo">
+        <canvas id="ml-train-canvas" class="ml-canvas" aria-hidden="true"></canvas>
+        <canvas id="ml-train-loss-canvas" class="ml-canvas" aria-hidden="true"></canvas>
+      </div>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Iteration <output id="ml-train-iter">0</output></span>
+        <span class="ml-stat">Loss <output id="ml-train-loss">&mdash;</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        Two parameters (slope, intercept) make this visible; GPT-class models
+        run the <em>same loop</em> with hundreds of billions of parameters.
+        That scale is why training happens on
+        <a href="/gpu/">GPU</a> clusters in the
+        <a href="/cloud/">cloud</a> &mdash; but nothing about the loop itself
+        changes.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 — LOSS FUNCTIONS
+  ================================================================ -->
+  <section class="ml-section" id="loss" aria-labelledby="loss-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">08</span> Keeping score</p>
+      <h2 id="loss-h">Loss: the number that means &ldquo;how wrong&rdquo;</h2>
+      <p class="ml-lede">
+        Before a model can improve, it needs a single honest number measuring
+        how wrong it currently is. That number is the <strong>loss</strong>.
+        Lower is better; zero would be perfect. The entire training process
+        exists to push this one number down.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">Feel the loss</p>
+      <p class="ml-widget-note">
+        Drag the line by its handles. Each red stem is one prediction error;
+        the loss adds them all up (here, as squared errors &mdash; so big
+        misses hurt disproportionately). Try the presets, then find a better
+        fit by hand than the &ldquo;good fit&rdquo; preset.
+      </p>
+      <div class="ml-ctrl-row">
+        <button class="ml-btn" id="ml-loss-bad" type="button">High loss</button>
+        <button class="ml-btn" id="ml-loss-good" type="button">Low loss</button>
+        <button class="ml-btn" id="ml-loss-anim" type="button">Watch loss improve</button>
+      </div>
+      <canvas id="ml-loss-canvas" class="ml-canvas" aria-hidden="true"></canvas>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Loss (mean squared error) <output id="ml-loss-val">&mdash;</output></span>
+        <span class="ml-stat">Your best <output id="ml-loss-best">&mdash;</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        Different jobs need different scorekeepers. Predicting a number uses
+        squared or absolute error. Classifying spam uses a loss that punishes
+        <em>confident wrong answers</em> hardest &mdash; saying &ldquo;99%
+        legit&rdquo; about spam should cost more than saying
+        &ldquo;55% legit.&rdquo; Choosing the loss <em>is</em> choosing what
+        the model will care about, which makes it one of the most consequential
+        design decisions in any ML system.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 — GRADIENT DESCENT
+  ================================================================ -->
+  <section class="ml-section" id="gradient" aria-labelledby="gradient-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">09</span> Going downhill</p>
+      <h2 id="gradient-h">Gradient descent: rolling downhill on the loss</h2>
+      <p class="ml-lede">
+        Picture every possible setting of the model&rsquo;s parameters as a
+        point in a landscape, where <strong>height is the loss</strong>.
+        Somewhere in that terrain is a valley &mdash; the settings where the
+        model is least wrong. Gradient descent is beautifully simple: feel
+        which way is downhill, take a small step, repeat.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">The descent playground</p>
+      <p class="ml-widget-note">
+        Click anywhere on the terrain to drop the ball, choose a learning rate
+        &mdash; the step size &mdash; and run. Can you find the settings that
+        get stuck on the plateau? That overshoot back and forth without ever
+        settling? That land in the shallow dip instead of the deep valley?
+      </p>
+      <div class="ml-ctrl-row">
+        <label class="ml-slider-label" for="ml-gd-lr">Learning rate
+          <input type="range" id="ml-gd-lr" min="0" max="100" value="35" step="1">
+          <output id="ml-gd-lr-out">0.10</output>
+        </label>
+        <label class="ml-slider-label" for="ml-gd-steps">Max steps
+          <input type="range" id="ml-gd-steps" min="10" max="200" value="80" step="5">
+          <output id="ml-gd-steps-out">80</output>
+        </label>
+        <button class="ml-btn ml-btn-primary" id="ml-gd-run" type="button">Run descent</button>
+        <button class="ml-btn ml-btn-ghost" id="ml-gd-reset" type="button">Reset</button>
+      </div>
+      <canvas id="ml-gd-canvas" class="ml-canvas ml-canvas-tall" aria-hidden="true"></canvas>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Steps taken <output id="ml-gd-taken">0</output></span>
+        <span class="ml-stat">Final loss <output id="ml-gd-loss">&mdash;</output></span>
+        <span class="ml-stat">Outcome <output id="ml-gd-outcome">&mdash;</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        The three classic failure modes are all here: a learning rate too
+        small crawls (or stalls on the plateau, where the ground is nearly
+        flat); too large ricochets past the valley; and descent can settle in
+        a <em>local</em> dip that is not the best solution. One honest caveat:
+        this 1-D cartoon is an educational model. Real deep-learning
+        landscapes have billions of dimensions, and optimizers use momentum,
+        adaptive step sizes, and noisy mini-batches &mdash; in those spaces,
+        the picture is stranger and local dips are less of a trap than this
+        hillside suggests.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 — OVERFITTING VS UNDERFITTING
+  ================================================================ -->
+  <section class="ml-section" id="fit" aria-labelledby="fit-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">10</span> The central tension</p>
+      <h2 id="fit-h">Overfitting vs. underfitting</h2>
+      <p class="ml-lede">
+        The goal of training is not to ace the examples &mdash; it is to
+        <strong>generalize</strong> to data the model has never seen. A model
+        that is too simple misses the real pattern
+        (<strong>underfitting</strong>, or high bias). A model complex enough
+        to memorize every wiggle of the training data &mdash; noise included
+        &mdash; falls apart on new data (<strong>overfitting</strong>, or high
+        variance). The sweet spot lives between them.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">The complexity dial</p>
+      <p class="ml-widget-note">
+        Solid dots are <strong>training data</strong>; hollow dots are
+        <strong>validation data</strong> the model never sees during fitting.
+        Both come from the same dashed true curve plus noise. Drag the
+        complexity dial from 1 to 15 and watch the two error bars &mdash; the
+        gap between them is the signature of overfitting.
+      </p>
+      <div class="ml-ctrl-row">
+        <label class="ml-slider-label" for="ml-fit-deg">Model complexity
+          <input type="range" id="ml-fit-deg" min="1" max="15" value="1" step="1">
+          <output id="ml-fit-deg-out">1</output>
+        </label>
+        <button class="ml-btn" id="ml-fit-newdata" type="button">New sample</button>
+        <span class="ml-fit-verdict" id="ml-fit-verdict" aria-live="polite">Underfitting</span>
+      </div>
+      <div class="ml-duo">
+        <canvas id="ml-fit-canvas" class="ml-canvas" aria-hidden="true"></canvas>
+        <canvas id="ml-fit-err-canvas" class="ml-canvas" aria-hidden="true"></canvas>
+      </div>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Training error <output id="ml-fit-train">&mdash;</output></span>
+        <span class="ml-stat">Validation error <output id="ml-fit-val">&mdash;</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        The right-hand chart is one of the most important pictures in machine
+        learning: training error falls forever as complexity grows, but
+        validation error is U-shaped. Left of the valley, the model is too
+        rigid (bias); right of it, the model is memorizing noise (variance).
+        For the spam filter, an overfit model has effectively memorized its
+        10,000 training emails &mdash; and flags nothing new, because no new
+        email matches them exactly.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       11 — TRAIN / VALIDATION / TEST
+  ================================================================ -->
+  <section class="ml-section" id="split" aria-labelledby="split-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">11</span> Honest measurement</p>
+      <h2 id="split-h">Train, validation, test</h2>
+      <p class="ml-lede">
+        If the last chapter taught anything, it is that a model&rsquo;s score
+        on its own training data means almost nothing. So practitioners split
+        the dataset <em>before</em> touching it: <strong>train</strong> to
+        learn from, <strong>validation</strong> to tune decisions like the
+        complexity dial, and a <strong>test</strong> set opened exactly once,
+        at the end, for the honest final grade.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">Split the dataset</p>
+      <div class="ml-ctrl-row">
+        <label class="ml-slider-label" for="ml-split-train">Training share
+          <input type="range" id="ml-split-train" min="30" max="90" value="70" step="5">
+          <output id="ml-split-train-out">70%</output>
+        </label>
+        <button class="ml-btn" id="ml-split-shuffle" type="button">Shuffle &amp; resplit</button>
+        <label class="ml-check-label" for="ml-split-leak">
+          <input type="checkbox" id="ml-split-leak">
+          Leak test data into training
+        </label>
+      </div>
+      <div class="ml-split-viz" id="ml-split-viz" aria-hidden="true"></div>
+      <div class="ml-split-legend" aria-hidden="true">
+        <span class="ml-legend-item"><i class="ml-swatch ml-swatch-train"></i> Train</span>
+        <span class="ml-legend-item"><i class="ml-swatch ml-swatch-val"></i> Validation</span>
+        <span class="ml-legend-item"><i class="ml-swatch ml-swatch-test"></i> Test</span>
+        <span class="ml-legend-item"><i class="ml-swatch ml-swatch-leak"></i> Leaked</span>
+      </div>
+      <div class="ml-stat-row" aria-live="polite">
+        <span class="ml-stat">Score you would report <output id="ml-split-reported">&mdash;</output></span>
+        <span class="ml-stat">Score in the real world <output id="ml-split-real">&mdash;</output></span>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after" id="ml-split-note">
+        Toggle the leak. When test examples sneak into training &mdash; via
+        duplicated records, or preprocessing computed on the full dataset
+        &mdash; the model has already seen its exam questions. The reported
+        score soars; the real-world score does not move. This is
+        <strong>data leakage</strong>, and it is the most common way ML
+        projects fool their own creators. (The numbers here are illustrative,
+        but the failure is painfully real.)
+      </p>
+    </div>
+
+    <div class="ml-prose" data-ml-reveal>
+      <p>
+        How big should each slice be? With thousands of examples, something
+        like 70 / 15 / 15 is typical; with millions, the validation and test
+        sets can be proportionally tiny and still reliable. The principle
+        matters more than the ratio: <em>tune on validation, report on test,
+        and never let the test set influence any decision.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 — EVALUATION METRICS
+  ================================================================ -->
+  <section class="ml-section" id="metrics" aria-labelledby="metrics-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">12</span> What counts as good?</p>
+      <h2 id="metrics-h">Evaluation: accuracy is not enough</h2>
+      <p class="ml-lede">
+        Back to the spam filter &mdash; now with the question every deployed
+        model faces: <em>which mistakes matter more?</em> Flagging your
+        boss&rsquo;s email as spam (a false positive) is far worse than
+        letting one junk email through (a false negative). A single
+        &ldquo;accuracy&rdquo; number hides that difference entirely.
+      </p>
+    </div>
+
+    <div class="ml-widget" data-ml-reveal>
+      <p class="ml-panel-h">The threshold dilemma</p>
+      <p class="ml-widget-note">
+        The model gives every email a spam score from 0 to 100; the two humps
+        are the real spam (rose) and real legit mail (sky). You choose the
+        cutoff. Drag it and watch every metric respond &mdash; then try to
+        make precision and recall both happy at once.
+      </p>
+      <div class="ml-ctrl-row">
+        <label class="ml-slider-label ml-slider-wide" for="ml-met-thresh">Spam threshold
+          <input type="range" id="ml-met-thresh" min="5" max="95" value="50" step="1">
+          <output id="ml-met-thresh-out">50</output>
+        </label>
+        <button class="ml-btn" id="ml-met-strict" type="button">Protect the inbox</button>
+        <button class="ml-btn" id="ml-met-loose" type="button">Catch all spam</button>
+      </div>
+      <canvas id="ml-met-canvas" class="ml-canvas" aria-hidden="true"></canvas>
+      <div class="ml-met-grid">
+        <div class="ml-met-cm" role="table" aria-label="Confusion matrix">
+          <span class="ml-met-cm-corner" role="columnheader"></span>
+          <span class="ml-met-cm-h" role="columnheader">Flagged spam</span>
+          <span class="ml-met-cm-h" role="columnheader">Delivered</span>
+          <span class="ml-met-cm-h ml-met-cm-rowh" role="rowheader">Actually spam</span>
+          <span class="ml-met-cm-cell is-good" role="cell">Caught <output id="ml-met-tp">0</output></span>
+          <span class="ml-met-cm-cell is-bad" role="cell">Missed <output id="ml-met-fn">0</output></span>
+          <span class="ml-met-cm-h ml-met-cm-rowh" role="rowheader">Actually legit</span>
+          <span class="ml-met-cm-cell is-bad" role="cell">Lost mail <output id="ml-met-fp">0</output></span>
+          <span class="ml-met-cm-cell is-good" role="cell">Delivered <output id="ml-met-tn">0</output></span>
+        </div>
+        <div class="ml-met-stats" aria-live="polite">
+          <span class="ml-stat">Accuracy <output id="ml-met-acc">&mdash;</output></span>
+          <span class="ml-stat">Precision <output id="ml-met-prec">&mdash;</output>
+            <small>of flagged, how much was really spam</small></span>
+          <span class="ml-stat">Recall <output id="ml-met-rec">&mdash;</output>
+            <small>of real spam, how much we caught</small></span>
+          <span class="ml-stat">F1 <output id="ml-met-f1">&mdash;</output>
+            <small>balance of the two</small></span>
+        </div>
+      </div>
+      <p class="ml-widget-note ml-widget-note-after">
+        There is no free lunch: pushing the threshold right protects the inbox
+        (high precision) but lets spam through (low recall); pushing left does
+        the reverse. <strong>The right metric depends on the problem.</strong>
+        For cancer screening you accept false alarms to miss nothing (recall);
+        for auto-deleting email you must almost never be wrong (precision).
+        For regression tasks the equivalents are averages of miss distance,
+        like mean absolute error. And when one class is rare &mdash; 1% fraud
+        &mdash; accuracy is nearly meaningless: &ldquo;never fraud&rdquo;
+        scores 99%.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 — REAL-WORLD APPLICATIONS
+  ================================================================ -->
+  <section class="ml-section" id="applications" aria-labelledby="applications-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">13</span> In the wild</p>
+      <h2 id="applications-h">Where you already meet machine learning</h2>
+      <p class="ml-lede">
+        Every card below is a system you have probably used this week. Expand
+        each to see the same anatomy: what the data was, what goes in, what
+        comes out &mdash; and where the limits are.
+      </p>
+    </div>
+
+    <div class="ml-apps" data-ml-reveal>
+      <details class="ml-app">
+        <summary><span class="ml-app-icon" aria-hidden="true"><i class="fas fa-envelope"></i></span>
+          Email spam filtering <span class="ml-app-kind">classification</span></summary>
+        <dl class="ml-app-body">
+          <dt>Data</dt><dd>Billions of emails users marked as spam or not.</dd>
+          <dt>Input</dt><dd>Sender, headers, words, links, formatting features.</dd>
+          <dt>Output</dt><dd>Spam probability; a threshold decides the folder.</dd>
+          <dt>Why ML</dt><dd>Spammers adapt daily &mdash; hand-written rules rot in weeks.</dd>
+          <dt>Limits</dt><dd>Adversaries probe the model; rare false positives lose real mail.</dd>
+        </dl>
+      </details>
+      <details class="ml-app">
+        <summary><span class="ml-app-icon" aria-hidden="true"><i class="fas fa-credit-card"></i></span>
+          Fraud detection <span class="ml-app-kind">classification</span></summary>
+        <dl class="ml-app-body">
+          <dt>Data</dt><dd>Historical transactions labeled by later fraud reports.</dd>
+          <dt>Input</dt><dd>Amount, merchant, location, time, spending history.</dd>
+          <dt>Output</dt><dd>Risk score &mdash; approve, challenge, or block in milliseconds.</dd>
+          <dt>Why ML</dt><dd>Fraud patterns are subtle, evolving, and buried in millions of legit purchases.</dd>
+          <dt>Limits</dt><dd>Extreme class imbalance; false alarms freeze real cards; fraudsters adapt.</dd>
+        </dl>
+      </details>
+      <details class="ml-app">
+        <summary><span class="ml-app-icon" aria-hidden="true"><i class="fas fa-film"></i></span>
+          Recommendations <span class="ml-app-kind">ranking</span></summary>
+        <dl class="ml-app-body">
+          <dt>Data</dt><dd>What millions of users watched, clicked, skipped, and rated.</dd>
+          <dt>Input</dt><dd>Your history plus patterns from users who behave like you.</dd>
+          <dt>Output</dt><dd>A personally ranked list of what to show next.</dd>
+          <dt>Why ML</dt><dd>No human can hand-rank a catalog of 100 million items per person.</dd>
+          <dt>Limits</dt><dd>Feedback loops narrow taste; cold start for new users and items.</dd>
+        </dl>
+      </details>
+      <details class="ml-app">
+        <summary><span class="ml-app-icon" aria-hidden="true"><i class="fas fa-x-ray"></i></span>
+          Medical imaging <span class="ml-app-kind">classification</span></summary>
+        <dl class="ml-app-body">
+          <dt>Data</dt><dd>Scans annotated by radiologists, often years of archives.</dd>
+          <dt>Input</dt><dd>Pixels of an X-ray, CT, MRI, or pathology slide.</dd>
+          <dt>Output</dt><dd>Regions of concern with confidence, for a human to review.</dd>
+          <dt>Why ML</dt><dd>Deep models can match specialists on narrow, well-defined findings.</dd>
+          <dt>Limits</dt><dd>A model trained on one hospital&rsquo;s machines can stumble on another&rsquo;s; oversight stays essential.</dd>
+        </dl>
+      </details>
+      <details class="ml-app">
+        <summary><span class="ml-app-icon" aria-hidden="true"><i class="fas fa-car"></i></span>
+          Driver assistance <span class="ml-app-kind">perception</span></summary>
+        <dl class="ml-app-body">
+          <dt>Data</dt><dd>Millions of miles of labeled camera, radar, and lidar recordings.</dd>
+          <dt>Input</dt><dd>Live sensor streams, dozens of times per second.</dd>
+          <dt>Output</dt><dd>Detected lanes, vehicles, pedestrians; predicted paths.</dd>
+          <dt>Why ML</dt><dd>&ldquo;Recognize a pedestrian in any weather&rdquo; cannot be written as rules.</dd>
+          <dt>Limits</dt><dd>Rare situations are underrepresented in training; the long tail is the hard part.</dd>
+        </dl>
+      </details>
+      <details class="ml-app">
+        <summary><span class="ml-app-icon" aria-hidden="true"><i class="fas fa-microphone"></i></span>
+          Speech recognition <span class="ml-app-kind">sequence</span></summary>
+        <dl class="ml-app-body">
+          <dt>Data</dt><dd>Hundreds of thousands of hours of audio paired with transcripts.</dd>
+          <dt>Input</dt><dd>A raw audio waveform.</dd>
+          <dt>Output</dt><dd>The most probable word sequence.</dd>
+          <dt>Why ML</dt><dd>Accents, noise, and vocabulary defeat every rule-based attempt.</dd>
+          <dt>Limits</dt><dd>Underperforms on accents and languages scarce in the training data.</dd>
+        </dl>
+      </details>
+      <details class="ml-app">
+        <summary><span class="ml-app-icon" aria-hidden="true"><i class="fas fa-language"></i></span>
+          Translation <span class="ml-app-kind">sequence</span></summary>
+        <dl class="ml-app-body">
+          <dt>Data</dt><dd>Millions of human-translated sentence pairs.</dd>
+          <dt>Input</dt><dd>Text in the source language.</dd>
+          <dt>Output</dt><dd>Text in the target language.</dd>
+          <dt>Why ML</dt><dd>Meaning does not survive word-for-word rules; models learn context.</dd>
+          <dt>Limits</dt><dd>Idioms, rare language pairs, and cultural nuance still slip through.</dd>
+        </dl>
+      </details>
+      <details class="ml-app">
+        <summary><span class="ml-app-icon" aria-hidden="true"><i class="fas fa-industry"></i></span>
+          Predictive maintenance <span class="ml-app-kind">regression</span></summary>
+        <dl class="ml-app-body">
+          <dt>Data</dt><dd>Sensor histories from machines that later failed &mdash; or did not.</dd>
+          <dt>Input</dt><dd>Vibration, temperature, pressure, acoustic readings.</dd>
+          <dt>Output</dt><dd>Estimated time to failure; a maintenance schedule.</dd>
+          <dt>Why ML</dt><dd>Failure precursors are faint, machine-specific patterns humans miss.</dd>
+          <dt>Limits</dt><dd>Failures are rare, so labeled examples are scarce and expensive.</dd>
+        </dl>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       14 — MISCONCEPTIONS
+  ================================================================ -->
+  <section class="ml-section" id="misconceptions" aria-labelledby="misconceptions-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">14</span> Setting the record straight</p>
+      <h2 id="misconceptions-h">Common misconceptions</h2>
+      <p class="ml-lede">
+        Machine learning attracts more mythology than almost any technology.
+        Expand each claim for the honest version.
+      </p>
+    </div>
+
+    <div class="ml-myths" data-ml-reveal>
+      <details class="ml-myth">
+        <summary>&ldquo;More data always means a better model.&rdquo;</summary>
+        <p>
+          More <em>relevant, clean, representative</em> data usually helps
+          &mdash; but more of the wrong data actively hurts. A million biased
+          or mislabeled examples teach the bias more thoroughly. Past a point,
+          the returns also flatten: doubling the data might buy a fraction of
+          a percent. Data <em>quality</em> and <em>coverage</em> beat raw
+          volume.
+        </p>
+      </details>
+      <details class="ml-myth">
+        <summary>&ldquo;AI and machine learning are the same thing.&rdquo;</summary>
+        <p>
+          ML is one approach <em>within</em> AI &mdash; the dominant one
+          today, but not the whole field. Chess engines, route planners, and
+          rule-based expert systems are AI without learning. The nesting
+          diagram in <a href="#landscape">chapter 2</a> is the map;
+          the <a href="/ai/">AI exhibit</a> covers the full territory.
+        </p>
+      </details>
+      <details class="ml-myth">
+        <summary>&ldquo;Models memorize everything they see.&rdquo;</summary>
+        <p>
+          A well-trained model does the opposite: it <em>compresses</em>
+          patterns and discards specifics &mdash; that is what generalization
+          means. Memorization is the failure mode called overfitting, and
+          practitioners actively fight it. (Models <em>can</em> memorize rare
+          or repeated training snippets, which matters for privacy, but
+          wholesale memorization is neither the goal nor the norm.)
+        </p>
+      </details>
+      <details class="ml-myth">
+        <summary>&ldquo;Machine learning means deep learning.&rdquo;</summary>
+        <p>
+          Deep neural networks dominate headlines, but vast amounts of
+          production ML is linear models, decision trees, and gradient-boosted
+          ensembles &mdash; which often win on tabular business data while
+          being cheaper and easier to explain. Deep learning earns its cost
+          on perception and language, where features are too complex to
+          hand-design.
+        </p>
+      </details>
+      <details class="ml-myth">
+        <summary>&ldquo;95% accuracy means it&rsquo;s a good model.&rdquo;</summary>
+        <p>
+          Accuracy is meaningless without context. If 95% of email is legit,
+          &ldquo;never flag anything&rdquo; scores 95% while catching zero
+          spam. The <a href="#metrics">evaluation chapter</a> shows why
+          precision, recall, and the costs of each error type tell the real
+          story &mdash; and why the number must come from data the model
+          never trained on.
+        </p>
+      </details>
+      <details class="ml-myth">
+        <summary>&ldquo;The model understands the world like we do.&rdquo;</summary>
+        <p>
+          A model learns statistical regularities in its training data &mdash;
+          correlations, not comprehension. It can associate
+          &ldquo;FREE!!!&rdquo; with spam without any concept of money or
+          deception, and it can be confidently wrong the moment the world
+          drifts away from its data. Treating pattern-matching as
+          understanding is how ML systems get deployed into situations they
+          silently cannot handle.
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       THE ML LAB
+  ================================================================ -->
+  <section class="ml-section ml-section-lab" id="lab" aria-labelledby="lab-h">
+    <div class="ml-section-head" data-ml-reveal>
+      <p class="ml-kicker"><span class="ml-kicker-num">Lab</span> Everything at once</p>
+      <h2 id="lab-h">The Machine Learning Lab</h2>
+      <p class="ml-lede">
+        Every idea from this page in one sandbox. Pick a task, shape the data,
+        set the dials, and train &mdash; then deliberately cause overfitting,
+        underfitting, and every failure you have just learned to recognize.
+        The models are real (a tiny neural network, polynomial regression,
+        k-means); the scale is honest-cartoon small so you can see everything.
+      </p>
+    </div>
+
+    <div class="ml-widget ml-lab" data-ml-reveal>
+      <div class="ml-seg ml-lab-tasks" role="group" aria-label="Choose a task">
+        <button class="ml-seg-btn is-active" id="ml-lab-task-clf" type="button">Classification</button>
+        <button class="ml-seg-btn" id="ml-lab-task-reg" type="button">Regression</button>
+        <button class="ml-seg-btn" id="ml-lab-task-clu" type="button">Clustering</button>
+      </div>
+
+      <div class="ml-lab-grid">
+        <div class="ml-lab-controls">
+          <label class="ml-slider-label" for="ml-lab-n">Dataset size
+            <input type="range" id="ml-lab-n" min="20" max="300" value="120" step="10">
+            <output id="ml-lab-n-out">120</output>
+          </label>
+          <label class="ml-slider-label" for="ml-lab-noise">Noise level
+            <input type="range" id="ml-lab-noise" min="0" max="100" value="25" step="5">
+            <output id="ml-lab-noise-out">25%</output>
+          </label>
+          <label class="ml-slider-label" for="ml-lab-complex">Model complexity
+            <input type="range" id="ml-lab-complex" min="1" max="16" value="4" step="1">
+            <output id="ml-lab-complex-out">4</output>
+          </label>
+          <label class="ml-slider-label" for="ml-lab-lr">Learning rate
+            <input type="range" id="ml-lab-lr" min="0" max="100" value="50" step="1">
+            <output id="ml-lab-lr-out">0.30</output>
+          </label>
+          <label class="ml-slider-label" for="ml-lab-iters">Training iterations
+            <input type="range" id="ml-lab-iters" min="20" max="600" value="250" step="10">
+            <output id="ml-lab-iters-out">250</output>
+          </label>
+          <div class="ml-ctrl-row ml-lab-btns">
+            <button class="ml-btn ml-btn-primary" id="ml-lab-train" type="button">Train model</button>
+            <button class="ml-btn ml-btn-ghost" id="ml-lab-newdata" type="button">New data</button>
+          </div>
+          <div class="ml-lab-recipes">
+            <p class="ml-panel-h">Try to cause&hellip;</p>
+            <button class="ml-chip" id="ml-lab-rec-under" type="button">Underfitting</button>
+            <button class="ml-chip" id="ml-lab-rec-over" type="button">Overfitting</button>
+            <button class="ml-chip" id="ml-lab-rec-noisy" type="button">Drowning in noise</button>
+            <button class="ml-chip" id="ml-lab-rec-wild" type="button">Unstable training</button>
+          </div>
+        </div>
+
+        <div class="ml-lab-stage">
+          <canvas id="ml-lab-canvas" class="ml-canvas ml-canvas-tall" aria-hidden="true"></canvas>
+          <canvas id="ml-lab-loss" class="ml-canvas ml-canvas-short" aria-hidden="true"></canvas>
+          <div class="ml-stat-row" aria-live="polite">
+            <span class="ml-stat">Training <output id="ml-lab-trainm">&mdash;</output></span>
+            <span class="ml-stat">Validation <output id="ml-lab-valm">&mdash;</output></span>
+            <span class="ml-stat">Diagnosis <output id="ml-lab-diag">&mdash;</output></span>
+          </div>
+          <p class="ml-widget-note" id="ml-lab-note" aria-live="polite">
+            Solid dots train the model; hollow dots are held-out validation
+            data. Train, watch both loss curves, and read the diagnosis.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       CLOSE — THE ANSWER, AND ONWARD
+  ================================================================ -->
+  <section class="ml-section ml-section-close" aria-label="Closing">
+    <div class="ml-close" data-ml-reveal>
+      <p class="ml-kicker">The question, answered</p>
+      <h2>So &mdash; how does the computer learn to recognize spam?</h2>
+      <p class="ml-prose-wide">
+        You can answer it yourself now. Collect thousands of emails people
+        already labeled. Describe each by its features. Split the pile into
+        train, validation, and test <em>before</em> doing anything else.
+        Train a classifier by letting gradient descent walk its parameters
+        downhill on a loss that punishes confident mistakes. Tune the
+        complexity until validation error &mdash; not training error &mdash;
+        bottoms out. Pick the threshold whose precision-recall trade-off
+        matches what mistakes actually cost. Grade once on the test set, ship,
+        and keep retraining as spammers adapt. No rules were ever written
+        &mdash; only patterns, learned from examples, measured honestly.
+      </p>
+      <p class="ml-prose-wide">
+        And the road continues from here. The same loop, scaled to billions
+        of parameters on <a href="/gpu/">GPU</a> fleets coordinated in the
+        <a href="/cloud/">cloud</a> &mdash; with datasets streamed through
+        <a href="/memory/">memory and storage</a>, scheduled by
+        <a href="/operating-systems/">operating systems</a>, and served to you
+        across <a href="/internet/">the internet</a> &mdash; is exactly what
+        produced <a href="/chatgpt/">ChatGPT</a>. A future exhibit on
+        <strong>Large Language Models</strong> will pick up the story where
+        this page ends.
+      </p>
+    </div>
+  </section>
+
+  <!-- knowledge-nav.js injects the "Where this fits" section here -->
+</div>
