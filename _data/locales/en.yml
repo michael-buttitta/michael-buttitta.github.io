@@ -29,6 +29,7 @@ tabs:
   cpu: Inside a CPU
   memory: Inside Memory
   blockchain: Understanding Blockchain
+  cryptography: Understanding Cryptography
 
 # the text displayed in the search bar & search results
 search:

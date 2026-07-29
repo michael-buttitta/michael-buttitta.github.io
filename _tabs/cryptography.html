@@ -1,0 +1,928 @@
+---
+layout: gpu
+title: Cryptography
+icon: fas fa-key
+order: 8
+description: >-
+  An interactive visual guide to modern cryptography — why encryption exists,
+  symmetric and asymmetric ciphers, hash functions, digital signatures,
+  certificates and HTTPS, password hashing, key exchange, and the post-quantum
+  future, explained with live in-browser demos built on real cryptography.
+extra_css:
+  - /assets/css/cryptography.css
+extra_js:
+  - /assets/js/cryptography.js
+---
+
+<div id="crypto-experience">
+  <noscript>
+    <p class="cy-noscript">
+      The live demos on this page &mdash; real SHA-256 hashing, real AES-GCM
+      encryption, real ECDSA signatures &mdash; need JavaScript. All of the
+      explanations below still read fine without it.
+    </p>
+  </noscript>
+
+  <!-- Chapter rail (desktop) -->
+  <nav class="cy-rail" aria-label="Chapters">
+    <a class="cy-rail-dot" href="#top" data-label="Top"><span></span></a>
+    <a class="cy-rail-dot" href="#why" data-label="Why cryptography exists"><span></span></a>
+    <a class="cy-rail-dot" href="#history" data-label="A brief history"><span></span></a>
+    <a class="cy-rail-dot" href="#symmetric" data-label="Symmetric encryption"><span></span></a>
+    <a class="cy-rail-dot" href="#asymmetric" data-label="Asymmetric encryption"><span></span></a>
+    <a class="cy-rail-dot" href="#hashing" data-label="Hash functions"><span></span></a>
+    <a class="cy-rail-dot" href="#signatures" data-label="Digital signatures"><span></span></a>
+    <a class="cy-rail-dot" href="#https" data-label="Certificates &amp; HTTPS"><span></span></a>
+    <a class="cy-rail-dot" href="#passwords" data-label="Password security"><span></span></a>
+    <a class="cy-rail-dot" href="#keyexchange" data-label="Key exchange"><span></span></a>
+    <a class="cy-rail-dot" href="#everyday" data-label="Everyday cryptography"><span></span></a>
+    <a class="cy-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
+    <a class="cy-rail-dot" href="#future" data-label="The future"><span></span></a>
+    <a class="cy-rail-dot" href="#lab" data-label="Cryptography lab"><span></span></a>
+  </nav>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <header class="cy-hero" id="top">
+    <canvas id="cy-hero-canvas" aria-hidden="true"></canvas>
+    <div class="cy-hero-inner">
+      <p class="cy-kicker">An interactive exhibit</p>
+      <h1 class="cy-hero-title">Understanding Cryptography</h1>
+      <p class="cy-hero-sub">
+        Explore how mathematics protects digital information, secures the
+        internet, and enables trust between billions of devices every day.
+      </p>
+      <div class="cy-hero-cta">
+        <a class="cy-btn cy-btn-primary" id="cy-hero-cta" href="#why">Begin exploring</a>
+        <span class="cy-hero-hint">13 chapters &middot; real cryptography, live in your browser &middot; no installs</span>
+      </div>
+    </div>
+    <div class="cy-hero-scrollhint" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ================================================================
+       01 — WHY CRYPTOGRAPHY EXISTS
+  ================================================================ -->
+  <section class="cy-section" id="why" aria-labelledby="why-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">01</span> The problem</p>
+      <h2 id="why-h">Why cryptography exists</h2>
+      <p class="cy-lede">
+        Imagine mailing a private letter on a postcard. Every mail carrier,
+        sorter, and nosy neighbor along the route can read it &mdash; or
+        quietly rewrite it. Now imagine sending a password, a bank transfer,
+        or a medical record across the internet, where every message is copied
+        through dozens of machines you have never met. How do you stop
+        strangers from reading it, changing it, or pretending to be you?
+      </p>
+    </div>
+
+    <p class="cy-prose">
+      Watch a message travel from Alice to Bob below. It hops through relays
+      &mdash; routers, Wi-Fi access points, servers &mdash; and one of them,
+      Eve, is eavesdropping. Send the message in the clear, then send it
+      encrypted, and compare what Eve actually sees.
+    </p>
+
+    <div class="cy-panel" data-cy-reveal>
+      <div class="cy-panel-controls" role="group" aria-label="Eavesdropping demo controls">
+        <button type="button" id="cy-intercept-plain" class="cy-btn cy-btn-ghost" aria-pressed="false">Send unencrypted</button>
+        <button type="button" id="cy-intercept-enc" class="cy-btn cy-btn-ghost" aria-pressed="false">Send encrypted</button>
+      </div>
+      <canvas id="cy-intercept-canvas" class="cy-canvas"
+              aria-label="Animated demo: a message travels from Alice through several network relays to Bob. Unencrypted, the eavesdropper Eve reads it perfectly; encrypted, Eve captures only unreadable ciphertext."></canvas>
+      <div class="cy-statrow">
+        <div class="cy-stat"><span class="cy-stat-label">Message sent</span><span class="cy-stat-val" id="cy-intercept-sent">&ndash;</span></div>
+        <div class="cy-stat"><span class="cy-stat-label">What Eve captured</span><span class="cy-stat-val cy-mono" id="cy-intercept-seen">&ndash;</span></div>
+        <div class="cy-stat"><span class="cy-stat-label">What Bob read</span><span class="cy-stat-val" id="cy-intercept-bob">&ndash;</span></div>
+      </div>
+      <p class="cy-panel-status" id="cy-intercept-status" aria-live="polite"></p>
+    </div>
+
+    <p class="cy-prose">
+      Cryptography is the mathematics of communicating in the presence of
+      adversaries. Everything on this page &mdash; and essentially all of
+      internet security &mdash; is built to deliver four guarantees:
+    </p>
+
+    <div class="cy-pillars" data-cy-reveal>
+      <div class="cy-pillar">
+        <div class="cy-pillar-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><rect x="12" y="20" width="24" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M17 20v-5a7 7 0 0 1 14 0v5" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="29" r="2.6" fill="currentColor"/></svg>
+        </div>
+        <h3>Confidentiality</h3>
+        <p>Only the intended recipient can read the message. Everyone else sees noise. This is what <strong>encryption</strong> provides.</p>
+      </div>
+      <div class="cy-pillar">
+        <div class="cy-pillar-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><path d="M24 5l15 6v10c0 9.5-6.4 17.4-15 21-8.6-3.6-15-11.5-15-21V11z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M17 24l5 5 9-10" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>
+        </div>
+        <h3>Integrity</h3>
+        <p>The message that arrives is exactly the message that was sent &mdash; any tampering, even one flipped bit, is detected. This is what <strong>hashes</strong> and <strong>authentication codes</strong> provide.</p>
+      </div>
+      <div class="cy-pillar">
+        <div class="cy-pillar-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="17" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M10 40c1.5-7.5 7-12 14-12s12.5 4.5 14 12" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>
+        </div>
+        <h3>Authentication</h3>
+        <p>You are really talking to who you think you are &mdash; your bank, not an impostor with a convincing login page. This is what <strong>certificates</strong> and <strong>signatures</strong> provide.</p>
+      </div>
+      <div class="cy-pillar">
+        <div class="cy-pillar-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><path d="M12 36c8-2 10-14 24-16M14 12l4 22M30 14l-8 22" fill="none" stroke="currentColor" stroke-width="0"/><path d="M10 38h28M14 38c2-10 4-18 10-24 2.5-2.5 6-3 8 0" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M27 20l6-2 2 6" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>
+        </div>
+        <h3>Non-repudiation</h3>
+        <p>The sender cannot later deny sending the message &mdash; a <strong>digital signature</strong> is proof that only the holder of a specific private key could have produced it.</p>
+      </div>
+    </div>
+
+    <p class="cy-prose">
+      The rest of this page builds these guarantees up one primitive at a time
+      &mdash; ciphers, keys, hashes, signatures, certificates &mdash; until the
+      whole machinery of HTTPS clicks into place.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       02 — A BRIEF HISTORY
+  ================================================================ -->
+  <section class="cy-section" id="history" aria-labelledby="history-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">02</span> Origins</p>
+      <h2 id="history-h">A brief history of secrets</h2>
+      <p class="cy-lede">
+        For most of its 2,000-year history, cryptography was a military craft:
+        generals hiding orders from enemies. In a single generation it became
+        the invisible infrastructure of everyday life. Here is how.
+      </p>
+    </div>
+
+    <ol class="cy-timeline">
+      <li class="cy-era" data-year="~50 BC">
+        <h3>The Caesar cipher</h3>
+        <p>Julius Caesar shifted every letter of his military messages three
+        places down the alphabet. Trivial today &mdash; there are only 25
+        possible shifts to try &mdash; but effective against illiterate
+        couriers. Try it yourself below.</p>
+      </li>
+      <li class="cy-era" data-year="800s–1500s">
+        <h3>Substitution ciphers &amp; frequency analysis</h3>
+        <p>Scrambling the whole alphabet gives 400 septillion possible keys
+        &mdash; yet Arab scholar al-Kindi broke it anyway by counting letter
+        frequencies. The lesson still holds: <em>a huge keyspace means nothing
+        if the cipher leaks patterns.</em></p>
+      </li>
+      <li class="cy-era" data-year="1939–1945">
+        <h3>Enigma &amp; wartime codebreaking</h3>
+        <p>Nazi Germany&rsquo;s Enigma machine changed its substitution with
+        every keystroke &mdash; about 158 quintillion settings. Polish and
+        British cryptanalysts, including Alan Turing at Bletchley Park, broke
+        it with early computing machinery, shortening the war and midwifing
+        computer science itself.</p>
+      </li>
+      <li class="cy-era" data-year="1977">
+        <h3>DES — a public standard</h3>
+        <p>The US standardized the Data Encryption Standard: for the first
+        time, a cipher anyone could study, implement, and attack in the open.
+        Its 56-bit key eventually fell to brute force, teaching the field to
+        design for decades of hardware growth.</p>
+      </li>
+      <li class="cy-era" data-year="1976–1978">
+        <h3>Diffie–Hellman &amp; RSA — the public-key revolution</h3>
+        <p>Whitfield Diffie and Martin Hellman asked a heretical question:
+        could two strangers agree on a secret <em>in public</em>? Their key
+        exchange, followed by Rivest, Shamir, and Adleman&rsquo;s RSA
+        cryptosystem, split keys into public and private halves &mdash; the
+        idea that makes internet-scale security possible.</p>
+      </li>
+      <li class="cy-era" data-year="2001">
+        <h3>AES — the workhorse</h3>
+        <p>After a five-year open worldwide competition, the Rijndael cipher
+        became the Advanced Encryption Standard. It now encrypts your Wi-Fi,
+        your disk, your messages &mdash; often via dedicated CPU instructions
+        (see the <a href="/cpu/">CPU exhibit</a> for how hardware accelerates
+        it).</p>
+      </li>
+      <li class="cy-era" data-year="1985–2005">
+        <h3>Elliptic-curve cryptography</h3>
+        <p>A different kind of math &mdash; points on curves instead of giant
+        primes &mdash; delivers RSA-level security with far smaller keys: a
+        256-bit ECC key roughly matches a 3,072-bit RSA key. Smaller, faster
+        keys made strong crypto practical on phones and smart cards.</p>
+      </li>
+      <li class="cy-era" data-year="1995–now">
+        <h3>SSL → TLS — securing the web</h3>
+        <p>Netscape&rsquo;s SSL, refined into TLS, packaged key exchange,
+        certificates, and symmetric encryption into one handshake every
+        browser performs billions of times a day. The padlock was born.</p>
+      </li>
+      <li class="cy-era" data-year="Today">
+        <h3>Cryptography everywhere</h3>
+        <p>Over 95% of web traffic is encrypted. Your phone signs its software
+        updates, your messages are end-to-end encrypted, and entire monetary
+        systems (see <a href="/bitcoin/">Understanding Bitcoin</a>) are built
+        from nothing but hashes and signatures. Military secrecy became
+        civilian infrastructure.</p>
+      </li>
+    </ol>
+
+    <div class="cy-panel" data-cy-reveal>
+      <h3 class="cy-panel-title">Try it — the Caesar cipher</h3>
+      <p class="cy-panel-note">
+        Shift each letter down the alphabet. Then click <em>break it</em> to
+        see why a 25-key cipher hasn&rsquo;t protected anything in centuries.
+      </p>
+      <div class="cy-field">
+        <label for="cy-caesar-in">Your message</label>
+        <input type="text" id="cy-caesar-in" maxlength="64" value="ATTACK AT DAWN" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="cy-field cy-field-slider">
+        <label for="cy-caesar-shift">Shift: <output id="cy-caesar-shiftval">3</output></label>
+        <input type="range" id="cy-caesar-shift" min="1" max="25" value="3" step="1">
+      </div>
+      <div class="cy-readout">
+        <span class="cy-readout-label">Ciphertext</span>
+        <code id="cy-caesar-out" class="cy-mono" aria-live="polite">DWWDFN DW GDZQ</code>
+      </div>
+      <div class="cy-panel-controls">
+        <button type="button" id="cy-caesar-crack" class="cy-btn cy-btn-ghost">Break it: try all 25 shifts</button>
+      </div>
+      <div id="cy-caesar-cracked" class="cy-caesar-cracked" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       03 — SYMMETRIC ENCRYPTION
+  ================================================================ -->
+  <section class="cy-section" id="symmetric" aria-labelledby="symmetric-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">03</span> One shared secret</p>
+      <h2 id="symmetric-h">Symmetric encryption</h2>
+      <p class="cy-lede">
+        The oldest idea in cryptography, perfected: one secret key both locks
+        and unlocks the message. Modern symmetric ciphers like
+        <strong>AES</strong> are so fast and so strong that brute-forcing a
+        single 256-bit key would outlast the universe &mdash; the catch is
+        that both sides must already share the key.
+      </p>
+    </div>
+
+    <div class="cy-flow" data-cy-reveal aria-hidden="true">
+      <span class="cy-flow-node">Message</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-key">Secret key</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-op">Encrypt</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-ct">Ciphertext</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-key">Same secret key</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-op">Decrypt</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node">Message</span>
+    </div>
+
+    <div class="cy-panel" data-cy-reveal>
+      <h3 class="cy-panel-title">Live demo — real AES-256-GCM, in your browser</h3>
+      <p class="cy-panel-note">
+        This is not a simulation: your browser&rsquo;s built-in Web Crypto API
+        derives a 256-bit key from your passphrase and encrypts with
+        AES&#8209;GCM &mdash; the same cipher protecting this page&rsquo;s
+        HTTPS connection. Encrypt, then try decrypting with the wrong
+        passphrase.
+      </p>
+      <div class="cy-grid2">
+        <div class="cy-field">
+          <label for="cy-sym-msg">Message</label>
+          <input type="text" id="cy-sym-msg" maxlength="120" value="Meet me at the harbor at midnight." autocomplete="off">
+        </div>
+        <div class="cy-field">
+          <label for="cy-sym-key">Shared passphrase</label>
+          <input type="text" id="cy-sym-key" maxlength="64" value="correct horse battery staple" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+      <div class="cy-panel-controls">
+        <button type="button" id="cy-sym-encrypt" class="cy-btn cy-btn-primary">Encrypt</button>
+      </div>
+      <div class="cy-readout">
+        <span class="cy-readout-label">Ciphertext (hex)</span>
+        <code id="cy-sym-ct" class="cy-mono cy-wrap" aria-live="polite">&ndash;</code>
+      </div>
+      <div class="cy-grid2">
+        <div class="cy-field">
+          <label for="cy-sym-key2">Passphrase to decrypt with</label>
+          <input type="text" id="cy-sym-key2" maxlength="64" value="correct horse battery staple" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="cy-panel-controls cy-controls-bottom">
+          <button type="button" id="cy-sym-decrypt" class="cy-btn cy-btn-ghost" disabled>Decrypt</button>
+        </div>
+      </div>
+      <div class="cy-readout">
+        <span class="cy-readout-label">Decrypted</span>
+        <code id="cy-sym-out" class="cy-mono cy-wrap" aria-live="polite">&ndash;</code>
+      </div>
+      <p class="cy-panel-status" id="cy-sym-status" aria-live="polite"></p>
+    </div>
+
+    <div class="cy-facts" data-cy-reveal>
+      <div class="cy-fact"><strong>One shared secret.</strong> The same key encrypts and decrypts &mdash; like a physical lock where one key both locks and unlocks.</div>
+      <div class="cy-fact"><strong>Fast.</strong> AES encrypts gigabytes per second; modern CPUs execute it with dedicated <code>AES-NI</code> instructions in hardware.</div>
+      <div class="cy-fact"><strong>Efficient.</strong> Ciphertext is barely larger than the message. This is why <em>bulk</em> data &mdash; disks, video calls, this web page &mdash; always uses symmetric encryption.</div>
+      <div class="cy-fact cy-fact-warn"><strong>The key-distribution problem.</strong> How do Alice and Bob agree on the key in the first place, if every channel between them is being watched? For centuries the only answer was couriers and locked briefcases. The next two chapters are the modern answer.</div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       04 — ASYMMETRIC ENCRYPTION
+  ================================================================ -->
+  <section class="cy-section" id="asymmetric" aria-labelledby="asymmetric-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">04</span> The revolution</p>
+      <h2 id="asymmetric-h">Asymmetric encryption</h2>
+      <p class="cy-lede">
+        In 1976 cryptographers found a way to split the key in two: a
+        <strong>public key</strong> you can shout from the rooftops, and a
+        <strong>private key</strong> you never reveal. What one half locks,
+        only the other half unlocks. Strangers can now exchange secrets
+        without ever meeting.
+      </p>
+    </div>
+
+    <p class="cy-prose">
+      The intuition: Bob&rsquo;s public key is an <em>open padlock</em> he
+      hands out freely. Anyone can snap it shut on a box &mdash; but once
+      closed, only Bob&rsquo;s private key opens it. Alice never needs
+      Bob&rsquo;s secret; she only needs his padlock. Watch it happen:
+    </p>
+
+    <div class="cy-panel" data-cy-reveal>
+      <div class="cy-panel-controls" role="group" aria-label="Asymmetric encryption animation controls">
+        <button type="button" id="cy-asym-play" class="cy-btn cy-btn-primary">Play: Alice writes to Bob</button>
+        <button type="button" id="cy-asym-eve" class="cy-btn cy-btn-ghost">What if Eve grabs the box?</button>
+      </div>
+      <canvas id="cy-asym-canvas" class="cy-canvas cy-canvas-tall"
+              aria-label="Animated story: Bob generates a private key and a public key, publishes the public key, Alice locks her message with Bob's public key, the locked box travels across the network, and only Bob's private key opens it. In the alternate ending, Eve captures the box but her copy of the public key cannot open it."></canvas>
+      <p class="cy-panel-status" id="cy-asym-status" aria-live="polite"></p>
+    </div>
+
+    <div class="cy-panel" data-cy-reveal>
+      <h3 class="cy-panel-title">Live demo — real RSA-OAEP key pair</h3>
+      <p class="cy-panel-note">
+        Generate a real 2048-bit RSA key pair (Web Crypto, in your browser
+        &mdash; the private key never leaves this page). Encrypt a message
+        with the public key, then try to decrypt it with the <em>public</em>
+        key and watch the mathematics refuse.
+      </p>
+      <div class="cy-panel-controls">
+        <button type="button" id="cy-asym-gen" class="cy-btn cy-btn-primary">1&middot; Generate Bob&rsquo;s key pair</button>
+      </div>
+      <div class="cy-keycards">
+        <div class="cy-keycard cy-keycard-pub">
+          <span class="cy-keycard-tag">Public key &mdash; share freely</span>
+          <code id="cy-asym-pub" class="cy-mono cy-wrap">&ndash;</code>
+        </div>
+        <div class="cy-keycard cy-keycard-priv">
+          <span class="cy-keycard-tag">Private key &mdash; never leaves Bob</span>
+          <code id="cy-asym-priv" class="cy-mono">&ndash;</code>
+        </div>
+      </div>
+      <div class="cy-field">
+        <label for="cy-asym-msg">Alice&rsquo;s message to Bob</label>
+        <input type="text" id="cy-asym-msg" maxlength="100" value="The account number is 7749." autocomplete="off">
+      </div>
+      <div class="cy-panel-controls">
+        <button type="button" id="cy-asym-encrypt" class="cy-btn cy-btn-primary" disabled>2&middot; Encrypt with public key</button>
+        <button type="button" id="cy-asym-decrypt" class="cy-btn cy-btn-ghost" disabled>3&middot; Decrypt with private key</button>
+        <button type="button" id="cy-asym-trypub" class="cy-btn cy-btn-ghost" disabled>Try decrypting with the public key</button>
+      </div>
+      <div class="cy-readout">
+        <span class="cy-readout-label">Ciphertext (hex)</span>
+        <code id="cy-asym-ct" class="cy-mono cy-wrap" aria-live="polite">&ndash;</code>
+      </div>
+      <p class="cy-panel-status" id="cy-asym-out" aria-live="polite"></p>
+    </div>
+
+    <div class="cy-facts" data-cy-reveal>
+      <div class="cy-fact"><strong>Public keys can be shared</strong> because encrypting is a one-way street: turning the public key back into the private key would require factoring enormous numbers (RSA) or reversing elliptic-curve math (ECC) &mdash; problems with no known efficient solution.</div>
+      <div class="cy-fact cy-fact-warn"><strong>Private keys must stay secret</strong> &mdash; whoever holds the private key <em>is</em> you, mathematically. Where keys physically live (and why memory protection matters) is a story the <a href="/memory/">Memory &amp; Storage exhibit</a> tells.</div>
+      <div class="cy-fact"><strong>The trade-off:</strong> asymmetric operations are thousands of times slower than AES and can only handle small payloads. So real systems use asymmetric crypto once &mdash; to agree on a symmetric key &mdash; then let AES do the heavy lifting. That hybrid is exactly what TLS does, as you&rsquo;ll see in chapter 07.</div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       05 — HASH FUNCTIONS
+  ================================================================ -->
+  <section class="cy-section" id="hashing" aria-labelledby="hashing-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">05</span> Digital fingerprints</p>
+      <h2 id="hashing-h">Hash functions</h2>
+      <p class="cy-lede">
+        A cryptographic hash function reads any input &mdash; a word, a novel,
+        a 4&nbsp;GB movie &mdash; and produces a fixed-size fingerprint.
+        Change one bit of the input and the fingerprint changes beyond
+        recognition. It is the internet&rsquo;s tamper-evident seal.
+      </p>
+    </div>
+
+    <div class="cy-panel" data-cy-reveal>
+      <h3 class="cy-panel-title">Hash playground — live SHA-256</h3>
+      <p class="cy-panel-note">
+        Type anything. The digest below is computed with a real SHA-256
+        implementation as you type. The 16&times;16 grid shows all 256 bits of
+        the digest &mdash; watch how many flip when you change a single
+        character.
+      </p>
+      <div class="cy-field">
+        <label for="cy-hash-in">Input</label>
+        <textarea id="cy-hash-in" rows="2" maxlength="500" spellcheck="false">The quick brown fox jumps over the lazy dog</textarea>
+      </div>
+      <div class="cy-readout">
+        <span class="cy-readout-label">SHA-256</span>
+        <code id="cy-hash-out" class="cy-mono cy-wrap" aria-live="polite"></code>
+      </div>
+      <div class="cy-hashviz">
+        <canvas id="cy-hash-grid" class="cy-hash-grid" width="272" height="272"
+                aria-label="A 16 by 16 grid of cells, one per bit of the SHA-256 digest. Cells that changed since the previous input flash briefly."></canvas>
+        <div class="cy-hashviz-side">
+          <div class="cy-stat"><span class="cy-stat-label">Bits changed vs previous input</span><span class="cy-stat-val" id="cy-hash-diff">&ndash;</span></div>
+          <p class="cy-panel-note">A good hash flips about half of all output
+          bits on any change &mdash; the <strong>avalanche effect</strong>.
+          There is no pattern to exploit, no way to work backwards.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cy-facts" data-cy-reveal>
+      <div class="cy-fact"><strong>Deterministic.</strong> The same input always produces the same digest &mdash; on any machine, forever. That is what makes fingerprints comparable.</div>
+      <div class="cy-fact"><strong>One-way.</strong> Going from digest back to input is computationally infeasible. A hash is a fingerprint, not a container: the original is not &ldquo;inside&rdquo; it.</div>
+      <div class="cy-fact"><strong>Collision-resistant.</strong> Finding two different inputs with the same SHA-256 digest would take on the order of 2<sup>128</sup> attempts &mdash; billions of times the age of the universe at any conceivable speed.</div>
+      <div class="cy-fact"><strong>Integrity everywhere.</strong> Software downloads publish their hash so you can verify nothing was corrupted or backdoored. <a href="/blockchain/">Blockchains</a> chain block hashes together so history itself becomes tamper-evident, and <a href="/bitcoin/">Bitcoin&rsquo;s mining</a> is a global race to find lucky hashes.</div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       06 — DIGITAL SIGNATURES
+  ================================================================ -->
+  <section class="cy-section" id="signatures" aria-labelledby="signatures-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">06</span> Proof of authorship</p>
+      <h2 id="signatures-h">Digital signatures</h2>
+      <p class="cy-lede">
+        Encryption proves <em>secrecy</em>. Signatures prove
+        <em>authenticity</em>. A digital signature runs asymmetric keys in
+        reverse: you sign with your <strong>private</strong> key, and anyone
+        can verify with your <strong>public</strong> key &mdash; proving the
+        message came from you and hasn&rsquo;t changed since.
+      </p>
+    </div>
+
+    <div class="cy-flow" data-cy-reveal aria-hidden="true">
+      <span class="cy-flow-node">Document</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-op">Hash</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-key">Private key signs</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-ct">Signature</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-key">Public key verifies</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node">Valid&nbsp;/&nbsp;forged</span>
+    </div>
+
+    <div class="cy-panel" data-cy-reveal>
+      <h3 class="cy-panel-title">Live demo — real ECDSA (P-256) signatures</h3>
+      <p class="cy-panel-note">
+        Sign the contract below with a real elliptic-curve key pair generated
+        in your browser. Then edit the document &mdash; even one character
+        &mdash; and watch verification fail instantly. Restore the original
+        text and it passes again.
+      </p>
+      <div class="cy-field">
+        <label for="cy-sig-doc">Document</label>
+        <textarea id="cy-sig-doc" rows="3" maxlength="400" spellcheck="false">I, Alice, agree to pay Bob exactly 100 dollars on Friday.</textarea>
+      </div>
+      <div class="cy-panel-controls">
+        <button type="button" id="cy-sig-sign" class="cy-btn cy-btn-primary">Sign with Alice&rsquo;s private key</button>
+        <button type="button" id="cy-sig-restore" class="cy-btn cy-btn-ghost" disabled>Restore signed text</button>
+      </div>
+      <div class="cy-readout">
+        <span class="cy-readout-label">Signature (hex)</span>
+        <code id="cy-sig-out" class="cy-mono cy-wrap" aria-live="polite">&ndash;</code>
+      </div>
+      <div class="cy-verdict" id="cy-sig-verdict" aria-live="polite" data-state="idle">
+        <span class="cy-verdict-icon" aria-hidden="true"></span>
+        <span class="cy-verdict-text">Sign the document to begin.</span>
+      </div>
+    </div>
+
+    <div class="cy-facts" data-cy-reveal>
+      <div class="cy-fact"><strong>What is actually signed is the hash</strong> of the document &mdash; which is why signatures are tiny and fast even for huge files, and why any edit breaks them.</div>
+      <div class="cy-fact"><strong>Authentication + integrity + non-repudiation</strong> in one primitive: only the private key could have made it, the content is pinned, and the signer cannot deny it later.</div>
+      <div class="cy-fact"><strong>You use these constantly.</strong> Every app update, every HTTPS certificate, every <a href="/bitcoin/">Bitcoin transaction</a> is a digital signature being verified on your behalf.</div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       07 — CERTIFICATES & HTTPS
+  ================================================================ -->
+  <section class="cy-section" id="https" aria-labelledby="https-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">07</span> The padlock</p>
+      <h2 id="https-h">Certificates &amp; HTTPS</h2>
+      <p class="cy-lede">
+        Encryption alone has a blind spot: you might be having a perfectly
+        secure conversation <em>with the wrong person</em>. Certificates solve
+        identity; TLS assembles everything on this page into the handshake
+        behind the padlock in your address bar.
+      </p>
+    </div>
+
+    <p class="cy-prose">
+      A <strong>certificate</strong> is a signed statement: &ldquo;this public
+      key belongs to <code>yourbank.com</code>&rdquo; &mdash; signed by a
+      <strong>Certificate Authority</strong> (CA), an organization your
+      browser already trusts and whose public keys ship inside it. The CA
+      verified the site&rsquo;s identity before signing, so an impostor
+      can&rsquo;t present a certificate for a domain they don&rsquo;t control.
+      Step through a TLS handshake:
+    </p>
+
+    <div class="cy-panel" data-cy-reveal>
+      <div class="cy-panel-controls" role="group" aria-label="TLS handshake animation controls">
+        <button type="button" id="cy-tls-play" class="cy-btn cy-btn-primary">Play the handshake</button>
+        <button type="button" id="cy-tls-step" class="cy-btn cy-btn-ghost">Step</button>
+        <button type="button" id="cy-tls-reset" class="cy-btn cy-btn-ghost">Reset</button>
+      </div>
+      <canvas id="cy-tls-canvas" class="cy-canvas cy-canvas-tall"
+              aria-label="Animated TLS handshake: the browser says hello, the server presents its certificate, the browser checks the certificate authority's signature, both sides run a key exchange to derive a shared session key, and the connection switches to fast symmetric encryption, shown as a closing padlock."></canvas>
+      <ol class="cy-tls-steps" id="cy-tls-steps">
+        <li data-step="0"><strong>Hello.</strong> Your browser opens the connection: &ldquo;here are the cipher suites I speak, and a fresh random number.&rdquo;</li>
+        <li data-step="1"><strong>Certificate.</strong> The server replies with its certificate &mdash; its public key plus the CA&rsquo;s signature vouching for its identity.</li>
+        <li data-step="2"><strong>Verification.</strong> The browser checks the CA&rsquo;s signature against its built-in trust store, the domain name, and the expiry date. Any mismatch → the full-page warning you&rsquo;ve seen.</li>
+        <li data-step="3"><strong>Key exchange.</strong> Browser and server run an ephemeral Diffie&ndash;Hellman exchange (chapter 09) to derive a <strong>session key</strong> no eavesdropper can compute.</li>
+        <li data-step="4"><strong>Encrypted.</strong> Both switch to symmetric AES with the session key. The padlock closes &mdash; the whole ceremony took a few round-trips.</li>
+      </ol>
+      <p class="cy-panel-status" id="cy-tls-status" aria-live="polite"></p>
+    </div>
+
+    <div class="cy-facts" data-cy-reveal>
+      <div class="cy-fact"><strong>Why HTTPS prevents impersonation:</strong> an attacker can intercept traffic, but they cannot produce a certificate for <code>yourbank.com</code> that a trusted CA signed &mdash; and without the site&rsquo;s private key, they cannot complete the handshake as that site.</div>
+      <div class="cy-fact"><strong>Chain of trust.</strong> Certificates form a chain: site → intermediate CA → root CA. Your OS and browser ship with ~100 audited root CAs; every padlock traces back to one of them.</div>
+      <div class="cy-fact cy-fact-warn"><strong>The padlock means the <em>connection</em> is secure, not the <em>site</em>.</strong> A phishing site can have flawless HTTPS. The padlock says &ldquo;nobody is in the middle&rdquo; &mdash; it does not say &ldquo;these people are honest.&rdquo; (More in chapter 11.)</div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       08 — PASSWORD SECURITY
+  ================================================================ -->
+  <section class="cy-section" id="passwords" aria-labelledby="passwords-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">08</span> Storing secrets</p>
+      <h2 id="passwords-h">Password security</h2>
+      <p class="cy-lede">
+        A well-run website <em>cannot tell you your own password</em> &mdash;
+        because it never stored it. It stored a salted hash. When breaches
+        happen (and they do), this single design decision separates a bad week
+        from a catastrophe.
+      </p>
+    </div>
+
+    <div class="cy-flow" data-cy-reveal aria-hidden="true">
+      <span class="cy-flow-node">Password</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-key">+ random salt</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-op">Slow hash</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node cy-flow-ct">Digest</span><span class="cy-flow-arrow">→</span>
+      <span class="cy-flow-node">Database</span>
+    </div>
+
+    <div class="cy-panel" data-cy-reveal>
+      <h3 class="cy-panel-title">Breach simulator — plaintext vs salted hashes</h3>
+      <p class="cy-panel-note">
+        Two sites store the same four accounts. Add your own test password
+        (don&rsquo;t use a real one &mdash; nothing leaves this page, but
+        it&rsquo;s good hygiene), then breach both databases and compare what
+        the attacker walks away with. Note how <em>dana</em> and <em>erin</em>
+        chose the same password &mdash; and what each database reveals about
+        that.
+      </p>
+      <div class="cy-grid2">
+        <div class="cy-field">
+          <label for="cy-pw-user">Username</label>
+          <input type="text" id="cy-pw-user" maxlength="16" value="you" autocomplete="off">
+        </div>
+        <div class="cy-field">
+          <label for="cy-pw-in">Test password</label>
+          <input type="text" id="cy-pw-in" maxlength="32" value="hunter2" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+      <div class="cy-panel-controls">
+        <button type="button" id="cy-pw-add" class="cy-btn cy-btn-primary">Create account on both sites</button>
+        <button type="button" id="cy-pw-breach" class="cy-btn cy-btn-danger">Breach both databases</button>
+      </div>
+      <div class="cy-pwgrid">
+        <div class="cy-pwdb" id="cy-pw-plain-wrap">
+          <h4>Site A &mdash; stores plaintext</h4>
+          <table class="cy-table" id="cy-pw-plain-table">
+            <thead><tr><th scope="col">user</th><th scope="col">password</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="cy-pwdb" id="cy-pw-hash-wrap">
+          <h4>Site B &mdash; stores salt + hash</h4>
+          <table class="cy-table" id="cy-pw-hash-table">
+            <thead><tr><th scope="col">user</th><th scope="col">salt</th><th scope="col">hash(salt + password)</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <p class="cy-panel-status" id="cy-pw-status" aria-live="polite"></p>
+    </div>
+
+    <div class="cy-facts" data-cy-reveal>
+      <div class="cy-fact"><strong>Hashing, not encryption.</strong> The site never needs your password back &mdash; at login it hashes what you typed and compares digests. One-way is exactly the property you want here.</div>
+      <div class="cy-fact"><strong>Salting defeats rainbow tables.</strong> Attackers once precomputed hashes of millions of common passwords (&ldquo;rainbow tables&rdquo;) and looked breached digests up instantly. A unique random salt per user makes every hash unique &mdash; the precomputed table is worthless, and identical passwords no longer produce identical hashes.</div>
+      <div class="cy-fact"><strong>Slow on purpose.</strong> Real systems use deliberately expensive hashes (bcrypt, scrypt, Argon2) so that even with stolen hashes, guessing billions of passwords per second is impossible. (The demo above uses fast SHA-256 for illustration only.)</div>
+      <div class="cy-fact cy-fact-warn"><strong>None of this saves a weak password.</strong> Hashing protects the database, not a password an attacker can guess in a hundred tries. Long, unique passwords &mdash; ideally from a password manager (itself an encrypted vault, chapter 10) &mdash; remain your half of the bargain.</div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       09 — KEY EXCHANGE
+  ================================================================ -->
+  <section class="cy-section" id="keyexchange" aria-labelledby="keyexchange-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">09</span> Agreeing in public</p>
+      <h2 id="keyexchange-h">Key exchange</h2>
+      <p class="cy-lede">
+        The most counterintuitive trick in cryptography: two strangers shout
+        at each other across a crowded room &mdash; and end up sharing a
+        secret nobody else in the room knows. This is
+        <strong>Diffie&ndash;Hellman key exchange</strong>, and it runs every
+        time you open an HTTPS page.
+      </p>
+    </div>
+
+    <p class="cy-prose">
+      The classic intuition uses paint. Mixing colors is easy; un-mixing them
+      is practically impossible &mdash; a one-way operation, like the math
+      underneath (modular exponentiation or elliptic-curve multiplication).
+      Watch Alice and Bob mix their way to a shared secret while Eve captures
+      everything that crosses the wire:
+    </p>
+
+    <div class="cy-panel" data-cy-reveal>
+      <div class="cy-panel-controls" role="group" aria-label="Key exchange animation controls">
+        <button type="button" id="cy-dh-play" class="cy-btn cy-btn-primary">Play the exchange</button>
+        <button type="button" id="cy-dh-reset" class="cy-btn cy-btn-ghost">Reset</button>
+      </div>
+      <canvas id="cy-dh-canvas" class="cy-canvas cy-canvas-tall"
+              aria-label="Animated paint-mixing analogy for Diffie–Hellman: Alice and Bob start from a shared public color, each mixes in a private color and sends the mixture across the network, then each mixes their private color into the other's mixture, arriving at an identical shared secret color. Eve, watching the wire, holds only the public color and the two mixtures, which she cannot un-mix."></canvas>
+      <p class="cy-panel-status" id="cy-dh-status" aria-live="polite"></p>
+    </div>
+
+    <div class="cy-facts" data-cy-reveal>
+      <div class="cy-fact"><strong>Session keys.</strong> The shared secret becomes a temporary symmetric key for exactly one conversation, then is thrown away. Fresh session, fresh key.</div>
+      <div class="cy-fact"><strong>Forward secrecy.</strong> Because session keys are ephemeral and never sent anywhere, even a future theft of the server&rsquo;s long-term private key cannot decrypt <em>recorded past traffic</em>. Yesterday&rsquo;s conversations stay sealed forever.</div>
+      <div class="cy-fact"><strong>Exchange ≠ identity.</strong> Diffie&ndash;Hellman guarantees a private channel but not <em>with whom</em> &mdash; that is why TLS pairs it with certificates (chapter 07): signatures prove identity, the exchange builds the secret.</div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       10 — EVERYDAY CRYPTOGRAPHY
+  ================================================================ -->
+  <section class="cy-section" id="everyday" aria-labelledby="everyday-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">10</span> All around you</p>
+      <h2 id="everyday-h">Cryptography in everyday life</h2>
+      <p class="cy-lede">
+        You have probably used cryptography a hundred times today without
+        noticing. Select anything below to see which primitives from this page
+        it is built from.
+      </p>
+    </div>
+
+    <div class="cy-apps" data-cy-reveal role="group" aria-label="Everyday applications of cryptography">
+      <div class="cy-app-list" id="cy-app-list"></div>
+      <div class="cy-app-detail" id="cy-app-detail" aria-live="polite">
+        <p class="cy-panel-note">Select an application to see the cryptography inside it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       11 — MISCONCEPTIONS
+  ================================================================ -->
+  <section class="cy-section" id="myths" aria-labelledby="myths-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">11</span> Setting the record straight</p>
+      <h2 id="myths-h">Common misconceptions</h2>
+      <p class="cy-lede">
+        Cryptography attracts confident half-truths. Each card states a common
+        belief &mdash; open it for what&rsquo;s actually going on.
+      </p>
+    </div>
+
+    <div class="cy-myths" data-cy-reveal>
+      <details class="cy-myth">
+        <summary><span class="cy-myth-tag">Myth</span> &ldquo;Hashing is just another kind of encryption.&rdquo;</summary>
+        <p>Encryption is reversible by design &mdash; the right key recovers the
+        message. Hashing is <em>irreversible</em> by design &mdash; nothing
+        recovers the input, ever, for anyone. They solve different problems:
+        encryption protects secrecy; hashing proves integrity. Confusing them
+        leads to real bugs, like &ldquo;encrypting&rdquo; passwords when they
+        should be hashed.</p>
+      </details>
+      <details class="cy-myth">
+        <summary><span class="cy-myth-tag">Myth</span> &ldquo;If a public key encrypted it, the public key can decrypt it.&rdquo;</summary>
+        <p>No &mdash; the pair is a one-way street in each direction. What the
+        public key encrypts, only the private key decrypts (you saw a browser
+        refuse to try in chapter 04). The reverse pairing is what signatures
+        use: what the private key signs, the public key verifies. One key
+        can never undo its own operation.</p>
+      </details>
+      <details class="cy-myth">
+        <summary><span class="cy-myth-tag">Myth</span> &ldquo;The padlock means the website is trustworthy.&rdquo;</summary>
+        <p>The padlock means the <em>connection</em> is encrypted and you are
+        really talking to the domain in the address bar. A scam site with a
+        convincing name can get a perfectly valid certificate in minutes.
+        HTTPS rules out eavesdroppers and impostors-in-the-middle &mdash; it
+        says nothing about the honesty of the site itself.</p>
+      </details>
+      <details class="cy-myth">
+        <summary><span class="cy-myth-tag">Myth</span> &ldquo;Strong encryption makes a system secure.&rdquo;</summary>
+        <p>Encryption is one layer. Real breaches usually route around it:
+        phished credentials, unpatched servers, malicious insiders, stolen
+        devices with keys in <a href="/memory/">memory</a>. Attackers
+        don&rsquo;t break AES &mdash; they log in. Cryptography protects data
+        in transit and at rest; it cannot protect a careless deployment or a
+        tricked human.</p>
+      </details>
+      <details class="cy-myth">
+        <summary><span class="cy-myth-tag">Myth</span> &ldquo;A bigger key is always meaningfully safer.&rdquo;</summary>
+        <p>Past a threshold, key size stops being the weak point. AES-128 is
+        already unbrute-forceable with any physical computer; AES-256 adds
+        margin, not a different reality. Attacks target implementations,
+        protocols, and people long before they target the key. (Quantum
+        computing changes this calculus for <em>some</em> algorithms &mdash;
+        see the next chapter.)</p>
+      </details>
+      <details class="cy-myth">
+        <summary><span class="cy-myth-tag">Myth</span> &ldquo;Inventing my own cipher makes me safer &mdash; nobody knows how it works.&rdquo;</summary>
+        <p>The opposite. Every cipher on this page survived decades of public
+        attack by thousands of experts &mdash; that scrutiny <em>is</em> the
+        security. Secret home-made designs fail in hours when they finally
+        meet a competent adversary. The field&rsquo;s first commandment
+        (Kerckhoffs&rsquo;s principle, 1883): assume the enemy knows the
+        system; only the key is secret.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       12 — THE FUTURE
+  ================================================================ -->
+  <section class="cy-section" id="future" aria-labelledby="future-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">12</span> What&rsquo;s next</p>
+      <h2 id="future-h">The future of cryptography</h2>
+      <p class="cy-lede">
+        Cryptography is not finished. A sufficiently large quantum computer
+        would break today&rsquo;s public-key algorithms &mdash; and the
+        replacements are already shipping. Meanwhile, stranger tools are
+        emerging: proofs that reveal nothing, and computation on data that
+        stays encrypted.
+      </p>
+    </div>
+
+    <div class="cy-future" data-cy-reveal>
+      <div class="cy-future-card">
+        <h3>The quantum threat</h3>
+        <p>Shor&rsquo;s algorithm, run on a large fault-tolerant quantum
+        computer, would factor RSA moduli and solve elliptic-curve problems
+        efficiently &mdash; breaking RSA, ECC, and classic Diffie&ndash;Hellman.
+        No such machine exists yet, but &ldquo;harvest now, decrypt
+        later&rdquo; attacks &mdash; recording encrypted traffic today to
+        crack in a decade &mdash; make the migration urgent now. Symmetric
+        crypto and hashes are far less affected: AES-256 and SHA-256 remain
+        solid.</p>
+      </div>
+      <div class="cy-future-card">
+        <h3>Post-quantum cryptography</h3>
+        <p>In 2024, NIST standardized the first post-quantum algorithms &mdash;
+        ML-KEM (Kyber) for key exchange and ML-DSA (Dilithium) for signatures
+        &mdash; built on <strong>lattice problems</strong>: finding short
+        vectors in high-dimensional grids, hard even for quantum computers.
+        Major browsers and cloud providers already run hybrid classical +
+        post-quantum handshakes on live traffic.</p>
+      </div>
+      <div class="cy-future-card">
+        <h3>Zero-knowledge proofs</h3>
+        <p>Prove a statement is true while revealing <em>nothing else</em>:
+        that you are over 18 without showing your birthdate, or that a
+        transaction is valid without disclosing amounts. Once a theoretical
+        curiosity, ZK proofs now secure privacy-preserving identity systems
+        and scale <a href="/blockchain/">blockchains</a> by proving thousands
+        of transactions in one tiny certificate.</p>
+      </div>
+      <div class="cy-future-card">
+        <h3>Homomorphic encryption</h3>
+        <p>Compute directly on encrypted data: a cloud server adds your
+        encrypted numbers, returning an encrypted sum &mdash; without ever
+        being able to read any of them. Still costly, but improving fast, and
+        already used for private database lookups and privacy-preserving
+        analytics. The endgame: services that are useful without ever seeing
+        your data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       13 — CRYPTOGRAPHY LAB
+  ================================================================ -->
+  <section class="cy-section" id="lab" aria-labelledby="lab-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker"><span class="cy-kicker-num">13</span> Capstone</p>
+      <h2 id="lab-h">The cryptography lab</h2>
+      <p class="cy-lede">
+        Everything on this page, assembled into one secure message pipeline
+        &mdash; the same shape as TLS, Signal, or a software update. Send a
+        message from Alice to Bob; every primitive runs for real. Then let Eve
+        tamper with it in transit and watch the defenses trip, layer by layer.
+      </p>
+    </div>
+
+    <div class="cy-panel" data-cy-reveal>
+      <div class="cy-grid2">
+        <div class="cy-field">
+          <label for="cy-lab-msg">Alice&rsquo;s message</label>
+          <input type="text" id="cy-lab-msg" maxlength="120" value="Wire the funds to account 4471 today." autocomplete="off">
+        </div>
+        <div class="cy-field cy-field-check">
+          <label class="cy-check">
+            <input type="checkbox" id="cy-lab-tamper">
+            <span>Eve tampers with the ciphertext in transit</span>
+          </label>
+        </div>
+      </div>
+      <div class="cy-panel-controls">
+        <button type="button" id="cy-lab-run" class="cy-btn cy-btn-primary">Run the secure pipeline</button>
+      </div>
+      <ol class="cy-lab-stages" id="cy-lab-stages">
+        <li class="cy-lab-stage" data-stage="keys">
+          <span class="cy-lab-stage-icon" aria-hidden="true"></span>
+          <div><h4>Keys &amp; session setup</h4><p class="cy-lab-stage-detail">Alice and Bob derive a shared AES-256 session key (as if via Diffie&ndash;Hellman); Alice holds an ECDSA signing key pair.</p><code class="cy-mono cy-wrap cy-lab-stage-out"></code></div>
+        </li>
+        <li class="cy-lab-stage" data-stage="hash">
+          <span class="cy-lab-stage-icon" aria-hidden="true"></span>
+          <div><h4>Hash</h4><p class="cy-lab-stage-detail">The message is fingerprinted with SHA-256.</p><code class="cy-mono cy-wrap cy-lab-stage-out"></code></div>
+        </li>
+        <li class="cy-lab-stage" data-stage="sign">
+          <span class="cy-lab-stage-icon" aria-hidden="true"></span>
+          <div><h4>Sign</h4><p class="cy-lab-stage-detail">Alice signs the hash with her private key &mdash; authenticity and non-repudiation.</p><code class="cy-mono cy-wrap cy-lab-stage-out"></code></div>
+        </li>
+        <li class="cy-lab-stage" data-stage="encrypt">
+          <span class="cy-lab-stage-icon" aria-hidden="true"></span>
+          <div><h4>Encrypt</h4><p class="cy-lab-stage-detail">Message + signature are sealed with AES-256-GCM under the session key &mdash; confidentiality.</p><code class="cy-mono cy-wrap cy-lab-stage-out"></code></div>
+        </li>
+        <li class="cy-lab-stage" data-stage="transit">
+          <span class="cy-lab-stage-icon" aria-hidden="true"></span>
+          <div><h4>Transit</h4><p class="cy-lab-stage-detail">The ciphertext crosses the open network, past Eve.</p><code class="cy-mono cy-wrap cy-lab-stage-out"></code></div>
+        </li>
+        <li class="cy-lab-stage" data-stage="decrypt">
+          <span class="cy-lab-stage-icon" aria-hidden="true"></span>
+          <div><h4>Decrypt &amp; authenticate</h4><p class="cy-lab-stage-detail">Bob decrypts with the session key; AES-GCM&rsquo;s built-in authentication tag detects any modification of the ciphertext.</p><code class="cy-mono cy-wrap cy-lab-stage-out"></code></div>
+        </li>
+        <li class="cy-lab-stage" data-stage="verify">
+          <span class="cy-lab-stage-icon" aria-hidden="true"></span>
+          <div><h4>Verify signature</h4><p class="cy-lab-stage-detail">Bob checks Alice&rsquo;s signature against her public key &mdash; proof the message is really hers and unmodified.</p><code class="cy-mono cy-wrap cy-lab-stage-out"></code></div>
+        </li>
+      </ol>
+      <p class="cy-panel-status" id="cy-lab-status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       KEEP EXPLORING
+  ================================================================ -->
+  <section class="cy-section cy-section-outro" id="next" aria-labelledby="next-h">
+    <div class="cy-section-head">
+      <p class="cy-kicker">Keep exploring</p>
+      <h2 id="next-h">One connected story</h2>
+      <p class="cy-lede">
+        Cryptography doesn&rsquo;t run in a vacuum &mdash; it runs on silicon,
+        lives in memory, and powers entire systems. The other exhibits pick up
+        where this one leaves off.
+      </p>
+    </div>
+    <div class="cy-nextgrid" data-cy-reveal>
+      <a class="cy-next" href="/cpu/">
+        <span class="cy-next-tag">Inside a Modern CPU</span>
+        <p>How processors execute the algorithms on this page &mdash; and why dedicated AES instructions make encryption effectively free.</p>
+      </a>
+      <a class="cy-next" href="/memory/">
+        <span class="cy-next-tag">Inside Computer Memory</span>
+        <p>Where keys, certificates, and decrypted data physically live &mdash; and why protecting memory is part of protecting secrets.</p>
+      </a>
+      <a class="cy-next" href="/blockchain/">
+        <span class="cy-next-tag">Understanding Blockchain</span>
+        <p>Hashes and signatures assembled into tamper-evident shared ledgers, plus distributed consensus.</p>
+      </a>
+      <a class="cy-next" href="/bitcoin/">
+        <span class="cy-next-tag">Understanding Bitcoin</span>
+        <p>The most prominent real-world application of this page: hashing, digital signatures, and decentralized networking as money.</p>
+      </a>
+    </div>
+  </section>
+</div>

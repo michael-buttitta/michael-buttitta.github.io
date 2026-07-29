@@ -1,0 +1,1554 @@
+/* =============================================================================
+   Understanding Cryptography — page styles
+   Loaded only on /cryptography/ via `extra_css` front matter
+   (see _includes/metadata-hook.html).
+
+   Scoping: every rule lives under #crypto-experience (or targets .cy-*
+   classes) so nothing leaks into the Chirpy theme. Colors extend the site's
+   "modern fintech" skin: slate surfaces, teal accent (#2DD4BF / #14B8A6),
+   Inter type.
+
+   Data-series palette (same validated set as the other exhibits):
+   teal #0D9488, amber #D97706, sky #0284C7, rose #E11D48, violet #8B5CF6,
+   lime #65A30D. Semantic assignments used consistently across all chapters:
+     secure / verified / plaintext-at-rest = teal · keys / secrets = amber ·
+     public / broadcast = sky · attacker / tampered / failure = rose ·
+     ciphertext / sealed = violet · shared-derived secret = lime
+   ========================================================================== */
+
+/* Smooth in-page scrolling, only on this page and only if motion is OK */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(#crypto-experience) {
+    scroll-behavior: smooth;
+  }
+}
+
+#crypto-experience {
+  /* surfaces & lines */
+  --cy-bg: #0f172a;
+  --cy-deep: #0b1120;
+  --cy-panel: rgba(30, 41, 59, 0.45);
+  --cy-panel-solid: #151f36;
+  --cy-line: #1e293b;
+  --cy-line-strong: #334155;
+
+  /* text */
+  --cy-text: #cbd5e1;
+  --cy-text-strong: #f1f5f9;
+  --cy-muted: #94a3b8;
+  --cy-faint: #64748b;
+
+  /* brand accents (UI only) */
+  --cy-teal: #2dd4bf;
+  --cy-teal-deep: #14b8a6;
+
+  /* data series (validated) */
+  --cy-c-teal: #0d9488;
+  --cy-c-amber: #d97706;
+  --cy-c-sky: #0284c7;
+  --cy-c-rose: #e11d48;
+  --cy-c-violet: #8b5cf6;
+  --cy-c-lime: #65a30d;
+  --cy-c-free: #273449;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--cy-text);
+  overflow-wrap: break-word;
+}
+
+/* ---------- primitives ------------------------------------------------- */
+
+#crypto-experience :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--cy-teal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+#crypto-experience canvas {
+  display: block;
+  width: 100%;
+}
+
+#crypto-experience .cy-canvas {
+  height: 320px;
+  border: 1px solid var(--cy-line);
+  border-radius: 12px;
+  background: var(--cy-deep);
+}
+
+#crypto-experience .cy-canvas-tall {
+  height: 400px;
+}
+
+#crypto-experience .cy-noscript {
+  margin: 1rem 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--cy-line-strong);
+  border-left: 3px solid var(--cy-teal);
+  border-radius: 8px;
+  background: var(--cy-panel);
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-kicker-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+#crypto-experience h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: var(--cy-text-strong);
+}
+
+#crypto-experience h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--cy-text-strong);
+}
+
+#crypto-experience .cy-lede {
+  max-width: 62ch;
+  margin: 0;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-lede :is(em, strong, code) {
+  color: var(--cy-text);
+}
+
+#crypto-experience .cy-prose {
+  max-width: 68ch;
+  margin: 1.4rem 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--cy-text);
+}
+
+#crypto-experience .cy-prose a,
+#crypto-experience .cy-lede a,
+#crypto-experience .cy-fact a,
+#crypto-experience .cy-myth a,
+#crypto-experience .cy-era a {
+  color: var(--cy-teal);
+  text-decoration: underline;
+  text-decoration-color: rgba(45, 212, 191, 0.4);
+  text-underline-offset: 3px;
+}
+
+#crypto-experience .cy-prose a:hover,
+#crypto-experience .cy-fact a:hover {
+  text-decoration-color: var(--cy-teal);
+}
+
+#crypto-experience code {
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--cy-line);
+  font-size: 0.88em;
+  color: var(--cy-text);
+}
+
+#crypto-experience .cy-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-ligatures: none;
+}
+
+#crypto-experience .cy-wrap {
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* ---------- buttons ----------------------------------------------------- */
+
+#crypto-experience .cy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+    color 0.18s ease, transform 0.18s ease;
+}
+
+#crypto-experience .cy-btn:active {
+  transform: translateY(1px);
+}
+
+#crypto-experience .cy-btn-primary {
+  background: var(--cy-teal-deep);
+  color: #06211f;
+  border-color: var(--cy-teal-deep);
+}
+
+#crypto-experience .cy-btn-primary:hover {
+  background: var(--cy-teal);
+  border-color: var(--cy-teal);
+  color: #06211f;
+}
+
+#crypto-experience .cy-btn-ghost {
+  background: transparent;
+  color: var(--cy-text);
+  border-color: var(--cy-line-strong);
+}
+
+#crypto-experience .cy-btn-ghost:hover {
+  border-color: var(--cy-teal);
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-btn-ghost[aria-pressed='true'] {
+  border-color: var(--cy-teal);
+  color: var(--cy-teal);
+  background: rgba(45, 212, 191, 0.08);
+}
+
+#crypto-experience .cy-btn-danger {
+  background: transparent;
+  color: #fda4af;
+  border-color: rgba(225, 29, 72, 0.55);
+}
+
+#crypto-experience .cy-btn-danger:hover {
+  background: rgba(225, 29, 72, 0.12);
+  border-color: #e11d48;
+  color: #fecdd3;
+}
+
+#crypto-experience .cy-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---------- chapter rail ------------------------------------------------ */
+
+#crypto-experience .cy-rail {
+  position: fixed;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 40;
+}
+
+#crypto-experience .cy-rail-dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+}
+
+#crypto-experience .cy-rail-dot span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cy-line-strong);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#crypto-experience .cy-rail-dot:hover span,
+#crypto-experience .cy-rail-dot.is-active span {
+  background: var(--cy-teal);
+  transform: scale(1.35);
+}
+
+#crypto-experience .cy-rail-dot::after {
+  content: attr(data-label);
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  background: var(--cy-panel-solid);
+  border: 1px solid var(--cy-line-strong);
+  color: var(--cy-text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+#crypto-experience .cy-rail-dot:hover::after,
+#crypto-experience .cy-rail-dot:focus-visible::after {
+  opacity: 1;
+}
+
+@media (max-width: 1250px) {
+  #crypto-experience .cy-rail {
+    display: none;
+  }
+}
+
+/* ---------- hero -------------------------------------------------------- */
+
+#crypto-experience .cy-hero {
+  position: relative;
+  min-height: 78vh;
+  display: grid;
+  place-items: center;
+  margin: 0 0 3rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 18px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 90% 60% at 70% 10%, rgba(20, 184, 166, 0.12), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 20% 90%, rgba(139, 92, 246, 0.08), transparent 60%),
+    var(--cy-deep);
+}
+
+#crypto-experience #cy-hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#crypto-experience .cy-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 46rem;
+  padding: 4.5rem 1.5rem;
+  text-align: center;
+}
+
+#crypto-experience .cy-hero-inner .cy-kicker {
+  justify-content: center;
+}
+
+#crypto-experience .cy-hero-title {
+  margin: 0 0 1.1rem;
+  font-size: clamp(2.5rem, 6.5vw, 4.2rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--cy-text-strong);
+  background: linear-gradient(115deg, #f1f5f9 55%, var(--cy-teal));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#crypto-experience .cy-hero-sub {
+  margin: 0 auto 2rem;
+  max-width: 38rem;
+  font-size: 1.12rem;
+  line-height: 1.7;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-hero-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+#crypto-experience .cy-hero-cta .cy-btn-primary {
+  padding: 0.85rem 1.9rem;
+  font-size: 1rem;
+}
+
+#crypto-experience .cy-hero-hint {
+  font-size: 0.8rem;
+  color: var(--cy-faint);
+}
+
+#crypto-experience .cy-hero-scrollhint {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 34px;
+  border: 2px solid var(--cy-line-strong);
+  border-radius: 12px;
+}
+
+#crypto-experience .cy-hero-scrollhint span {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 4px;
+  height: 7px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--cy-teal);
+  animation: cy-scrollhint 1.8s ease-in-out infinite;
+}
+
+@keyframes cy-scrollhint {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(10px); opacity: 0; }
+  85% { transform: translateY(0); opacity: 0; }
+}
+
+/* ---------- sections ---------------------------------------------------- */
+
+#crypto-experience .cy-section {
+  margin: 0 auto 5.5rem;
+  max-width: 62rem;
+  scroll-margin-top: 4.5rem;
+}
+
+#crypto-experience .cy-section-head {
+  margin-bottom: 1.6rem;
+}
+
+#crypto-experience .cy-section-outro {
+  margin-bottom: 2rem;
+}
+
+/* ---------- panels ------------------------------------------------------ */
+
+#crypto-experience .cy-panel {
+  margin: 1.6rem 0;
+  padding: 1.4rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 14px;
+  background: var(--cy-panel);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+#crypto-experience .cy-panel-title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+#crypto-experience .cy-panel-note {
+  margin: 0 0 1rem;
+  max-width: 68ch;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-panel-note :is(em, strong, code) {
+  color: var(--cy-text);
+}
+
+#crypto-experience .cy-panel-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+}
+
+#crypto-experience .cy-controls-bottom {
+  align-items: flex-end;
+  margin-bottom: 0;
+}
+
+#crypto-experience .cy-panel-status {
+  margin: 0.9rem 0 0;
+  min-height: 1.3em;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-panel-status.is-ok { color: var(--cy-teal); }
+#crypto-experience .cy-panel-status.is-bad { color: #fb7185; }
+
+/* ---------- stats / readouts / fields ----------------------------------- */
+
+#crypto-experience .cy-statrow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+#crypto-experience .cy-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 10px;
+  background: rgba(11, 17, 32, 0.6);
+}
+
+#crypto-experience .cy-stat-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cy-faint);
+}
+
+#crypto-experience .cy-stat-val {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--cy-text-strong);
+  word-break: break-all;
+}
+
+#crypto-experience .cy-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0 0 1rem;
+}
+
+#crypto-experience .cy-field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cy-faint);
+}
+
+#crypto-experience .cy-field :is(input[type='text'], textarea) {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--cy-line-strong);
+  border-radius: 9px;
+  background: var(--cy-deep);
+  color: var(--cy-text-strong);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+#crypto-experience .cy-field :is(input, textarea):focus {
+  border-color: var(--cy-teal);
+  outline: none;
+}
+
+#crypto-experience .cy-field-slider input[type='range'] {
+  width: 100%;
+  accent-color: var(--cy-teal);
+}
+
+#crypto-experience .cy-field-check {
+  justify-content: flex-end;
+}
+
+#crypto-experience .cy-check {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+  color: var(--cy-text);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+#crypto-experience .cy-check input {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--cy-c-rose);
+}
+
+#crypto-experience .cy-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
+}
+
+@media (max-width: 700px) {
+  #crypto-experience .cy-grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+#crypto-experience .cy-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 10px;
+  background: rgba(11, 17, 32, 0.6);
+}
+
+#crypto-experience .cy-readout-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cy-faint);
+}
+
+#crypto-experience .cy-readout code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.85rem;
+  color: var(--cy-teal);
+}
+
+/* ---------- reveal-on-scroll -------------------------------------------- */
+
+#crypto-experience [data-cy-reveal],
+#crypto-experience .cy-era {
+  opacity: 1;
+  transform: none;
+}
+
+.cy-js #crypto-experience [data-cy-reveal],
+.cy-js #crypto-experience .cy-era {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.cy-js #crypto-experience [data-cy-reveal].is-in,
+.cy-js #crypto-experience .cy-era.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cy-js #crypto-experience [data-cy-reveal],
+  .cy-js #crypto-experience .cy-era {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- 01: pillars -------------------------------------------------- */
+
+#crypto-experience .cy-pillars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.9rem;
+  margin: 1.6rem 0;
+}
+
+#crypto-experience .cy-pillar {
+  padding: 1.2rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 14px;
+  background: var(--cy-panel);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+#crypto-experience .cy-pillar:hover {
+  border-color: rgba(45, 212, 191, 0.5);
+  transform: translateY(-2px);
+}
+
+#crypto-experience .cy-pillar-icon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 0.8rem;
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-pillar-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+#crypto-experience .cy-pillar p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-pillar p strong {
+  color: var(--cy-text);
+}
+
+/* ---------- 02: timeline ------------------------------------------------- */
+
+#crypto-experience .cy-timeline {
+  list-style: none;
+  margin: 2rem 0;
+  padding: 0;
+  position: relative;
+}
+
+#crypto-experience .cy-timeline::before {
+  content: '';
+  position: absolute;
+  left: 7.2rem;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--cy-teal-deep), var(--cy-line-strong));
+  opacity: 0.5;
+}
+
+#crypto-experience .cy-era {
+  position: relative;
+  margin: 0 0 1.6rem;
+  padding-left: 9.4rem;
+}
+
+#crypto-experience .cy-era::before {
+  content: attr(data-year);
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  width: 6.2rem;
+  text-align: right;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--cy-teal);
+  font-variant-numeric: tabular-nums;
+}
+
+#crypto-experience .cy-era::after {
+  content: '';
+  position: absolute;
+  left: calc(7.2rem - 4px);
+  top: 0.42rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cy-deep);
+  border: 2px solid var(--cy-teal);
+}
+
+#crypto-experience .cy-era h3 {
+  margin-bottom: 0.3rem;
+}
+
+#crypto-experience .cy-era p {
+  margin: 0;
+  max-width: 58ch;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-era p :is(em, strong) {
+  color: var(--cy-text);
+}
+
+@media (max-width: 640px) {
+  #crypto-experience .cy-timeline::before {
+    left: 5px;
+  }
+  #crypto-experience .cy-era {
+    padding-left: 1.8rem;
+  }
+  #crypto-experience .cy-era::before {
+    position: static;
+    display: block;
+    width: auto;
+    text-align: left;
+    margin-bottom: 0.2rem;
+  }
+  #crypto-experience .cy-era::after {
+    left: 1px;
+    top: 0.35rem;
+  }
+}
+
+/* Caesar cracked list */
+
+#crypto-experience .cy-caesar-cracked {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.35rem 0.9rem;
+  margin-top: 0.4rem;
+}
+
+#crypto-experience .cy-caesar-try {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--cy-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#crypto-experience .cy-caesar-try.is-hit {
+  color: var(--cy-teal);
+  font-weight: 700;
+}
+
+#crypto-experience .cy-caesar-try .cy-caesar-shiftno {
+  display: inline-block;
+  min-width: 2.4em;
+  color: var(--cy-line-strong);
+}
+
+#crypto-experience .cy-caesar-try.is-hit .cy-caesar-shiftno {
+  color: var(--cy-teal-deep);
+}
+
+/* ---------- flow diagrams ------------------------------------------------ */
+
+#crypto-experience .cy-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.6rem 0;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 12px;
+  background: rgba(11, 17, 32, 0.5);
+}
+
+#crypto-experience .cy-flow-node {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--cy-line-strong);
+  border-radius: 8px;
+  background: var(--cy-panel-solid);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cy-text);
+  white-space: nowrap;
+}
+
+#crypto-experience .cy-flow-key {
+  border-color: rgba(217, 119, 6, 0.6);
+  color: #fbbf24;
+}
+
+#crypto-experience .cy-flow-op {
+  border-color: rgba(45, 212, 191, 0.55);
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-flow-ct {
+  border-color: rgba(139, 92, 246, 0.6);
+  color: #c4b5fd;
+}
+
+#crypto-experience .cy-flow-arrow {
+  color: var(--cy-faint);
+  font-size: 0.9rem;
+}
+
+/* ---------- fact cards --------------------------------------------------- */
+
+#crypto-experience .cy-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.9rem;
+  margin: 1.6rem 0;
+}
+
+#crypto-experience .cy-fact {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--cy-line);
+  border-left: 3px solid var(--cy-teal-deep);
+  border-radius: 10px;
+  background: var(--cy-panel);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-fact strong {
+  color: var(--cy-text-strong);
+}
+
+#crypto-experience .cy-fact-warn {
+  border-left-color: var(--cy-c-amber);
+}
+
+/* ---------- 04: key cards ------------------------------------------------ */
+
+#crypto-experience .cy-keycards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+@media (max-width: 700px) {
+  #crypto-experience .cy-keycards {
+    grid-template-columns: 1fr;
+  }
+}
+
+#crypto-experience .cy-keycard {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--cy-line);
+  background: rgba(11, 17, 32, 0.6);
+}
+
+#crypto-experience .cy-keycard-pub {
+  border-color: rgba(2, 132, 199, 0.55);
+}
+
+#crypto-experience .cy-keycard-priv {
+  border-color: rgba(217, 119, 6, 0.55);
+}
+
+#crypto-experience .cy-keycard-tag {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#crypto-experience .cy-keycard-pub .cy-keycard-tag { color: #38bdf8; }
+#crypto-experience .cy-keycard-priv .cy-keycard-tag { color: #fbbf24; }
+
+#crypto-experience .cy-keycard code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.8rem;
+  color: var(--cy-muted);
+}
+
+/* ---------- 05: hash viz ------------------------------------------------- */
+
+#crypto-experience .cy-hashviz {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.2rem;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  #crypto-experience .cy-hashviz {
+    grid-template-columns: 1fr;
+  }
+}
+
+#crypto-experience .cy-hash-grid {
+  width: 272px;
+  height: 272px;
+  max-width: 100%;
+  border: 1px solid var(--cy-line);
+  border-radius: 10px;
+  background: var(--cy-deep);
+}
+
+#crypto-experience .cy-hashviz-side .cy-stat {
+  margin-bottom: 0.8rem;
+}
+
+#crypto-experience .cy-hashviz-side .cy-panel-note {
+  margin-bottom: 0;
+}
+
+/* ---------- 06: signature verdict ---------------------------------------- */
+
+#crypto-experience .cy-verdict {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--cy-line);
+  background: rgba(11, 17, 32, 0.6);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--cy-muted);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+#crypto-experience .cy-verdict-icon {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--cy-line-strong);
+  position: relative;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+#crypto-experience .cy-verdict-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#crypto-experience .cy-verdict[data-state='valid'] {
+  border-color: rgba(13, 148, 136, 0.65);
+  background: rgba(13, 148, 136, 0.1);
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-verdict[data-state='valid'] .cy-verdict-icon {
+  border-color: var(--cy-teal);
+  background: rgba(45, 212, 191, 0.15);
+}
+
+#crypto-experience .cy-verdict[data-state='valid'] .cy-verdict-icon::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%232dd4bf' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+#crypto-experience .cy-verdict[data-state='invalid'] {
+  border-color: rgba(225, 29, 72, 0.65);
+  background: rgba(225, 29, 72, 0.1);
+  color: #fb7185;
+}
+
+#crypto-experience .cy-verdict[data-state='invalid'] .cy-verdict-icon {
+  border-color: #e11d48;
+  background: rgba(225, 29, 72, 0.15);
+}
+
+#crypto-experience .cy-verdict[data-state='invalid'] .cy-verdict-icon::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 7l10 10M17 7L7 17' fill='none' stroke='%23fb7185' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* ---------- 07: TLS steps ------------------------------------------------ */
+
+#crypto-experience .cy-tls-steps {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+  counter-reset: tls-step;
+}
+
+#crypto-experience .cy-tls-steps li {
+  counter-increment: tls-step;
+  position: relative;
+  padding: 0.6rem 0.9rem 0.6rem 2.6rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 9px;
+  background: rgba(11, 17, 32, 0.5);
+  font-size: 0.87rem;
+  line-height: 1.6;
+  color: var(--cy-faint);
+  transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+}
+
+#crypto-experience .cy-tls-steps li::before {
+  content: counter(tls-step);
+  position: absolute;
+  left: 0.75rem;
+  top: 0.7rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  border: 1px solid var(--cy-line-strong);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--cy-faint);
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+#crypto-experience .cy-tls-steps li strong {
+  color: inherit;
+}
+
+#crypto-experience .cy-tls-steps li.is-active {
+  border-color: rgba(45, 212, 191, 0.6);
+  background: rgba(13, 148, 136, 0.09);
+  color: var(--cy-text);
+}
+
+#crypto-experience .cy-tls-steps li.is-active::before {
+  border-color: var(--cy-teal);
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-tls-steps li.is-done {
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-tls-steps li.is-done::before {
+  border-color: var(--cy-teal-deep);
+  color: var(--cy-teal-deep);
+}
+
+/* ---------- 08: password tables ------------------------------------------ */
+
+#crypto-experience .cy-pwgrid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 820px) {
+  #crypto-experience .cy-pwgrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+#crypto-experience .cy-pwdb {
+  border: 1px solid var(--cy-line);
+  border-radius: 10px;
+  background: rgba(11, 17, 32, 0.6);
+  padding: 0.9rem;
+  overflow-x: auto;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#crypto-experience .cy-pwdb.is-breached {
+  border-color: rgba(225, 29, 72, 0.6);
+}
+
+#crypto-experience .cy-pwdb.is-breached-safe {
+  border-color: rgba(13, 148, 136, 0.6);
+}
+
+#crypto-experience .cy-pwdb h4 {
+  margin: 0 0 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+
+#crypto-experience .cy-table th,
+#crypto-experience .cy-table td {
+  padding: 0.35rem 0.55rem;
+  text-align: left;
+  border-bottom: 1px solid var(--cy-line);
+  color: var(--cy-muted);
+  white-space: nowrap;
+}
+
+#crypto-experience .cy-table th {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--cy-faint);
+}
+
+#crypto-experience .cy-table td.cy-pw-exposed {
+  color: #fb7185;
+  font-weight: 700;
+}
+
+#crypto-experience .cy-table td.cy-pw-safe {
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-table tr.cy-pw-dup td {
+  background: rgba(217, 119, 6, 0.08);
+}
+
+/* ---------- 10: everyday apps -------------------------------------------- */
+
+#crypto-experience .cy-apps {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) 3fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  #crypto-experience .cy-apps {
+    grid-template-columns: 1fr;
+  }
+}
+
+#crypto-experience .cy-app-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+#crypto-experience .cy-app-btn {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 9px;
+  background: var(--cy-panel);
+  color: var(--cy-text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease;
+}
+
+#crypto-experience .cy-app-btn:hover {
+  border-color: rgba(45, 212, 191, 0.55);
+}
+
+#crypto-experience .cy-app-btn[aria-pressed='true'] {
+  border-color: var(--cy-teal);
+  color: var(--cy-teal);
+  background: rgba(45, 212, 191, 0.08);
+}
+
+#crypto-experience .cy-app-detail {
+  min-height: 12rem;
+  padding: 1.2rem 1.3rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 12px;
+  background: var(--cy-panel);
+  position: sticky;
+  top: 4.5rem;
+}
+
+#crypto-experience .cy-app-detail h3 {
+  margin-bottom: 0.6rem;
+}
+
+#crypto-experience .cy-app-detail p {
+  margin: 0 0 0.8rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-chiprow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+#crypto-experience .cy-chip {
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--cy-line-strong);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+#crypto-experience .cy-chip-sym { border-color: rgba(13, 148, 136, 0.6); color: var(--cy-teal); }
+#crypto-experience .cy-chip-asym { border-color: rgba(2, 132, 199, 0.6); color: #38bdf8; }
+#crypto-experience .cy-chip-hash { border-color: rgba(139, 92, 246, 0.6); color: #c4b5fd; }
+#crypto-experience .cy-chip-sig { border-color: rgba(217, 119, 6, 0.6); color: #fbbf24; }
+#crypto-experience .cy-chip-tls { border-color: rgba(101, 163, 13, 0.6); color: #a3e635; }
+
+/* ---------- 11: myths ---------------------------------------------------- */
+
+#crypto-experience .cy-myths {
+  display: grid;
+  gap: 0.7rem;
+  margin: 1.6rem 0;
+}
+
+#crypto-experience .cy-myth {
+  border: 1px solid var(--cy-line);
+  border-radius: 11px;
+  background: var(--cy-panel);
+  overflow: hidden;
+}
+
+#crypto-experience .cy-myth summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.95rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--cy-text);
+  cursor: pointer;
+  list-style: none;
+  transition: color 0.18s ease;
+}
+
+#crypto-experience .cy-myth summary::-webkit-details-marker {
+  display: none;
+}
+
+#crypto-experience .cy-myth summary::after {
+  content: '+';
+  margin-left: auto;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--cy-faint);
+  transition: transform 0.2s ease;
+}
+
+#crypto-experience .cy-myth[open] summary::after {
+  transform: rotate(45deg);
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-myth summary:hover {
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-myth-tag {
+  flex: 0 0 auto;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(225, 29, 72, 0.55);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fb7185;
+}
+
+#crypto-experience .cy-myth p {
+  margin: 0;
+  padding: 0 1.1rem 1.1rem;
+  max-width: 72ch;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-myth p em {
+  color: var(--cy-text);
+}
+
+/* ---------- 12: future --------------------------------------------------- */
+
+#crypto-experience .cy-future {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.9rem;
+  margin: 1.6rem 0;
+}
+
+#crypto-experience .cy-future-card {
+  padding: 1.2rem 1.3rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 14px;
+  background:
+    linear-gradient(155deg, rgba(139, 92, 246, 0.07), transparent 45%),
+    var(--cy-panel);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+#crypto-experience .cy-future-card:hover {
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+#crypto-experience .cy-future-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--cy-muted);
+}
+
+#crypto-experience .cy-future-card p strong {
+  color: var(--cy-text);
+}
+
+/* ---------- 13: lab stages ----------------------------------------------- */
+
+#crypto-experience .cy-lab-stages {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+#crypto-experience .cy-lab-stage {
+  display: flex;
+  gap: 0.85rem;
+  padding: 0.75rem 0.95rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 10px;
+  background: rgba(11, 17, 32, 0.5);
+  transition: border-color 0.3s ease, background-color 0.3s ease, opacity 0.3s ease;
+  opacity: 0.55;
+}
+
+#crypto-experience .cy-lab-stage h4 {
+  margin: 0 0 0.15rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--cy-text);
+}
+
+#crypto-experience .cy-lab-stage-detail {
+  margin: 0 0 0.3rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--cy-faint);
+}
+
+#crypto-experience .cy-lab-stage-out {
+  display: block;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.78rem;
+  color: var(--cy-teal);
+  min-height: 1em;
+}
+
+#crypto-experience .cy-lab-stage-icon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  margin-top: 0.1rem;
+  border-radius: 50%;
+  border: 2px solid var(--cy-line-strong);
+  position: relative;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#crypto-experience .cy-lab-stage-icon::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 15px 15px;
+}
+
+#crypto-experience .cy-lab-stage.is-active {
+  opacity: 1;
+  border-color: rgba(45, 212, 191, 0.55);
+  background: rgba(13, 148, 136, 0.08);
+}
+
+#crypto-experience .cy-lab-stage.is-active .cy-lab-stage-icon {
+  border-color: var(--cy-teal);
+}
+
+#crypto-experience .cy-lab-stage.is-ok {
+  opacity: 1;
+}
+
+#crypto-experience .cy-lab-stage.is-ok .cy-lab-stage-icon {
+  border-color: var(--cy-teal-deep);
+  background: rgba(45, 212, 191, 0.12);
+}
+
+#crypto-experience .cy-lab-stage.is-ok .cy-lab-stage-icon::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%232dd4bf' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+#crypto-experience .cy-lab-stage.is-bad {
+  opacity: 1;
+  border-color: rgba(225, 29, 72, 0.6);
+  background: rgba(225, 29, 72, 0.07);
+}
+
+#crypto-experience .cy-lab-stage.is-bad .cy-lab-stage-icon {
+  border-color: #e11d48;
+  background: rgba(225, 29, 72, 0.14);
+}
+
+#crypto-experience .cy-lab-stage.is-bad .cy-lab-stage-icon::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 7l10 10M17 7L7 17' fill='none' stroke='%23fb7185' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+#crypto-experience .cy-lab-stage.is-bad .cy-lab-stage-out {
+  color: #fb7185;
+}
+
+#crypto-experience .cy-lab-stage.is-warn {
+  opacity: 1;
+  border-color: rgba(217, 119, 6, 0.55);
+  background: rgba(217, 119, 6, 0.06);
+}
+
+#crypto-experience .cy-lab-stage.is-warn .cy-lab-stage-icon {
+  border-color: var(--cy-c-amber);
+}
+
+#crypto-experience .cy-lab-stage.is-warn .cy-lab-stage-out {
+  color: #fbbf24;
+}
+
+/* ---------- outro cards -------------------------------------------------- */
+
+#crypto-experience .cy-nextgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.9rem;
+  margin: 1.6rem 0 0;
+}
+
+#crypto-experience .cy-next {
+  display: block;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid var(--cy-line);
+  border-radius: 13px;
+  background: var(--cy-panel);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+#crypto-experience .cy-next:hover {
+  border-color: var(--cy-teal);
+  transform: translateY(-2px);
+}
+
+#crypto-experience .cy-next-tag {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cy-teal);
+}
+
+#crypto-experience .cy-next p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--cy-muted);
+}
+
+/* ---------- reduced motion ----------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  #crypto-experience .cy-hero-scrollhint span {
+    animation: none;
+  }
+  #crypto-experience :is(.cy-pillar, .cy-future-card, .cy-next):hover {
+    transform: none;
+  }
+  #crypto-experience * {
+    transition-duration: 0.01ms !important;
+  }
+}
