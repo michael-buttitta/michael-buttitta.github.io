@@ -241,6 +241,7 @@
 
     function drawStatic() {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       /* faint pcb grid */
       ctx.save();
@@ -679,6 +680,7 @@
 
     function draw() {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var s = sim || freshSim();
 
@@ -1124,6 +1126,7 @@
 
     function draw() {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var s = st || fresh();
       var mid = w / 2;
@@ -1596,6 +1599,7 @@
 
     function draw(dt) {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 260 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var lat = latNs(), bw = bwGBs();
       /* pipe geometry: height from bandwidth (log), crossing time from latency (log) */
@@ -1824,6 +1828,7 @@
 
     function draw(progress, dt) {
       var g = laneGeom();
+      if (g.w < 100 || g.h < 100) { return; }
       var m = lastM || model();
       ctx.clearRect(0, 0, g.w, g.h);
 
