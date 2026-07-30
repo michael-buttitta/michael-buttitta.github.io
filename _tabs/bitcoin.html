@@ -1241,9 +1241,12 @@ extra_js:
   ================================================================ -->
   <section class="bx-section" id="lightning" aria-labelledby="lightning-h">
     <div class="bx-section-head">
-      <p class="bx-kicker"><span class="bx-kicker-num">12</span> Layer 2</p>
+      <p class="bx-kicker"><span class="bx-kicker-num">12</span> Coda &middot; Layer 2</p>
       <h2 id="lightning-h">Lightning: settle later, pay now</h2>
       <p class="bx-lede">
+        Everything up to here was about the base layer &mdash; whether the
+        ledger holds. This chapter answers a different question: what gets
+        built on top of it once it does.
         Global consensus is Bitcoin's superpower and its bottleneck: every
         node checks every transaction, so the base chain handles only a
         handful per second, and a coffee shouldn't wait ten minutes. The
@@ -1499,6 +1502,53 @@ extra_js:
       forks; limited blocks create fee pressure; more work means safer
       history) are the real thing.
     </p>
+  </section>
+
+  <!-- ================================================================
+       NEXT STOPS
+  ================================================================ -->
+  <section class="bx-section bx-section-next" id="next" aria-labelledby="next-h">
+    <div class="bx-section-head">
+      <p class="bx-kicker">Keep exploring</p>
+      <h2 id="next-h">Where to go from here</h2>
+      <p class="bx-lede">
+        Bitcoin is an assembly of older ideas &mdash; hashes, signatures,
+        gossip networks, silicon &mdash; pointed at one problem. Five exhibits
+        take those pieces apart on their own terms.
+      </p>
+    </div>
+    <div class="bx-nextgrid" data-bx-reveal>
+      <a class="bx-next" href="/blockchain/">
+        <span class="bx-next-tag">Understanding Blockchain</span>
+        <p>The tamper demo in chapter 04 is one blockchain. This is the general
+        structure underneath it &mdash; Merkle trees, consensus families, and
+        what changes when the ledger isn't money.</p>
+      </a>
+      <a class="bx-next" href="/cryptography/">
+        <span class="bx-next-tag">Understanding Cryptography</span>
+        <p>Chapter 06 asked you to trust that a signature proves ownership.
+        Here is why it does: the same secp256k1 curve, plus the hashing and
+        key exchange the rest of the internet runs on.</p>
+      </a>
+      <a class="bx-next" href="/internet/">
+        <span class="bx-next-tag">How the Internet Works</span>
+        <p>The gossip in chapter 05 and the propagation delay that caused your
+        forks in the playground are real network behavior. This exhibit routes
+        the packets that carry them.</p>
+      </a>
+      <a class="bx-next" href="/cpu/">
+        <span class="bx-next-tag">Inside a Modern CPU</span>
+        <p>Your miner in chapter 08 managed a few hundred thousand hashes per
+        second. This is the machine doing that work &mdash; and why purpose-built
+        silicon beats it by a factor of a trillion.</p>
+      </a>
+      <a class="bx-next" href="/cloud/">
+        <span class="bx-next-tag">Understanding the Cloud</span>
+        <p>Every node in chapter 09 runs somewhere on real hardware. This is
+        what that somewhere looks like when it belongs to someone else &mdash;
+        and why running your own node is a different bet.</p>
+      </a>
+    </div>
   </section>
 
   <!-- ================================================================

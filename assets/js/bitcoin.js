@@ -397,7 +397,46 @@
   }
 
   /* When loaded outside a browser (Node), export the crypto core for the
-     vector tests and stop — everything below is DOM territory. */
+     vector tests and stop — everything below is DOM territory.
+
+     Calling conventions (all positional; bytes are Uint8Array, scalars BigInt):
+
+       utf8Bytes(str)                 -> Uint8Array
+       bytesToHex(bytes)              -> lowercase hex string
+       hexToBytes(hex)                -> Uint8Array
+       bytesToBig(bytes)              -> BigInt, big-endian
+       bigToBytes(big, len)           -> Uint8Array, big-endian, zero-padded
+       reverseBytes(bytes)            -> Uint8Array (little/big-endian flip)
+       sha256(bytes)                  -> Uint8Array(32)
+       sha256d(bytes)                 -> Uint8Array(32), SHA-256 applied twice
+       ripemd160(bytes)               -> Uint8Array(20)
+       hash160(bytes)                 -> Uint8Array(20), RIPEMD-160(SHA-256(x))
+       pubFromPriv(d)                 -> { x, y, compressed, uncompressed }
+                                         d is a BigInt in [1, EC_N)
+       ecdsaSign(z, d, k)             -> { r, s } | null   (null if k is
+                                         degenerate; retry with a fresh k)
+                                         z = message digest as BigInt,
+                                         d = private key, k = nonce
+       ecdsaVerify(z, r, s, pub)      -> boolean; pub is a pubFromPriv() result
+       base58check(bytes)             -> Base58Check string
+       p2pkhAddress(compressedPub)    -> '1...' address string
+
+     Recorded vector suite — every assertion must print PASS:
+
+       node -e "const B=require('./assets/js/bitcoin.js');
+       B.bytesToHex(B.sha256(B.utf8Bytes('abc'))) ===
+         'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'
+       B.bytesToHex(B.ripemd160(B.utf8Bytes('abc'))) ===
+         '8eb208f7e05d987a9b044a8e98c6b087f15a0bfc'
+       B.p2pkhAddress(B.pubFromPriv(1n).compressed) ===
+         '1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH'
+       // round trip: sign then verify
+       pub = B.pubFromPriv(12345n)
+       z   = B.bytesToBig(B.sha256(B.utf8Bytes('hello')))
+       s   = B.ecdsaSign(z, 12345n, 987654321n)
+       B.ecdsaVerify(z, s.r, s.s, pub)      === true
+       // and the same signature must fail against a different message
+       B.ecdsaVerify(z + 1n, s.r, s.s, pub) === false" */
   if (typeof window === 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
       module.exports = {
@@ -635,6 +674,7 @@
     }
 
     function draw(now) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var wd = wave ? wave.dist : null;
       var wAge = wave ? (now - wave.t0) : 0;
@@ -833,6 +873,7 @@
     }
 
     function drawAll(progress) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var rects = ledgerRects();
       rects.forEach(function (R) {
@@ -1068,7 +1109,9 @@
           el.nonce.textContent = fmtInt(n);
           el.hash.textContent = short(blockHash(idx));
           if (reduced()) { while (blockHash(idx).slice(0, TARGET.length) !== TARGET) { blocks[idx].nonce = ++n; } el.root.classList.remove('is-mining'); refresh(); return; }
-          requestAnimationFrame(chunk);
+          /* setTimeout, not rAF: the re-mine must keep grinding even if the tab
+             is hidden — rAF is frozen there. */
+          setTimeout(chunk, 16);
         }
         chunk();
       });
@@ -1571,7 +1614,9 @@
       els.rate.textContent = fmtInt(rateEma) + ' H/s';
       els.elapsed.textContent = ((performance.now() - t0) / 1000).toFixed(1) + ' s';
       els.best.textContent = best ? best.slice(0, 12) + '…' : '—';
-      requestAnimationFrame(frame);
+      /* setTimeout, not rAF: the miner must keep grinding even if the tab
+         is hidden — rAF is frozen there. */
+      setTimeout(frame, 16);
     }
 
     startBtn.addEventListener('click', function () {
@@ -1583,7 +1628,7 @@
       onceBtn.disabled = true;
       diffSel.disabled = true;
       els.verdict.textContent = 'Searching… each attempt is a full double SHA-256 of the 80-byte header. Odds per try: 1 in ' + fmtInt(Math.pow(16, zerosNeeded)) + '.';
-      requestAnimationFrame(frame);
+      setTimeout(frame, 16);
     });
 
     onceBtn.addEventListener('click', function () {
@@ -1633,6 +1678,7 @@
     }
 
     function draw() {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       if (!epochs.length) { return; }
       var padL = 46, padR = 52, padT = 18, padB = 26;
@@ -1733,7 +1779,7 @@
     if (!canvas) { return; }
     var cap = $('#bx-consensus-cap');
     var replayBtn = $('#bx-fork-replay');
-    var cv = setupCanvas(canvas, function () { place(); });
+    var cv = setupCanvas(canvas, function () { place(); if (reduced()) { drawStatic(); } });
     var ctx = cv.ctx, st = cv.state;
 
     /* four regional clusters (normalized coordinates) */
@@ -1825,6 +1871,7 @@
     }
 
     function draw(now) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
 
       /* cluster labels */
@@ -1879,6 +1926,14 @@
           ctx.stroke();
         }
       });
+    }
+
+    /* one settled propagation wave, drawn once — the reduced-motion frame, and
+       the repaint used when the canvas only gets a real box after first layout */
+    function drawStatic() {
+      wave = { dist: dijkstra(5), t0: performance.now() - 2000 };
+      draw(performance.now());
+      wave = null;
     }
 
     function forkTick(now) {
@@ -1940,9 +1995,7 @@
 
     if (reduced()) {
       /* static frame with one settled wave; replay renders end states stepwise */
-      wave = { dist: dijkstra(5), t0: performance.now() - 2000 };
-      draw(performance.now());
-      wave = null;
+      drawStatic();
       replayBtn.addEventListener('click', function () {
         if (cap) {
           cap.textContent = 'Fork replay (reduced motion): two simultaneous blocks split the network by region; the next block built on one of them, that branch accumulated more work, and every node converged on it. The losing block became stale.';
@@ -2384,6 +2437,16 @@
     var sim = null;
 
     function build() {
+      /* A zero-width backing store would place every node on top of every other
+         one and hand negative extents to the draw code. Leave `net` null — the
+         ResizeObserver refit calls build() again once the canvas has a real box
+         — but still make sure `sim` exists, because the run/reset buttons and
+         the rAF body dereference it. */
+      if (st.w < 60 || st.h < 60) {
+        net = null;
+        if (!sim) { resetSim(); }
+        return;
+      }
       var N = val('nodes');
       var M = Math.min(val('miners'), N);
       var margin = 26;
@@ -2527,6 +2590,7 @@
 
     var lastStatAt = 0;
     function tick(now, dt) {
+      if (!net) { return; }
       /* transactions */
       var rate = val('txrate');
       if (Math.random() < (rate * dt) / 1000) {
@@ -2551,6 +2615,7 @@
     }
 
     function drawFrame(now) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       if (!net) { return; }
       ctx.lineWidth = 1;

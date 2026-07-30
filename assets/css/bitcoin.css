@@ -2542,6 +2542,50 @@
   color: var(--bx-muted);
 }
 
+/* ---------- next stops -------------------------------------------------- */
+
+#bitcoin-experience .bx-section-next {
+  padding-bottom: 2rem;
+}
+
+#bitcoin-experience .bx-nextgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+#bitcoin-experience .bx-next {
+  display: block;
+  padding: 1.1rem;
+  border: 1px solid var(--bx-line);
+  border-radius: 12px;
+  background: var(--bx-panel);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+#bitcoin-experience .bx-next:hover,
+#bitcoin-experience .bx-next:focus-visible {
+  border-color: var(--bx-teal);
+  transform: translateY(-2px);
+}
+
+#bitcoin-experience .bx-next-tag {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--bx-teal);
+}
+
+#bitcoin-experience .bx-next p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--bx-muted);
+}
+
 /* ---------- outro ------------------------------------------------------- */
 
 #bitcoin-experience .bx-outro {
