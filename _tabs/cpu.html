@@ -958,11 +958,13 @@ extra_js:
       <p class="cx-kicker"><span class="cx-kicker-num">11</span> The sibling</p>
       <h2 id="vsgpu-h">CPU vs GPU</h2>
       <p class="cx-lede">
-        A CPU spends its transistors making <em>one</em> thread finish sooner:
-        caches, predictors, out-of-order machinery. A GPU spends the same
-        transistors on thousands of simple lanes that each run slowly &mdash;
-        but all at once. Neither is &ldquo;faster&rdquo;; they are built for
-        opposite workloads. Race them both ways.
+        Everything in the last ten chapters was spent on one goal: make
+        <em>this</em> instruction finish sooner. Caches, predictors,
+        out-of-order machinery &mdash; all of it buys latency. There is a
+        second way to spend the same transistors, and it is worth one chapter
+        here because it shows where the CPU&rsquo;s argument stops: give up
+        the cleverness, and you can afford thousands of slow lanes instead of
+        eight fast cores. Race the two and watch the trade decide itself.
       </p>
     </div>
 
@@ -1001,7 +1003,7 @@ extra_js:
 
     <div class="cx-table-wrap" data-cx-reveal>
       <table class="cx-compare">
-        <caption class="cx-visually-hidden">How CPUs and GPUs differ</caption>
+        <caption class="cx-visually-hidden">The one trade that separates a CPU from a GPU</caption>
         <thead>
           <tr><th scope="col"></th><th scope="col">CPU</th><th scope="col">GPU</th></tr>
         </thead>
@@ -1016,27 +1018,27 @@ extra_js:
             <td>Latency &mdash; finish <em>this</em> task now</td>
             <td>Throughput &mdash; finish <em>all</em> tasks soon</td>
           </tr>
-          <tr>
-            <th scope="row">Branching</th>
-            <td>Predicted, speculated, cheap</td>
-            <td>Divergence stalls whole lane groups</td>
-          </tr>
-          <tr>
-            <th scope="row">Ideal work</th>
-            <td>Operating systems, databases, game logic, compilers</td>
-            <td>Graphics, AI, simulation &mdash; same math on huge arrays</td>
-          </tr>
         </tbody>
       </table>
     </div>
 
     <p class="cx-caption">
-      In practice they are teammates: the CPU runs the program, makes the
-      decisions, and feeds the GPU its huge homogeneous jobs. This page has a
-      sibling &mdash; <a href="/gpu/">Inside a Modern GPU</a> &mdash; that
-      tells the other half of the story.
+      That is the whole comparison this page needs. Nothing else changes: the
+      CPU still runs the program and still makes the decisions &mdash; it just
+      hands the huge homogeneous jobs to a chip built the other way. What the
+      other way costs, and why a single branch is expensive when 32 lanes
+      share one instruction stream, is a page of its own:
+      <a href="/gpu/">Inside a Modern GPU</a>. Back here, we still have a
+      spec sheet to read and a chip to design.
     </p>
   </section>
+
+  <p class="cx-interlude">
+    The argument is finished. What follows is two chapters of reference and
+    history &mdash; the numbers you will actually meet on a spec sheet, and
+    the eighty years of chips that produced them &mdash; before you get to
+    build one yourself.
+  </p>
 
   <!-- ================================================================
        12 - READING A SPEC SHEET
@@ -1369,9 +1371,36 @@ extra_js:
       training run starts the same way: fetch, decode, execute, a few billion
       times a second. Now you know what happens in between.
     </p>
-    <div class="cx-outro-links">
-      <a class="cx-btn cx-btn-primary" href="/gpu/">Next: Inside a Modern GPU</a>
-      <a class="cx-btn cx-btn-ghost" href="/bitcoin/">Or: Understanding Bitcoin</a>
+    <div class="cx-nextgrid" data-cx-reveal>
+      <a class="cx-next" href="/memory/">
+        <span class="cx-next-tag">Inside Computer Memory</span>
+        <p>Chapter 06 stopped at the cache tiers. This is the rest of the
+        climb &mdash; DRAM rows, flash cells, virtual memory &mdash; and why
+        400 cycles is the optimistic number.</p>
+      </a>
+      <a class="cx-next" href="/operating-systems/">
+        <span class="cx-next-tag">Understanding Operating Systems</span>
+        <p>The core runs one instruction stream at a time. The software that
+        decides <em>whose</em> stream, and takes it away a few thousand times a
+        second, is the scheduler.</p>
+      </a>
+      <a class="cx-next" href="/gpu/">
+        <span class="cx-next-tag">Inside a Modern GPU</span>
+        <p>The other half of chapter 11. Everything this page spent
+        transistors on &mdash; prediction, reordering, deep caches &mdash;
+        thrown away in exchange for thousands of lanes.</p>
+      </a>
+      <a class="cx-next" href="/internet/">
+        <span class="cx-next-tag">How the Internet Works</span>
+        <p>Fetch, decode, execute is the local story. Follow one request out
+        of this machine and watch how much of the wait has nothing to do with
+        your clock speed.</p>
+      </a>
+      <a class="cx-next" href="/machine-learning/">
+        <span class="cx-next-tag">Understanding Machine Learning</span>
+        <p>What all those cycles get spent on now. Real gradient descent,
+        k-means and a small neural network, trained live in the browser.</p>
+      </a>
     </div>
     <p class="cx-outro-small">
       Built by hand with vanilla JavaScript, SVG, and canvas &mdash; no

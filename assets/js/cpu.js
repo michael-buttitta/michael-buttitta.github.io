@@ -15,6 +15,10 @@
 (function () {
   'use strict';
 
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return;
+  }
+
   document.documentElement.classList.add('cx-js');
 
   var RM = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -188,6 +192,7 @@
 
     function layout() {
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
       var dw = Math.min(w * 0.72, 760);
       var dh = Math.min(h * 0.78, dw * 0.62);
       dw = Math.min(dw, dh / 0.62);
@@ -232,6 +237,7 @@
 
     function draw(dt) {
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       if (!die) { layout(); }
       if (!die) { return; }
@@ -1086,6 +1092,7 @@
 
     function draw() {
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var left = 44;
       var top = 24;
@@ -1307,6 +1314,7 @@
 
     function draw() {
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
 
       /* pipe outline */
@@ -1492,6 +1500,7 @@
 
     function draw() {
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var s = activeSched();
       var left = 46;
@@ -1667,6 +1676,7 @@
     function draw(p) {
       var m = model();
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var left = 58;
       var top = 18;
@@ -1841,6 +1851,7 @@
 
     function drawCpu(p) {
       var ctx = cpuFit.ctx, w = cpuFit.state.w, h = cpuFit.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var lanes = 8;
       var top = 10, bottom = 24;
@@ -1869,6 +1880,7 @@
 
     function drawGpu(p) {
       var ctx = gpuFit.ctx, w = gpuFit.state.w, h = gpuFit.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var cols = 64, rows = 32;
       var top = 8, bottom = 24;
@@ -2141,6 +2153,7 @@
     function draw(pgs) {
       var m = lastM;
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       if (!m) {
         ctx.font = '13px Inter, sans-serif';
