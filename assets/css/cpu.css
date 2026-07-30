@@ -1880,11 +1880,19 @@ html.cx-js #cpu-experience .cx-hier[data-cx-reveal].is-in .cx-level-bar i {
   }
 }
 
+/* min-width:0 so the nowrap instruction lines cannot force the grid wider
+   than the viewport; below ~340px the panel scrolls instead of the page. */
+#cpu-experience .cx-ooo-prog,
+#cpu-experience .cx-ooo-stage {
+  min-width: 0;
+}
+
 #cpu-experience .cx-ooo-prog {
   padding: 1.1rem 1.2rem;
   border: 1px solid var(--cx-line);
   border-radius: 14px;
   background: var(--cx-panel);
+  overflow-x: auto;
 }
 
 #cpu-experience .cx-ooo-list {
