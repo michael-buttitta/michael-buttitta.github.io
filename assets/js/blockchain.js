@@ -18,8 +18,6 @@
 (function () {
   'use strict';
 
-  function reduced() { return RM.matches; }
-
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
 
@@ -122,8 +120,11 @@
   var ZERO64 = new Array(65).join('0');
 
   /* Under Node the file exports the hash core and stops (no DOM), so the
-     shipped artifact is directly unit-testable — same pattern as bitcoin.js:
-     node -e "const B=require('./assets/js/blockchain.js'); console.log(B.sha256('abc'))" */
+     shipped artifact is directly unit-testable — same pattern as bitcoin.js.
+     Calling convention: sha256(str) -> 64-char hex string. String in, unlike
+     bitcoin.js's byte-oriented sha256(Uint8Array); pass raw bytes through
+     utf8Bytes() if you need them. The canonical vector:
+     node -e "const K=require('./assets/js/blockchain.js');console.log(K.sha256('abc')==='ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad')" */
   if (typeof window === 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
       module.exports = { sha256: sha256, hexBitDiff: hexBitDiff, utf8Bytes: utf8Bytes };
@@ -134,6 +135,8 @@
   document.documentElement.classList.add('bc-js');
 
   var RM = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function reduced() { return RM.matches; }
 
   /* ==========================================================================
      Shared canvas / animation utilities

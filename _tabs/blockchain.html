@@ -30,6 +30,7 @@ extra_js:
   <nav class="bc-rail" aria-label="Chapters">
     <a class="bc-rail-dot" href="#top" data-label="Top"><span></span></a>
     <a class="bc-rail-dot" href="#trust" data-label="The trust problem"><span></span></a>
+    <a class="bc-rail-dot" href="#history" data-label="Timeline"><span></span></a>
     <a class="bc-rail-dot" href="#systems" data-label="Centralized vs decentralized"><span></span></a>
     <a class="bc-rail-dot" href="#anatomy" data-label="What is a blockchain?"><span></span></a>
     <a class="bc-rail-dot" href="#hashing" data-label="Hashing"><span></span></a>
@@ -41,7 +42,6 @@ extra_js:
     <a class="bc-rail-dot" href="#adoption" data-label="Real-world adoption"><span></span></a>
     <a class="bc-rail-dot" href="#whennot" data-label="When NOT to use it"><span></span></a>
     <a class="bc-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
-    <a class="bc-rail-dot" href="#history" data-label="Timeline"><span></span></a>
     <a class="bc-rail-dot" href="#playground" data-label="Blockchain builder"><span></span></a>
   </nav>
 
@@ -117,11 +117,100 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       02 - CENTRALIZED VS DECENTRALIZED
+       02 - TIMELINE
+  ================================================================ -->
+  <section class="bc-section" id="history" aria-labelledby="history-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker"><span class="bc-kicker-num">02</span> How we got here</p>
+      <h2 id="history-h">A brief history of the idea</h2>
+      <p class="bc-lede">
+        People tried to answer that question for thirty years before anyone
+        succeeded. Blockchain was not one invention but a slow assembly of
+        parts &mdash; decades of cryptography research that clicked together
+        in 2008. Scroll the timeline; every piece on it becomes a chapter of
+        this page.
+      </p>
+    </div>
+
+    <div class="bc-timeline-wrap" data-bc-reveal>
+      <ol class="bc-timeline" id="bc-timeline" aria-label="Timeline of blockchain milestones">
+        <li class="bc-era">
+          <span class="bc-era-year">1976&ndash;79</span>
+          <h3>Public-key cryptography &amp; Merkle trees</h3>
+          <p>Diffie and Hellman show strangers can share secrets in public; Ralph Merkle patents the hash tree &mdash; a way to fingerprint huge datasets so any piece can be verified against one small root hash.</p>
+          <span class="bc-era-stat">the raw ingredients</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">1991</span>
+          <h3>Hash-chained timestamps</h3>
+          <p>Haber and Stornetta propose linking documents into a chain of hashes so no timestamp can be back-dated without breaking every later link &mdash; a blockchain in all but name, published weekly as a hash in <em>The New York Times</em>.</p>
+          <span class="bc-era-stat">the chain, before the coin</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">1997&ndash;2004</span>
+          <h3>Proof of work</h3>
+          <p>Adam Back&rsquo;s Hashcash makes senders burn CPU time to deter spam; Hal Finney builds reusable proof-of-work tokens. Costly computation becomes a currency of credibility.</p>
+          <span class="bc-era-stat">work as a signal</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2008</span>
+          <h3>The Bitcoin whitepaper</h3>
+          <p>Satoshi Nakamoto combines the pieces &mdash; hash chains, Merkle trees, proof of work, peer-to-peer gossip &mdash; into the first system where strangers maintain a ledger with no authority at all. Nine pages that started an industry.</p>
+          <span class="bc-era-stat">the synthesis</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2009</span>
+          <h3>The genesis block</h3>
+          <p>The Bitcoin network goes live. For the first time, the double-spending problem is solved in the wild without a bank. The <a href="/bitcoin/">Understanding Bitcoin</a> exhibit dissects this machine bolt by bolt.</p>
+          <span class="bc-era-stat">theory becomes a network</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2015</span>
+          <h3>Ethereum &amp; smart contracts</h3>
+          <p>Vitalik Buterin&rsquo;s Ethereum generalizes the ledger into a shared computer: arbitrary programs, executed identically by every node. Blockchains become platforms, not just payment rails.</p>
+          <span class="bc-era-stat">the ledger learns to run code</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2015&ndash;17</span>
+          <h3>Enterprise platforms</h3>
+          <p>Hyperledger (Linux Foundation) and R3 Corda bring permissioned designs to consortia. A wave of corporate pilots follows &mdash; some land, many quietly conclude that a database would do.</p>
+          <span class="bc-era-stat">the permissioned turn</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2020</span>
+          <h3>DeFi</h3>
+          <p>Lending, trading, and market-making rebuilt as composable smart contracts. Billions flow in &mdash; demonstrating both the power of programmable settlement and the cost of buggy code, as exploits drain protocols.</p>
+          <span class="bc-era-stat">finance as software</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2021</span>
+          <h3>NFTs</h3>
+          <p>Unique on-chain tokens make digital collectibles tradable at scale &mdash; one application among many, briefly mistaken for the whole point. The speculative wave crests and recedes; the primitive (a ledger entry proving ownership of a unique item) remains.</p>
+          <span class="bc-era-stat">one application, loudly</span>
+        </li>
+        <li class="bc-era">
+          <span class="bc-era-year">2023&ndash;now</span>
+          <h3>Tokenized real-world assets</h3>
+          <p>Money-market funds, treasuries, and bank deposits appear on-chain from household-name institutions; stablecoins settle trillions yearly. Quieter than past cycles &mdash; and more consequential: the technology fades into infrastructure.</p>
+          <span class="bc-era-stat">boring on purpose</span>
+        </li>
+      </ol>
+    </div>
+
+    <p class="bc-caption">
+      That is the whole cast. The rest of this page takes the same parts in
+      the order an engineer would meet them &mdash; architecture, then
+      structure, then hashing, then consensus &mdash; and runs each one live
+      so you can see what it actually does.
+    </p>
+  </section>
+
+  <!-- ================================================================
+       03 - CENTRALIZED VS DECENTRALIZED
   ================================================================ -->
   <section class="bc-section" id="systems" aria-labelledby="systems-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">02</span> Two architectures</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">03</span> Two architectures</p>
       <h2 id="systems-h">Centralized vs decentralized systems</h2>
       <p class="bc-lede">
         A centralized system has one database, one owner, one administrator
@@ -203,11 +292,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       03 - WHAT IS A BLOCKCHAIN?
+       04 - WHAT IS A BLOCKCHAIN?
   ================================================================ -->
   <section class="bc-section" id="anatomy" aria-labelledby="anatomy-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">03</span> The data structure</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">04</span> The data structure</p>
       <h2 id="anatomy-h">What is a blockchain?</h2>
       <p class="bc-lede">
         Strip away the hype and a blockchain is a surprisingly simple data
@@ -278,11 +367,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       04 - HASHING
+       05 - HASHING
   ================================================================ -->
   <section class="bc-section" id="hashing" aria-labelledby="hashing-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">04</span> The fingerprint machine</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">05</span> The fingerprint machine</p>
       <h2 id="hashing-h">Hashing: fingerprints for data</h2>
       <p class="bc-lede">
         A cryptographic hash function takes any input &mdash; a word, a
@@ -353,11 +442,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       05 - WHY BLOCKS ARE SECURE (TAMPER DEMO)
+       06 - WHY BLOCKS ARE SECURE (TAMPER DEMO)
   ================================================================ -->
   <section class="bc-section" id="tamper" aria-labelledby="tamper-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">05</span> The centerpiece</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">06</span> The centerpiece</p>
       <h2 id="tamper-h">Why blocks are secure</h2>
       <p class="bc-lede">
         Time to break something. Below is a five-block chain with real
@@ -398,11 +487,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       06 - DISTRIBUTED CONSENSUS
+       07 - DISTRIBUTED CONSENSUS
   ================================================================ -->
   <section class="bc-section" id="consensus" aria-labelledby="consensus-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">06</span> Agreement at scale</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">07</span> Agreement at scale</p>
       <h2 id="consensus-h">Distributed consensus</h2>
       <p class="bc-lede">
         A chain of hashes proves history is <em>internally consistent</em>
@@ -461,11 +550,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       07 - CONSENSUS MECHANISMS
+       08 - CONSENSUS MECHANISMS
   ================================================================ -->
   <section class="bc-section" id="mechanisms" aria-labelledby="mechanisms-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">07</span> Four strategies</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">08</span> Four strategies</p>
       <h2 id="mechanisms-h">Consensus mechanisms</h2>
       <p class="bc-lede">
         &ldquo;Who gets to add the next block?&rdquo; has more than one good
@@ -546,11 +635,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       08 - PUBLIC VS PRIVATE BLOCKCHAINS
+       09 - PUBLIC VS PRIVATE BLOCKCHAINS
   ================================================================ -->
   <section class="bc-section" id="pubpriv" aria-labelledby="pubpriv-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">08</span> Two deployment models</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">09</span> Two deployment models</p>
       <h2 id="pubpriv-h">Public vs private blockchains</h2>
       <p class="bc-lede">
         &ldquo;Blockchain&rdquo; covers two very different deployment models.
@@ -602,11 +691,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       09 - SMART CONTRACTS
+       10 - SMART CONTRACTS
   ================================================================ -->
   <section class="bc-section" id="contracts" aria-labelledby="contracts-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">09</span> Programmable ledgers</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">10</span> Programmable ledgers</p>
       <h2 id="contracts-h">Smart contracts</h2>
       <p class="bc-lede">
         Early blockchains recorded one thing: transfers. The next idea was to
@@ -668,11 +757,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       10 - REAL-WORLD ADOPTION
+       11 - REAL-WORLD ADOPTION
   ================================================================ -->
   <section class="bc-section" id="adoption" aria-labelledby="adoption-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">10</span> In the field</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">11</span> In the field</p>
       <h2 id="adoption-h">Real-world adoption</h2>
       <p class="bc-lede">
         Where is this actually used? Honest answer: adoption is real but
@@ -751,11 +840,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       11 - WHEN NOT TO USE BLOCKCHAIN
+       12 - WHEN NOT TO USE BLOCKCHAIN
   ================================================================ -->
   <section class="bc-section" id="whennot" aria-labelledby="whennot-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">11</span> Engineering judgment</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">12</span> Engineering judgment</p>
       <h2 id="whennot-h">When <em>not</em> to use blockchain</h2>
       <p class="bc-lede">
         This may be the most useful chapter on the page. Blockchain is not a
@@ -828,11 +917,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       12 - COMMON MISCONCEPTIONS
+       13 - COMMON MISCONCEPTIONS
   ================================================================ -->
   <section class="bc-section" id="myths" aria-labelledby="myths-h">
     <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">12</span> Clearing the fog</p>
+      <p class="bc-kicker"><span class="bc-kicker-num">13</span> Clearing the fog</p>
       <h2 id="myths-h">Common misconceptions</h2>
       <p class="bc-lede">
         The word &ldquo;blockchain&rdquo; drags a decade of marketing behind
@@ -899,86 +988,6 @@ extra_js:
         when removing the trusted party is the actual requirement &mdash;
         see the previous chapter&rsquo;s triage.</p>
       </details>
-    </div>
-  </section>
-
-  <!-- ================================================================
-       13 - TIMELINE
-  ================================================================ -->
-  <section class="bc-section" id="history" aria-labelledby="history-h">
-    <div class="bc-section-head">
-      <p class="bc-kicker"><span class="bc-kicker-num">13</span> How we got here</p>
-      <h2 id="history-h">A brief history of the idea</h2>
-      <p class="bc-lede">
-        Blockchain was not one invention but a slow assembly of parts &mdash;
-        decades of cryptography research that clicked together in 2008.
-        Scroll the timeline.
-      </p>
-    </div>
-
-    <div class="bc-timeline-wrap" data-bc-reveal>
-      <ol class="bc-timeline" id="bc-timeline" aria-label="Timeline of blockchain milestones">
-        <li class="bc-era">
-          <span class="bc-era-year">1976&ndash;79</span>
-          <h3>Public-key cryptography &amp; Merkle trees</h3>
-          <p>Diffie and Hellman show strangers can share secrets in public; Ralph Merkle patents the hash tree &mdash; a way to fingerprint huge datasets so any piece can be verified against one small root hash.</p>
-          <span class="bc-era-stat">the raw ingredients</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">1991</span>
-          <h3>Hash-chained timestamps</h3>
-          <p>Haber and Stornetta propose linking documents into a chain of hashes so no timestamp can be back-dated without breaking every later link &mdash; a blockchain in all but name, published weekly as a hash in <em>The New York Times</em>.</p>
-          <span class="bc-era-stat">the chain, before the coin</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">1997&ndash;2004</span>
-          <h3>Proof of work</h3>
-          <p>Adam Back&rsquo;s Hashcash makes senders burn CPU time to deter spam; Hal Finney builds reusable proof-of-work tokens. Costly computation becomes a currency of credibility.</p>
-          <span class="bc-era-stat">work as a signal</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">2008</span>
-          <h3>The Bitcoin whitepaper</h3>
-          <p>Satoshi Nakamoto combines the pieces &mdash; hash chains, Merkle trees, proof of work, peer-to-peer gossip &mdash; into the first system where strangers maintain a ledger with no authority at all. Nine pages that started an industry.</p>
-          <span class="bc-era-stat">the synthesis</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">2009</span>
-          <h3>The genesis block</h3>
-          <p>The Bitcoin network goes live. For the first time, the double-spending problem is solved in the wild without a bank. The <a href="/bitcoin/">Understanding Bitcoin</a> exhibit dissects this machine bolt by bolt.</p>
-          <span class="bc-era-stat">theory becomes a network</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">2015</span>
-          <h3>Ethereum &amp; smart contracts</h3>
-          <p>Vitalik Buterin&rsquo;s Ethereum generalizes the ledger into a shared computer: arbitrary programs, executed identically by every node. Blockchains become platforms, not just payment rails.</p>
-          <span class="bc-era-stat">the ledger learns to run code</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">2015&ndash;17</span>
-          <h3>Enterprise platforms</h3>
-          <p>Hyperledger (Linux Foundation) and R3 Corda bring permissioned designs to consortia. A wave of corporate pilots follows &mdash; some land, many quietly conclude that a database would do.</p>
-          <span class="bc-era-stat">the permissioned turn</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">2020</span>
-          <h3>DeFi</h3>
-          <p>Lending, trading, and market-making rebuilt as composable smart contracts. Billions flow in &mdash; demonstrating both the power of programmable settlement and the cost of buggy code, as exploits drain protocols.</p>
-          <span class="bc-era-stat">finance as software</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">2021</span>
-          <h3>NFTs</h3>
-          <p>Unique on-chain tokens make digital collectibles tradable at scale &mdash; one application among many, briefly mistaken for the whole point. The speculative wave crests and recedes; the primitive (a ledger entry proving ownership of a unique item) remains.</p>
-          <span class="bc-era-stat">one application, loudly</span>
-        </li>
-        <li class="bc-era">
-          <span class="bc-era-year">2023&ndash;now</span>
-          <h3>Tokenized real-world assets</h3>
-          <p>Money-market funds, treasuries, and bank deposits appear on-chain from household-name institutions; stablecoins settle trillions yearly. Quieter than past cycles &mdash; and more consequential: the technology fades into infrastructure.</p>
-          <span class="bc-era-stat">boring on purpose</span>
-        </li>
-      </ol>
     </div>
   </section>
 
@@ -1081,14 +1090,85 @@ extra_js:
     </p>
   </section>
 
-  <footer class="bc-foot">
-    <p>
-      Part of an interactive series &mdash; continue with
-      <a href="/bitcoin/">Understanding Bitcoin</a> (blockchain&rsquo;s first
-      killer app, with real cryptography in the browser),
-      <a href="/cpu/">Inside a Modern CPU</a> (the hardware that does the
-      hashing), <a href="/memory/">Inside Computer Memory</a> (where ledgers
-      actually live), and <a href="/gpu/">Inside a Modern GPU</a>.
-    </p>
-  </footer>
+  <!-- ================================================================
+       CLOSE - THE ANSWER
+  ================================================================ -->
+  <section class="bc-section bc-section-close" aria-label="Closing">
+    <div class="bc-close" data-bc-reveal>
+      <p class="bc-kicker">The question, answered</p>
+      <h2>So &mdash; how do strangers who don&rsquo;t trust each other agree on one record?</h2>
+      <p class="bc-prose-wide">
+        You can answer it yourself now. Give every record a fingerprint that
+        changes completely if a single character does (chapter 05). Put each
+        block&rsquo;s fingerprint inside the next one, so editing any block
+        breaks every link after it and the damage is visible instantly
+        (chapter 06). Hand a full copy to everyone, so there is no single
+        keeper to bribe, coerce, or lose (chapter 03). Make adding a block
+        cost something real &mdash; work, stake, or a vote among known
+        members &mdash; so nobody rewrites history cheaply (chapter 08). Then
+        let every node check every block against the same rules and simply
+        refuse anything that fails. Nobody trusts anybody. The record holds
+        anyway.
+      </p>
+      <p class="bc-prose-wide">
+        That is what the builder above actually ran: real SHA-256, real
+        proof-of-work, real replication, real rejection. As its caption puts
+        it, the logic you exercised &mdash; hash, link, replicate, verify,
+        reject &mdash; is genuinely the whole trick. And the honest end of the
+        argument is chapter 12: this machinery buys agreement without a
+        keeper, and charges you throughput, storage, and complexity for it.
+        When you already have someone everyone trusts, a plain database is
+        still the better tool. Knowing which problem you have is the skill.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       NEXT STOPS
+  ================================================================ -->
+  <section class="bc-section bc-section-next" id="next" aria-labelledby="next-h">
+    <div class="bc-section-head">
+      <p class="bc-kicker">Keep exploring</p>
+      <h2 id="next-h">Where to go from here</h2>
+      <p class="bc-lede">
+        A blockchain is made of other people&rsquo;s inventions and runs on
+        other people&rsquo;s machines. Five exhibits pick up the thread.
+      </p>
+    </div>
+    <div class="bc-nextgrid" data-bc-reveal>
+      <a class="bc-next" href="/cryptography/">
+        <span class="bc-next-tag">Understanding Cryptography</span>
+        <p>The prerequisite. Chapter 05 used SHA-256 as a given; here you can
+        watch hash functions, keys, and digital signatures built from the
+        ground up &mdash; including the signatures a real chain uses to prove
+        who authorized a transaction.</p>
+      </a>
+      <a class="bc-next" href="/bitcoin/">
+        <span class="bc-next-tag">Understanding Bitcoin</span>
+        <p>The first system that actually did all of this in the wild. The
+        proof-of-work you mined in the builder, plus the parts this page left
+        out: real keys, addresses, signatures, and a fee market.</p>
+      </a>
+      <a class="bc-next" href="/internet/">
+        <span class="bc-next-tag">How the Internet Works</span>
+        <p>Chapter 07 replicated a block to five nodes in one animation. This
+        is the network that replication actually crosses &mdash; packets,
+        routing, and why &ldquo;everyone hears about it eventually&rdquo; is a
+        harder promise than it looks.</p>
+      </a>
+      <a class="bc-next" href="/cloud/">
+        <span class="bc-next-tag">Understanding the Cloud</span>
+        <p>Where the nodes in chapter 09&rsquo;s permissioned consortium
+        physically live. Someone rents those machines by the hour, and the
+        same decentralization argument gets awkward when half the network runs
+        in one datacenter.</p>
+      </a>
+      <a class="bc-next" href="/cpu/">
+        <span class="bc-next-tag">Inside a Modern CPU</span>
+        <p>The chip that ground out those hash attempts. Chapter 08&rsquo;s
+        proof of work is only a security model because that silicon has a
+        real, measurable cost per guess.</p>
+      </a>
+    </div>
+  </section>
 </div>
