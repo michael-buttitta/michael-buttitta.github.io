@@ -81,6 +81,15 @@ extra_js:
       </p>
     </div>
 
+    <p class="cy-caption cy-caption-note">
+      <strong>The cryptography on this page is real.</strong> Every digest comes
+      from a from-scratch SHA-256 written into this page&rsquo;s script; every
+      AES, RSA, and ECDSA demo calls your browser&rsquo;s own Web Crypto engine
+      &mdash; the same code that encrypts your bank&rsquo;s connection. All of it
+      computes locally, on your machine. Nothing you type into a demo here is
+      sent anywhere, because there is nothing on the other end to send it to.
+    </p>
+
     <p class="cy-prose">
       Watch a message travel from Alice to Bob below. It hops through relays
       &mdash; routers, Wi-Fi access points, servers &mdash; and one of them,
@@ -560,6 +569,16 @@ extra_js:
       <p class="cy-panel-status" id="cy-tls-status" aria-live="polite"></p>
     </div>
 
+    <p class="cy-caption cy-caption-note">
+      An honest disclaimer: <em>this handshake is a drawing</em>. It has the real
+      protocol&rsquo;s shape &mdash; the order of the messages, what each side
+      learns, where trust enters &mdash; but a live TLS handshake negotiates
+      cipher suites, parses a full certificate chain, and exchanges a great deal
+      more than five arrows. The AES-GCM, RSA-OAEP, and ECDSA demos in chapters
+      03, 04 and 06 are the opposite: no drawing at all, just your
+      browser&rsquo;s cryptography operating on whatever you typed.
+    </p>
+
     <div class="cy-facts" data-cy-reveal>
       <div class="cy-fact"><strong>Why HTTPS prevents impersonation:</strong> an attacker can intercept traffic, but they cannot produce a certificate for <code>yourbank.com</code> that a trusted CA signed &mdash; and without the site&rsquo;s private key, they cannot complete the handshake as that site.</div>
       <div class="cy-fact"><strong>Chain of trust.</strong> Certificates form a chain: site → intermediate CA → root CA. Your OS and browser ship with ~100 audited root CAs; every padlock traces back to one of them.</div>
@@ -910,13 +929,9 @@ extra_js:
       </p>
     </div>
     <div class="cy-nextgrid" data-cy-reveal>
-      <a class="cy-next" href="/cpu/">
-        <span class="cy-next-tag">Inside a Modern CPU</span>
-        <p>How processors execute the algorithms on this page &mdash; and why dedicated AES instructions make encryption effectively free.</p>
-      </a>
-      <a class="cy-next" href="/memory/">
-        <span class="cy-next-tag">Inside Computer Memory</span>
-        <p>Where keys, certificates, and decrypted data physically live &mdash; and why protecting memory is part of protecting secrets.</p>
+      <a class="cy-next" href="/internet/">
+        <span class="cy-next-tag">How the Internet Works</span>
+        <p>The wire chapter 07 kept calling &ldquo;open&rdquo; &mdash; routing, DNS, and the packet journey that HTTPS wraps every time you load a page.</p>
       </a>
       <a class="cy-next" href="/blockchain/">
         <span class="cy-next-tag">Understanding Blockchain</span>
@@ -925,6 +940,18 @@ extra_js:
       <a class="cy-next" href="/bitcoin/">
         <span class="cy-next-tag">Understanding Bitcoin</span>
         <p>The most prominent real-world application of this page: hashing, digital signatures, and decentralized networking as money.</p>
+      </a>
+      <a class="cy-next" href="/chatgpt/">
+        <span class="cy-next-tag">How ChatGPT Works</span>
+        <p>Follow one question end to end &mdash; and watch the handshake from chapter 07 open the connection before a single token is generated.</p>
+      </a>
+      <a class="cy-next" href="/cpu/">
+        <span class="cy-next-tag">Inside a Modern CPU</span>
+        <p>How processors execute the algorithms on this page &mdash; and why dedicated AES instructions make encryption effectively free.</p>
+      </a>
+      <a class="cy-next" href="/memory/">
+        <span class="cy-next-tag">Inside Computer Memory</span>
+        <p>Where keys, certificates, and decrypted data physically live &mdash; and why protecting memory is part of protecting secrets.</p>
       </a>
     </div>
   </section>

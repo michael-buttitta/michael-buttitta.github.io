@@ -133,7 +133,13 @@
 
   /* Under Node the file exports the cipher core and stops (no DOM), so the
      shipped artifact is directly unit-testable — same pattern as bitcoin.js:
-     node -e "const C=require('./assets/js/cryptography.js'); console.log(C.sha256('abc'))" */
+     node -e "const C=require('./assets/js/cryptography.js'); console.log(C.sha256('abc'))"
+
+     The surface is string-oriented, unlike bitcoin.js's byte-oriented core:
+     sha256(str) -> 64-char lowercase hex · caesar(str, shift) -> string ·
+     hexBitDiff(hexA, hexB) -> int · utf8Bytes(str) -> Uint8Array.
+     Canonical assertion:
+     sha256('abc') === 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad' */
   if (typeof window === 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
       module.exports = { sha256: sha256, caesar: caesar, hexBitDiff: hexBitDiff, utf8Bytes: utf8Bytes };
@@ -425,7 +431,7 @@
   function initHero() {
     var canvas = $('#cy-hero-canvas');
     if (!canvas) { return; }
-    var cv = setupCanvas(canvas);
+    var cv = setupCanvas(canvas, function () { refit(); });
     var ctx = cv.ctx, st = cv.state;
     var rng = makeRng(0xC0FFEE);
 
@@ -457,6 +463,16 @@
       for (i = 0; i < 12; i++) { spawnPacket(); }
     }
 
+    /* Node positions are absolute pixels, so a resize invalidates the scene.
+       This is also the refit path for a canvas that booted below the guard. */
+    function refit() {
+      NODES = [];
+      if (loop.running()) { return; } /* the loop re-lays out on its next frame */
+      if (st.w < 60 || st.h < 60) { return; }
+      layout();
+      draw(0);
+    }
+
     function spawnPacket() {
       if (!EDGES.length) { return; }
       var e = EDGES[Math.floor(rng() * EDGES.length)];
@@ -467,6 +483,7 @@
     }
 
     function draw(t) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var i;
       ctx.lineWidth = 1;
@@ -513,7 +530,7 @@
     }
 
     var loop = makeLoop(function (t) {
-      if (st.w < 2) { return; }
+      if (st.w < 60 || st.h < 60) { return; }
       if (!NODES.length) { layout(); }
       draw(t);
     });
@@ -521,7 +538,7 @@
     if (reduced()) {
       /* One static frame, no motion. */
       var tryStatic = function () {
-        if (st.w < 2) { requestAnimationFrame(tryStatic); return; }
+        if (st.w < 60 || st.h < 60) { requestAnimationFrame(tryStatic); return; }
         layout();
         draw(0);
       };
@@ -545,7 +562,9 @@
     var outSeen = $('#cy-intercept-seen');
     var outBob = $('#cy-intercept-bob');
     var statusEl = $('#cy-intercept-status');
-    var cv = setupCanvas(canvas);
+    var cv = setupCanvas(canvas, function () {
+      if (!loop.running()) { drawScene(anim.delivered ? 1 : null); }
+    });
     var ctx = cv.ctx, st = cv.state;
 
     var MSG = 'Meet me at noon';
@@ -566,6 +585,7 @@
     }
 
     function drawScene(prog) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var P = pts();
       /* wire */
@@ -820,7 +840,7 @@
     var btnPlay = $('#cy-asym-play');
     var btnEve = $('#cy-asym-eve');
     var statusEl = $('#cy-asym-status');
-    var cv = setupCanvas(canvas);
+    var cv = setupCanvas(canvas, function () { refit(); });
     var ctx = cv.ctx, st = cv.state;
 
     /* Storyboard: list of {dur, caption, draw(p, P)} — p eased 0..1 in-phase */
@@ -833,7 +853,15 @@
       };
     }
 
+    /* Refit path: redraw whatever the storyboard last settled on. */
+    function refit() {
+      if (loop.running() || st.w < 60 || st.h < 60) { return; }
+      if (story) { story[story.length - 1].draw(1, pts()); }
+      else { base(pts()); }
+    }
+
     function base(P) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       ctx.lineWidth = 1.5;
       ctx.strokeStyle = C.lineStrong;
@@ -943,6 +971,7 @@
 
     var anim = { t: 0, idx: 0 };
     var loop = makeLoop(function (t, dt) {
+      if (st.w < 60 || st.h < 60) { return; }
       anim.t += dt;
       var seg = story[anim.idx];
       var p = clamp(anim.t / seg.dur, 0, 1);
@@ -1341,6 +1370,7 @@
     }
 
     function drawStep(step, p) {
+      if (st.w < 60 || st.h < 60) { return; }
       var P = pts();
       ctx.clearRect(0, 0, st.w, st.h);
       drawBrowserBox(P);
@@ -1632,7 +1662,10 @@
       }
     }
 
+    /* Returns null when the canvas has no real box yet — every caller
+       dereferences the point set, so every caller must bail too. */
     function scene() {
+      if (st.w < 60 || st.h < 60) { return null; }
       ctx.clearRect(0, 0, st.w, st.h);
       var P = pts();
       ctx.lineWidth = 1.5;
@@ -1657,6 +1690,7 @@
     var idle = true;
     function drawIdle() {
       var P = scene();
+      if (!P) { return; }
       swatch(st.w * 0.5, P.wireY - 34, BASE, 'public start color — everyone sees it', 11);
     }
 
@@ -1721,10 +1755,11 @@
 
     var anim = { t: 0, idx: 0 };
     var loop = makeLoop(function (_, dt) {
+      var P = scene();
+      if (!P) { return; }
       anim.t += dt;
       var seg = story[anim.idx];
       var p = clamp(anim.t / seg.dur, 0, 1);
-      var P = scene();
       seg.draw(easeInOut(p), P);
       if (p >= 1) {
         anim.idx++;
@@ -1738,7 +1773,7 @@
       idle = false;
       if (reduced()) {
         var P = scene();
-        story[story.length - 1].draw(1, P);
+        if (P) { story[story.length - 1].draw(1, P); }
         setStatus(statusEl, story.map(function (s) { return s.caption; }).join(' '));
         return;
       }
