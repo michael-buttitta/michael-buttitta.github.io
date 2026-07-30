@@ -33,8 +33,7 @@ extra_js:
     <a class="mx-rail-dot" href="#cache" data-label="CPU cache"><span></span></a>
     <a class="mx-rail-dot" href="#ram" data-label="RAM"><span></span></a>
     <a class="mx-rail-dot" href="#virtual" data-label="Virtual memory &amp; paging"><span></span></a>
-    <a class="mx-rail-dot" href="#drives" data-label="SSDs vs hard drives"><span></span></a>
-    <a class="mx-rail-dot" href="#flash" data-label="Flash memory"><span></span></a>
+    <a class="mx-rail-dot" href="#drives" data-label="Storage: SSDs, disks &amp; flash"><span></span></a>
     <a class="mx-rail-dot" href="#launch" data-label="How a program starts"><span></span></a>
     <a class="mx-rail-dot" href="#speed" data-label="Latency &amp; bandwidth"><span></span></a>
     <a class="mx-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
@@ -51,8 +50,10 @@ extra_js:
       <p class="mx-kicker">An interactive exhibit</p>
       <h1 class="mx-hero-title">Inside Computer Memory</h1>
       <p class="mx-hero-sub">
-        Discover how modern computers store, organize, and retrieve billions of
-        pieces of information every second.
+        Why does one machine need five different kinds of memory instead of one
+        &mdash; and how does that choice decide how fast everything you do
+        feels? Eleven chapters and a simulator, answering it from the register
+        outward.
       </p>
       <div class="mx-hero-cta">
         <a class="mx-btn mx-btn-primary" id="mx-hero-cta" href="#what">Begin exploring</a>
@@ -514,18 +515,19 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       07 - SSD VS HDD
+       07 - STORAGE: SSD VS HDD, AND THE FLASH CELL UNDERNEATH
   ================================================================ -->
   <section class="mx-section" id="drives" aria-labelledby="drives-h">
     <div class="mx-section-head">
       <p class="mx-kicker"><span class="mx-kicker-num">07</span> The vault</p>
-      <h2 id="drives-h">SSDs vs hard drives &mdash; electrons against machinery</h2>
+      <h2 id="drives-h">Storage &mdash; electrons against machinery</h2>
       <p class="mx-lede">
         Below RAM sits permanent storage, and here two technologies compete. A
         <strong>hard drive</strong> stores bits magnetically on spinning
         platters and must physically move an arm to reach them. An
         <strong>SSD</strong> stores bits as trapped charge in NAND flash and
-        reaches any of them electronically. Race them.
+        reaches any of them electronically. Race them first, then open the
+        winner up and look at a single cell.
       </p>
     </div>
 
@@ -574,23 +576,17 @@ extra_js:
       CPU instead of the older SATA protocol, with deep command queues that
       keep dozens of requests in flight at once.
     </p>
-  </section>
 
-  <!-- ================================================================
-       08 - FLASH MEMORY
-  ================================================================ -->
-  <section class="mx-section" id="flash" aria-labelledby="flash-h">
-    <div class="mx-section-head">
-      <p class="mx-kicker"><span class="mx-kicker-num">08</span> The cell</p>
-      <h2 id="flash-h">Flash memory &mdash; bottling electrons</h2>
-      <p class="mx-lede">
-        The same NAND flash inside an SSD also powers USB sticks, SD cards,
-        and the storage in every phone. Each cell is a transistor with an
-        insulated <strong>charge trap</strong>: force electrons in and they
-        stay for years with no power at all &mdash; that is why flash, unlike
-        RAM, remembers. Try programming a cell yourself.
-      </p>
-    </div>
+    <h3 class="mx-subhead">Inside the winner: bottling electrons</h3>
+    <p class="mx-prose">
+      The race is decided one layer down, in the flash cell. The same NAND
+      inside an SSD also powers USB sticks, SD cards, and the storage in every
+      phone. Each cell is a transistor with an insulated <strong>charge
+      trap</strong>: force electrons in and they stay for years with no power
+      at all &mdash; that is why flash, unlike RAM, remembers, and why it has
+      no arm to swing. Program a cell yourself, then watch what a decade of
+      writes does to a whole drive.
+    </p>
 
     <div class="mx-flash-layout" data-mx-reveal>
       <div class="mx-flash-cell">
@@ -643,11 +639,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       09 - HOW A PROGRAM STARTS
+       08 - HOW A PROGRAM STARTS
   ================================================================ -->
   <section class="mx-section" id="launch" aria-labelledby="launch-h">
     <div class="mx-section-head">
-      <p class="mx-kicker"><span class="mx-kicker-num">09</span> The journey</p>
+      <p class="mx-kicker"><span class="mx-kicker-num">08</span> The journey</p>
       <h2 id="launch-h">How a program starts &mdash; the whole story</h2>
       <p class="mx-lede">
         Everything so far comes together in the two seconds between a
@@ -726,11 +722,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       10 - LATENCY & BANDWIDTH
+       09 - LATENCY & BANDWIDTH
   ================================================================ -->
   <section class="mx-section" id="speed" aria-labelledby="speed-h">
     <div class="mx-section-head">
-      <p class="mx-kicker"><span class="mx-kicker-num">10</span> The physics</p>
+      <p class="mx-kicker"><span class="mx-kicker-num">09</span> The physics</p>
       <h2 id="speed-h">Latency vs bandwidth &mdash; two kinds of fast</h2>
       <p class="mx-lede">
         <strong>Latency</strong> is how long the <em>first</em> byte takes to
@@ -783,11 +779,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       11 - MISCONCEPTIONS
+       10 - MISCONCEPTIONS
   ================================================================ -->
   <section class="mx-section" id="myths" aria-labelledby="myths-h">
     <div class="mx-section-head">
-      <p class="mx-kicker"><span class="mx-kicker-num">11</span> The FAQ</p>
+      <p class="mx-kicker"><span class="mx-kicker-num">10</span> The FAQ</p>
       <h2 id="myths-h">Common misconceptions</h2>
       <p class="mx-lede">
         Seven questions that trip up nearly everyone &mdash; each with the
@@ -870,16 +866,17 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       12 - HISTORY
+       11 - HISTORY
   ================================================================ -->
   <section class="mx-section" id="history" aria-labelledby="history-h">
     <div class="mx-section-head">
-      <p class="mx-kicker"><span class="mx-kicker-num">12</span> The lineage</p>
+      <p class="mx-kicker"><span class="mx-kicker-num">11</span> The lineage</p>
       <h2 id="history-h">Seventy years of remembering</h2>
       <p class="mx-lede">
-        From hand-woven magnetic donuts to terabytes on a fingernail &mdash;
-        every layer of today&rsquo;s hierarchy was once a breakthrough. Scroll
-        the timeline.
+        An interlude before you build one yourself &mdash; the argument is
+        finished, and this is where its pieces came from. From hand-woven
+        magnetic donuts to terabytes on a fingernail, every layer of
+        today&rsquo;s hierarchy was once a breakthrough. Scroll the timeline.
       </p>
     </div>
 
@@ -1026,22 +1023,100 @@ extra_js:
       </div>
 
       <p class="mx-caption">
-        The model is conceptual &mdash; honest ratios between layers rather
-        than cycle-accurate hardware &mdash; but the behaviors are the real
-        ones: cache hit rates collapse when working sets outgrow cache, paging
-        begins the moment applications outgrow RAM, and an NVMe drive softens
-        thrashing that a hard drive turns into molasses. If you leave with one
-        instinct, make it this: <em>performance is where your data lives.</em>
+        Read the model honestly: it is ratios, not hardware. There is no real
+        replacement policy, no TLB, no prefetcher and no cycle timing behind
+        these numbers &mdash; the miss rate is a curve fitted to how working
+        sets outgrow cache, and the fault rate is a curve fitted to how they
+        outgrow RAM. What transfers exactly is the shape: starve it of RAM and
+        the storage lane lights up; fix that with a hard drive and it barely
+        helps; fix it with more RAM and the traffic disappears entirely. The
+        closing chapter says what to keep from that.
       </p>
     </div>
   </section>
 
-  <footer class="mx-foot">
-    <p>
-      Part of an interactive series &mdash; explore
-      <a href="/cpu/">Inside a Modern CPU</a>,
-      <a href="/gpu/">Inside a Modern GPU</a>, and
-      <a href="/bitcoin/">Understanding Bitcoin</a>.
-    </p>
-  </footer>
+  <!-- ================================================================
+       CLOSE - THE ANSWER
+  ================================================================ -->
+  <section class="mx-section mx-section-close" aria-label="Closing">
+    <div class="mx-close" data-mx-reveal>
+      <p class="mx-kicker">The question, answered</p>
+      <h2>So &mdash; why five kinds of memory instead of one?</h2>
+      <p class="mx-prose-wide">
+        Because no single cell is fast, big, and cheap at once, and every layer
+        in this exhibit is a different bargain struck with that fact. Registers
+        (ch.&nbsp;03) are instant because there are only a few dozen of them.
+        Cache (ch.&nbsp;04) buys nanoseconds with six transistors per bit, and
+        earns them back only when your access pattern has locality &mdash; the
+        same computation, reordered, ran ten times faster. RAM (ch.&nbsp;05) is
+        one transistor and one leaky capacitor, which is exactly how you get
+        gigabytes and exactly why it forgets at power-off. Virtual memory
+        (ch.&nbsp;06) papers over the whole mess with an address space per
+        program, and quietly bills you ~80&nbsp;&micro;s the moment a page has
+        to come back from disk. Storage (ch.&nbsp;07) is where the bits
+        actually survive, and whether that costs 60&nbsp;&micro;s of
+        electronics or 8&nbsp;ms of swinging arm decides how a page fault
+        feels. Chapter&nbsp;08 is all five in sequence, in the two seconds
+        between a double-click and a window; chapter&nbsp;09 is why the ladder
+        has two rungs at every step &mdash; latency you cannot fix with more
+        lanes, bandwidth you cannot fix with a shorter wire.
+      </p>
+      <p class="mx-prose-wide">
+        The playground&rsquo;s model is conceptual &mdash; honest ratios
+        between layers rather than cycle-accurate hardware &mdash; but the
+        behaviors are the real ones: cache hit rates collapse when working
+        sets outgrow cache, paging begins the moment applications outgrow RAM,
+        and an NVMe drive softens thrashing that a hard drive turns into
+        molasses. If you leave with one instinct, make it this:
+        <em>performance is where your data lives.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       NEXT STOPS
+  ================================================================ -->
+  <section class="mx-section mx-section-next" id="next" aria-labelledby="next-h">
+    <div class="mx-section-head">
+      <p class="mx-kicker">Keep exploring</p>
+      <h2 id="next-h">Where to go from here</h2>
+      <p class="mx-lede">
+        The hierarchy does not end at your machine. Five exhibits pick up the
+        thread &mdash; upward into the software that manages it, sideways into
+        the chips that consume it, outward into the fleets that rent it.
+      </p>
+    </div>
+    <div class="mx-nextgrid" data-mx-reveal>
+      <a class="mx-next" href="/operating-systems/">
+        <span class="mx-next-tag">Understanding Operating Systems</span>
+        <p>Chapter 06 stops at the page fault. The OS is what handles it
+        &mdash; page tables, schedulers, and the decision about which of your
+        programs gets to keep its pages.</p>
+      </a>
+      <a class="mx-next" href="/cpu/">
+        <span class="mx-next-tag">Inside a Modern CPU</span>
+        <p>The customer for every access on this page. Chapter 03&rsquo;s
+        registers are its innermost parts, and most of its transistors exist to
+        hide the ~250 cycles that chapter 05 costs it.</p>
+      </a>
+      <a class="mx-next" href="/gpu/">
+        <span class="mx-next-tag">Inside a Modern GPU</span>
+        <p>Where chapter 09&rsquo;s bandwidth-over-latency trade is taken to
+        its limit: thousands of lanes fed by stacked memory, and a roofline
+        chart that tells you which of the two is your ceiling.</p>
+      </a>
+      <a class="mx-next" href="/cloud/">
+        <span class="mx-next-tag">Understanding the Cloud</span>
+        <p>The same pyramid, one building wide. The bottom layer of chapter
+        02 &mdash; &ldquo;cloud storage, effectively unlimited&rdquo; &mdash;
+        is someone else&rsquo;s RAM and SSDs, rented by the hour.</p>
+      </a>
+      <a class="mx-next" href="/machine-learning/">
+        <span class="mx-next-tag">Understanding Machine Learning</span>
+        <p>The workload that made the hierarchy famous again: datasets far
+        larger than RAM, streamed past the processor, where the playground
+        verdict for the whole field is &ldquo;bandwidth-bound.&rdquo;</p>
+      </a>
+    </div>
+  </section>
 </div>

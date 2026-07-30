@@ -15,6 +15,10 @@
 (function () {
   'use strict';
 
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return;
+  }
+
   document.documentElement.classList.add('mx-js');
 
   var RM = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -274,6 +278,9 @@
     }
 
     var loop = makeLoop(function (t, dt) {
+      /* layout() cannot be size-guarded — it builds the nodes/traces the
+         packets below dereference — so the reader bails instead. */
+      if (cv.state.w < 60 || cv.state.h < 60 || !traces.length) { return; }
       drawStatic();
       if (packets.length < 14 && rng() < 0.15) { spawn(); }
       var glowing = {};
@@ -1407,7 +1414,10 @@
         }
         blocks.forEach(color);
         if (writtenTotal < totalWrites) {
-          requestAnimationFrame(stepFrame);
+          /* setTimeout, not rAF: this advances the simulation the visitor is
+             waiting on (the button stays disabled until it finishes), and rAF
+             freezes while the tab is hidden */
+          setTimeout(stepFrame, 16);
         } else {
           onDone();
         }

@@ -1863,23 +1863,77 @@ html.mx-js #memory-experience .mx-era.is-in {
   }
 }
 
-/* ---------- footer ------------------------------------------------------ */
+/* ---------- close: the question, answered ------------------------------- */
 
-#memory-experience .mx-foot {
-  padding: 2.5rem 0 1rem;
-  border-top: 1px solid var(--mx-line);
-  font-size: 0.9rem;
-  color: var(--mx-faint);
+#memory-experience .mx-section-close {
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
 }
 
-#memory-experience .mx-foot a {
+#memory-experience .mx-close {
+  padding: clamp(1.5rem, 4vw, 2.6rem);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  border-radius: 20px;
+  background: linear-gradient(165deg, rgba(45, 212, 191, 0.06), rgba(30, 41, 59, 0.45));
+}
+
+#memory-experience .mx-close h2 {
+  max-width: 24ch;
+}
+
+#memory-experience .mx-prose-wide {
+  max-width: 74ch;
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  line-height: 1.75;
   color: var(--mx-muted);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
-#memory-experience .mx-foot a:hover {
+#memory-experience .mx-prose-wide:last-child {
+  margin-bottom: 0;
+}
+
+#memory-experience .mx-prose-wide :is(em, strong) {
+  color: var(--mx-text);
+}
+
+/* ---------- next stops --------------------------------------------------- */
+
+#memory-experience .mx-nextgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+#memory-experience .mx-next {
+  display: block;
+  padding: 1.1rem;
+  border: 1px solid var(--mx-line-strong);
+  border-radius: 12px;
+  background: var(--mx-panel);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+#memory-experience .mx-next:hover,
+#memory-experience .mx-next:focus-visible {
+  border-color: var(--mx-teal);
+  transform: translateY(-2px);
+}
+
+#memory-experience .mx-next-tag {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--mx-teal);
+}
+
+#memory-experience .mx-next p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--mx-muted);
 }
 
 /* ---------- reduced motion --------------------------------------------- */
