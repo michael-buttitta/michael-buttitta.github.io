@@ -141,6 +141,17 @@
   color: var(--gx-text-strong);
 }
 
+#gpu-experience .gx-interlude {
+  max-width: 62ch;
+  margin: 0 auto;
+  padding: 1.1rem 1.3rem;
+  border-left: 3px solid var(--gx-line-strong);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--gx-muted);
+  text-wrap: pretty;
+}
+
 #gpu-experience .gx-caption {
   max-width: 72ch;
   margin: 1rem 0 0;
@@ -562,6 +573,22 @@ html.gx-js #gpu-experience [data-gx-reveal].is-in {
   line-height: 1.7;
   color: var(--gx-muted);
   text-wrap: pretty;
+}
+
+#gpu-experience .gx-hero-q {
+  max-width: 52ch;
+  margin: 1.4rem auto 0;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--gx-line);
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  line-height: 1.65;
+  color: var(--gx-faint);
+  text-wrap: pretty;
+}
+
+#gpu-experience .gx-hero-q em {
+  font-style: normal;
+  color: var(--gx-text);
 }
 
 #gpu-experience .gx-hero-cta {
@@ -1677,6 +1704,50 @@ html.gx-js #gpu-experience .gx-era.is-in {
   background: var(--gx-deep);
 }
 
+/* ---------- next stops --------------------------------------------------- */
+
+#gpu-experience .gx-section-next {
+  padding-bottom: 2rem;
+}
+
+#gpu-experience .gx-nextgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+#gpu-experience .gx-next {
+  display: block;
+  padding: 1.1rem;
+  border: 1px solid var(--gx-line);
+  border-radius: 12px;
+  background: var(--gx-panel);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+#gpu-experience .gx-next:hover,
+#gpu-experience .gx-next:focus-visible {
+  border-color: var(--gx-teal);
+  transform: translateY(-2px);
+}
+
+#gpu-experience .gx-next-tag {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gx-teal);
+}
+
+#gpu-experience .gx-next p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--gx-muted);
+}
+
 /* ---------- outro -------------------------------------------------------- */
 
 #gpu-experience .gx-outro {
@@ -1685,6 +1756,20 @@ html.gx-js #gpu-experience .gx-era.is-in {
   padding: 4rem 0 2.5rem;
   border-top: 1px solid var(--gx-line);
   text-align: center;
+}
+
+#gpu-experience .gx-outro-kicker {
+  justify-content: center;
+}
+
+#gpu-experience .gx-outro-answer {
+  max-width: 72ch;
+  margin: 0 auto 2rem;
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--gx-muted);
+  text-align: left;
+  text-wrap: pretty;
 }
 
 #gpu-experience .gx-outro-line {

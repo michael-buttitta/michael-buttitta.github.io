@@ -52,6 +52,12 @@ extra_js:
         Explore how billions of transistors work together to render graphics,
         accelerate simulations, and power today's AI revolution.
       </p>
+      <p class="gx-hero-q">
+        One question runs through every chapter below:
+        <em>why does a chip with weaker, slower cores beat your CPU at some
+        jobs and lose badly at others &mdash; and what is it actually made
+        of?</em>
+      </p>
       <div class="gx-hero-cta">
         <a class="gx-btn gx-btn-primary" id="gx-hero-cta" href="#why">Begin exploring</a>
         <span class="gx-hero-hint">10 chapters &middot; live simulations &middot; no installs</span>
@@ -980,9 +986,16 @@ extra_js:
   <!-- ================================================================
        09 - PERFORMANCE METRICS
   ================================================================ -->
+  <p class="gx-interlude">
+    That is the machine explained. The next two chapters are an interlude
+    before the finale &mdash; a reference sheet for the numbers you will meet
+    on a product page, and the thirty-year story of how the chip got this
+    shape. Then you build one yourself.
+  </p>
+
   <section class="gx-section" id="metrics" aria-labelledby="metrics-h">
     <div class="gx-section-head">
-      <p class="gx-kicker"><span class="gx-kicker-num">09</span> The spec sheet</p>
+      <p class="gx-kicker"><span class="gx-kicker-num">09</span> Interlude &middot; the spec sheet</p>
       <h2 id="metrics-h">Reading a spec sheet</h2>
       <p class="gx-lede">
         Every number below is real, and every one of them is routinely
@@ -1080,7 +1093,7 @@ extra_js:
   ================================================================ -->
   <section class="gx-section" id="history" aria-labelledby="history-h">
     <div class="gx-section-head">
-      <p class="gx-kicker"><span class="gx-kicker-num">10</span> How we got here</p>
+      <p class="gx-kicker"><span class="gx-kicker-num">10</span> Interlude &middot; how we got here</p>
       <h2 id="history-h">Three decades of GPUs</h2>
       <p class="gx-lede">
         From a chip that could only draw textured triangles to the engine of
@@ -1250,7 +1263,65 @@ extra_js:
           clocks pay off. Every optimization guide ever written is a footnote
           to this chart.
         </p>
+        <p class="gx-caption">
+          Educational, not cycle-accurate: the model uses honest ratios
+          &mdash; peak FP32 as lanes &times; 2 FLOP &times; clock, memory time
+          as bytes &divide; bandwidth, spill at ~32 GB/s over PCIe, and total
+          time as the slower of compute and memory &mdash; but it has no
+          caches, no kernel launch overhead, no occupancy limits, and no
+          thermal throttling, so a real chip is messier in a dozen ways. The
+          lesson it teaches transfers exactly: set bandwidth to 100 GB/s and
+          watch 160 SMs sit idle.
+        </p>
       </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       NEXT STOPS
+  ================================================================ -->
+  <section class="gx-section gx-section-next" id="next" aria-labelledby="next-h">
+    <div class="gx-section-head">
+      <p class="gx-kicker">Keep exploring</p>
+      <h2 id="next-h">Where to go from here</h2>
+      <p class="gx-lede">
+        A GPU only makes sense next to the machine it accelerates and the
+        workloads that made it valuable. Six exhibits pick up the thread.
+      </p>
+    </div>
+    <div class="gx-nextgrid" data-gx-reveal>
+      <a class="gx-next" href="/cpu/">
+        <span class="gx-next-tag">Inside a Modern CPU</span>
+        <p>The chip on the other side of the race in chapter 01. Read it to see
+        what all that latency-hiding machinery buys &mdash; and why a GPU throws
+        most of it away.</p>
+      </a>
+      <a class="gx-next" href="/memory/">
+        <span class="gx-next-tag">Inside Computer Memory</span>
+        <p>The playground kept telling you that bandwidth was the bottleneck.
+        This is the hierarchy that bandwidth comes from, one tier at a time.</p>
+      </a>
+      <a class="gx-next" href="/machine-learning/">
+        <span class="gx-next-tag">Understanding Machine Learning</span>
+        <p>The matrix multiply in chapter 06 is one step of training. Here it
+        runs inside real gradient descent, on a model that actually learns.</p>
+      </a>
+      <a class="gx-next" href="/ai/">
+        <span class="gx-next-tag">Understanding Artificial Intelligence</span>
+        <p>The wider field the tensor cores were built to serve &mdash; search,
+        perception, reinforcement learning &mdash; with the algorithms running
+        live.</p>
+      </a>
+      <a class="gx-next" href="/llm/">
+        <span class="gx-next-tag">Large Language Models</span>
+        <p>The workload that made GPUs scarce. It is the memory-bound corner of
+        your roofline: 1.5 FLOP per byte, weights streamed for every token.</p>
+      </a>
+      <a class="gx-next" href="/cloud/">
+        <span class="gx-next-tag">Understanding the Cloud</span>
+        <p>Where the fleets live. One GPU is a chip; seventy-two of them behind
+        one interconnect are a building, and someone rents it by the hour.</p>
+      </a>
     </div>
   </section>
 
@@ -1258,6 +1329,20 @@ extra_js:
        OUTRO
   ================================================================ -->
   <footer class="gx-outro">
+    <p class="gx-kicker gx-outro-kicker">The question, answered</p>
+    <p class="gx-outro-answer">
+      A GPU beats your CPU whenever the same short calculation has to happen
+      thousands of times at once, and loses whenever the next step depends on
+      the last one. That is chapter 03: thousands of narrow lanes stepping in
+      lockstep, cheap because they share one instruction stream &mdash; which
+      is also why a branch that splits a warp costs you both sides of it.
+      Chapter 02 is what that costs in silicon: almost the whole die spent on
+      SMs and memory interface instead of the branch predictors and deep
+      caches a CPU needs. Chapters 05 and 11 are what it costs in practice:
+      lanes are cheap, but feeding them is not, so the honest limit on your
+      run is whichever finishes last &mdash; the math or the bus &mdash; and
+      the roofline tells you which before you write a line of code.
+    </p>
     <p class="gx-outro-line">
       Billions of transistors, one idea: <span>do everything, everywhere, all at once — slowly.</span>
     </p>

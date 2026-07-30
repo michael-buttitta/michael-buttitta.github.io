@@ -8,12 +8,24 @@
      3. Everything respects prefers-reduced-motion: ambient animation is
         disabled and user-triggered simulations jump to their final state.
 
-   Simulations are illustrative models with honest ratios, not cycle-accurate
-   hardware emulation — the captions in the HTML say so where it matters.
+   Honesty notes: the ray tracer is a real per-pixel path of camera rays,
+   shadow rays, mirror bounces, and hemisphere samples against real sphere
+   and plane intersections, and the matrix-multiply walkthrough computes real
+   dot products with a live multiply-accumulate count — both are genuinely
+   computing, not replaying. The roofline playground is an analytic
+   first-order model (time = the slower of compute and memory, plus PCIe
+   spill), and the hero scene, CPU-vs-GPU race, die shot, pipeline stepper,
+   and bandwidth stream are honest cartoons built to teach shape and ratio,
+   not cycle-accurate hardware emulation — the captions in the HTML say so
+   where it matters.
    ============================================================================ */
 
 (function () {
   'use strict';
+
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return;
+  }
 
   document.documentElement.classList.add('gx-js');
 
@@ -190,6 +202,7 @@
 
     function buildScene() {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       var dw = Math.min(w * 0.34, 360);
       var dh = Math.min(h * 0.36, 230);
       var die = { x: (w - dw) / 2, y: h * 0.62 - dh / 2, w: dw, h: dh };
@@ -257,6 +270,7 @@
 
     function drawStatic() {
       var ctx = cv.ctx, w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60 || !scene.die) { return; }
       ctx.clearRect(0, 0, w, h);
       // traces
       ctx.lineWidth = 1;
@@ -314,6 +328,7 @@
     drawStatic();
 
     var loop = makeLoop(function (t, dt) {
+      if (!scene.die) { return; }
       drawStatic();
       var ctx = cv.ctx;
       particles.forEach(function (p) {
@@ -401,6 +416,7 @@
     function draw(kind) {
       var p = panels[kind];
       var ctx = p.cv.ctx, w = p.cv.state.w, h = p.cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var pad = 8;
       var cell = Math.min((w - pad * 2) / COLS, (h - pad * 2) / ROWS);
@@ -551,6 +567,7 @@
 
     function draw() {
       var ctx = cv.ctx, w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var pad = 10;
       var cell = Math.min((w - pad * 2) / COLS, (h - pad * 2) / ROWS);
@@ -911,6 +928,7 @@
 
     function render(t) {
       var ctx = cv.ctx, w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       clearBg(ctx, w, h);
       STAGES[current](ctx, w, h, (t === undefined ? performance.now() : t) - stageStart);
     }
@@ -1042,6 +1060,7 @@
     function seed() {
       parts = [];
       var w = cv.state.w;
+      if (w < 60) { return; }
       var n = Math.min(72, Math.floor(w / 12));
       for (var i = 0; i < n; i++) {
         parts.push({ x: Math.random(), lane: Math.random(), dir: i % 4 === 0 ? -1 : 1, speed: 0.25 + Math.random() * 0.4, kind: 'vram' });
@@ -1069,6 +1088,7 @@
 
     function drawFrame(dt) {
       var ctx = cv.ctx, w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var nodeW = Math.min(150, w * 0.2), nodeH = h * 0.42;
       var leftX = w * 0.06, rightX = w * 0.94 - nodeW;
@@ -1203,7 +1223,17 @@
       }, 620);
     }
 
+    /* Pause the walkthrough when it scrolls out of view: the interval is
+       user-started and bounded (16 steps), but nothing should keep ticking
+       off-screen. */
+    function pause() {
+      if (!timer) { return; }
+      clearInterval(timer); timer = null;
+      $('#gx-mm-play').textContent = 'Play';
+    }
+
     $('#gx-mm-play').addEventListener('click', play);
+    onScreen(elC, null, pause);
     $('#gx-mm-step').addEventListener('click', function () {
       if (timer) { clearInterval(timer); timer = null; $('#gx-mm-play').textContent = 'Play'; }
       if (step >= 16) { reset(); }
@@ -1404,6 +1434,7 @@
       bctx.putImageData(img, 0, 0);
 
       var ctx = cv.ctx, w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.imageSmoothingEnabled = true;
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(buf, 0, 0, w, h);
@@ -1675,6 +1706,7 @@
 
     function drawSim(m, progress) {
       var ctx = cv.ctx, w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       if (!m) {
         ctx.fillStyle = C.faint;
