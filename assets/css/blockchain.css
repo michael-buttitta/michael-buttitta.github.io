@@ -612,8 +612,14 @@ html.bc-js #blockchain-experience [data-bc-reveal].is-in {
   position: relative;
   z-index: 1;
   max-width: 780px;
-  padding: 4rem 1.5rem;
+  padding: 4rem clamp(1.5rem, 4vw, 2.5rem);
   text-align: center;
+  margin-inline: clamp(0.85rem, 3vw, 1.5rem);
+  border: 1px solid var(--bc-line);
+  border-radius: 18px;
+  background: rgba(11, 17, 32, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 #blockchain-experience .bc-hero-inner .bc-kicker {

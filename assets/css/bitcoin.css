@@ -470,8 +470,14 @@
   position: relative;
   z-index: 2;
   max-width: 760px;
-  padding: 3rem 1.5rem;
+  padding: 3rem clamp(1.5rem, 4vw, 2.5rem);
   text-align: center;
+  margin-inline: clamp(0.85rem, 3vw, 1.5rem);
+  border: 1px solid var(--bx-line);
+  border-radius: 18px;
+  background: rgba(11, 17, 32, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 #bitcoin-experience .bx-hero-inner .bx-kicker {

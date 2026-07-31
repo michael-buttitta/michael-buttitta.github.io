@@ -450,6 +450,12 @@
   z-index: 1;
   max-width: 46rem;
   padding: 4rem clamp(1.4rem, 5vw, 3.5rem);
+  margin-inline: clamp(0.85rem, 3vw, 1.5rem);
+  border: 1px solid var(--ai-line);
+  border-radius: 18px;
+  background: rgba(11, 17, 32, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 #ai-experience .ai-hero-title {

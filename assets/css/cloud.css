@@ -274,8 +274,14 @@
   position: relative;
   z-index: 1;
   max-width: 46rem;
-  padding: 3rem 1.5rem;
+  padding: 3rem clamp(1.5rem, 4vw, 2.5rem);
   text-align: center;
+  margin-inline: clamp(0.85rem, 3vw, 1.5rem);
+  border: 1px solid var(--cl-line);
+  border-radius: 18px;
+  background: rgba(11, 17, 32, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 #cloud-experience .cl-hero-inner .cl-kicker {
