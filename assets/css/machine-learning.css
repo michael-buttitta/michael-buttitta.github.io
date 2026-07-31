@@ -1209,6 +1209,62 @@
   max-width: 26ch;
 }
 
+/* ---------- narrow phones (375px and below) ------------------------------ */
+
+/* The evaluation chapter's confusion matrix has the widest min-content of
+   anything on the page: a 6rem row-header plus two 7.5rem cells. Its grid
+   column stretched the whole ml-met-grid, which pushed the body into a
+   horizontal scroll at 375px. Let the columns collapse instead. */
+@media (max-width: 480px) {
+  #ml-experience .ml-met-cm,
+  #ml-experience .ml-met-stats {
+    min-width: 0;
+  }
+
+  #ml-experience .ml-met-cm {
+    grid-template-columns: auto repeat(2, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  #ml-experience .ml-met-cm-corner,
+  #ml-experience .ml-met-cm-rowh {
+    min-width: 0;
+    font-size: 0.66rem;
+  }
+
+  #ml-experience .ml-met-cm-cell {
+    padding: 0.55rem 0.5rem;
+  }
+
+  #ml-experience .ml-met-cm-cell output {
+    font-size: 1.05rem;
+  }
+
+  /* the threshold slider's label is nowrap and its track is 50vw; together
+     they exceeded the content box */
+  #ml-experience .ml-slider-label {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  #ml-experience .ml-slider-wide input[type='range'] {
+    width: min(300px, 100%);
+  }
+}
+
+/* At 320px the ML Lab's three-way task switch is still one row too wide. */
+@media (max-width: 360px) {
+  #ml-experience .ml-seg {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  #ml-experience .ml-seg-btn {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
+
 /* ---------- reduced motion (global belt-and-braces) ----------------------- */
 
 @media (prefers-reduced-motion: reduce) {
