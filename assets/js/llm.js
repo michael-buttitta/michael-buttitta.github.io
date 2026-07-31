@@ -837,7 +837,57 @@
   };
 
   /* When loaded outside a browser (Node), export the core for the vector
-     tests and stop — everything below is DOM territory. */
+     tests and stop — everything below is DOM territory.
+
+     Calling conventions. Every exported function is positional, and the
+     trained artifacts come FIRST — encode('text') throws; encode(T, 'text')
+     is the call. The three prebuilt artifacts are on the export itself:
+
+       TOK, NGRAM, EMB        the trained tokenizer, n-gram model, embeddings
+
+       encode(T, text)                 -> array of token ids
+       decode(T, ids)                  -> string (leading space is preserved,
+                                          so round-trip tests want .trim())
+       encodeDetailed(T, text)         -> per-word segmentation detail
+       trainBPE(corpus, merges)        -> a fresh tokenizer T
+       lmNextDist(T, M, contextIds)    -> dense array over the vocab, sums to 1
+       lmExplain(T, M, contextIds, tokenId)
+                                       -> the tri/bi/unigram counts behind one
+                                          probability
+       attention(Q, K, V, causal)      -> { weights, out }; rows of weights
+                                          each sum to 1
+       multiHeadAttention(X, params, causal)
+       buildModel(cfg)                 REQUIRES cfg — throws TypeError if it is
+                                       omitted, there is no default. Shape:
+                                       { vocabSize, dModel, heads, layers, seed }
+       forward(model, ids, opts)       -> { logits: [pos][vocab], probs, x0,
+                                            blocks, ... }; opts defaults to
+                                            { usePositional: true, causal: true }
+       applyTemperature(logits, t)     -> scaled logits
+       sortedEntries(dist)             -> [{ id, p }, ...] descending
+       topKFilter(entries, k)          -> { kept, ... }   k = 0 keeps everything
+       topPFilter(entries, p)          -> { kept, ... }
+       renormalize(entries)            -> entries rescaled to sum to 1
+       samplePipeline(logits, opts)    opts: { temperature, topK, topP, rand }
+                                       rand is a 0..1 draw, not a seed
+
+     Recorded vector suite — four assertions, all PASS as shipped. Run from the
+     repository root; also checked in verbatim as _audit/llm-vectors.js:
+
+       const L = require('./assets/js/llm.js'), T = L.TOK;
+       const ids = L.encode(T, 'the bank of the river');
+       // 1. BPE round-trip
+       L.decode(T, ids).trim() === 'the bank of the river'
+       // 2. n-gram distribution is a distribution
+       const d = L.lmNextDist(T, L.NGRAM, ids);
+       Math.abs(d.reduce((a, b) => a + b, 0) - 1) < 1e-9
+       // 3. the causal mask hides the future: row 0 attends only to itself
+       const I = [[1, 0], [0, 1]];
+       const A = L.attention(I, I, I, true);
+       Math.abs(A.weights[0][0] - 1) < 1e-12 && A.weights[0][1] === 0
+       // 4. every attention row is a distribution
+       A.weights.every(r => Math.abs(r.reduce((a, b) => a + b, 0) - 1) < 1e-9)
+  */
   if (typeof window === 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
       module.exports = LLM;
@@ -1106,7 +1156,7 @@
   function initHero() {
     var canvas = $('#llm-hero-canvas');
     if (!canvas) { return; }
-    var cv = setupCanvas(canvas);
+    var cv = setupCanvas(canvas, function () { if (reduced() || !loop) { draw(0); } });
     var ctx = cv.ctx;
     var rng = LLM.makeRng(2024);
     var words = [];
@@ -1128,6 +1178,7 @@
     function draw(t) {
       var w = cv.state.w;
       var h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       parts.forEach(function (p) {
         var x = ((p.x + (reduced() ? 0 : t * 0.00001 * p.v * 60)) % 1.1) * w;
@@ -1338,6 +1389,7 @@
     var moved = false;
 
     function layout() {
+      if (cv.state.w < 60 || cv.state.h < 60) { return; }
       var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
       EMB.coords.forEach(function (c) {
         if (c.x < minX) { minX = c.x; }
@@ -1364,6 +1416,7 @@
     }
 
     function draw() {
+      if (cv.state.w < 60 || cv.state.h < 60) { return; }
       ctx.clearRect(0, 0, cv.state.w, cv.state.h);
       var nbSet = {};
       if (selA && !selB) {
@@ -1577,6 +1630,7 @@
       var selRow = -1;
       function drawPE() {
         var ctx = cv.ctx;
+        if (cv.state.w < 60 || cv.state.h < 60) { return; }
         ctx.clearRect(0, 0, cv.state.w, cv.state.h);
         var labelW = 52;
         drawHeat(ctx, PE, labelW, 6, cv.state.w - labelW - 8, cv.state.h - 12, 1);
@@ -1674,6 +1728,7 @@
       var ctx = cv.ctx;
       var w = cv.state.w;
       var h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var n = state.ids.length;
       var pad = 40;
@@ -1845,9 +1900,11 @@
         var ctx = c.cv.ctx;
         var w = c.cv.state.w;
         var hh = c.cv.state.h;
-        ctx.clearRect(0, 0, w, hh);
-        var W = mode === 'real' ? mha.heads[h].att.weights : STORY[h].W;
-        drawHeat(ctx, W, 4, 4, w - 8, hh - 8, 1);
+        if (w >= 60 && hh >= 60) {
+          ctx.clearRect(0, 0, w, hh);
+          var W = mode === 'real' ? mha.heads[h].att.weights : STORY[h].W;
+          drawHeat(ctx, W, 4, 4, w - 8, hh - 8, 1);
+        }
         c.cap.textContent = mode === 'real'
           ? 'Head ' + (h + 1) + ' — random weights (real math)'
           : 'Head ' + (h + 1) + ' — “' + STORY[h].name + '” (illustrative)';
@@ -1915,6 +1972,7 @@
       var ctx = cv.ctx;
       var w = cv.state.w;
       var h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var labelW = 76;
       drawHeat(ctx, STAGES[cur].data, labelW, 8, w - labelW - 10, h - 16);
@@ -2040,6 +2098,7 @@
       var ctx = scv.ctx;
       var w = scv.state.w;
       var h = scv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var sizes = [128, 512, 4096, 32768, 131072];
       var names = ['128', '512', '4K', '32K', '128K'];
@@ -2113,6 +2172,7 @@
         var ctx = tcv.ctx;
         var w = tcv.state.w;
         var h = tcv.state.h;
+        if (w < 60 || h < 60) { return; }
         ctx.clearRect(0, 0, w, h);
         ctx.strokeStyle = C.line;
         ctx.strokeRect(10, 8, w - 20, h - 26);
@@ -2429,6 +2489,7 @@
       var ctx = cv.ctx;
       var w = cv.state.w;
       var h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var lo = 3;
       var hi = 12.4;
@@ -2565,6 +2626,12 @@
       });
     }
 
+    function drawHead(c, hd) {
+      if (c.state.w < 60 || c.state.h < 60) { return; }
+      c.ctx.clearRect(0, 0, c.state.w, c.state.h);
+      drawHeat(c.ctx, hd.att.weights, 2, 2, c.state.w - 4, c.state.h - 4, 1);
+    }
+
     function renderAttn() {
       attnEl.textContent = '';
       var c = state.model.config;
@@ -2577,8 +2644,8 @@
           cell.appendChild(cnv);
           cell.appendChild(el('p', 'llm-head-cap', 'L' + (L + 1) + '·H' + (h + 1)));
           attnEl.appendChild(cell);
-          var cv2 = setupCanvas(cnv);
-          drawHeat(cv2.ctx, hd.att.weights, 2, 2, cv2.state.w - 4, cv2.state.h - 4, 1);
+          var cv2 = setupCanvas(cnv, function () { drawHead(cv2, hd); });
+          drawHead(cv2, hd);
         });
       });
     }
