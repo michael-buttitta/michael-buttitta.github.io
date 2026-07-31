@@ -190,7 +190,7 @@
   function initHero() {
     var canvas = $('#os-hero-canvas');
     if (!canvas) { return; }
-    var cv = setupCanvas(canvas);
+    var cv = setupCanvas(canvas, function () { draw(performance.now()); });
     var ctx = cv.ctx, st = cv.state;
 
     var BOOTLINES = [
@@ -238,8 +238,9 @@
     }
 
     function draw(now) {
-      var L = layout();
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
+      var L = layout();
       var age = reduced() ? 60000 : now - t0;
       var boot = clamp(age / 14000, 0, 1);
       ctx.clearRect(0, 0, w, h);
@@ -346,13 +347,21 @@
     if (reduced()) {
       draw(performance.now());
     } else {
-      onScreen(canvas, function () { loop.start(); }, function () { loop.stop(); });
-      if (lineEl) {
-        setInterval(function () {
-          lineIdx = (lineIdx + 1) % BOOTLINES.length;
-          lineEl.textContent = BOOTLINES[lineIdx];
-        }, 2600);
-      }
+      /* The boot-log ticker rides the same on-screen gate as the animation, so it
+         stops cycling once the hero scrolls away instead of running forever. */
+      var lineTimer = null;
+      onScreen(canvas, function () {
+        loop.start();
+        if (lineEl && lineTimer === null) {
+          lineTimer = setInterval(function () {
+            lineIdx = (lineIdx + 1) % BOOTLINES.length;
+            lineEl.textContent = BOOTLINES[lineIdx];
+          }, 2600);
+        }
+      }, function () {
+        loop.stop();
+        if (lineTimer !== null) { clearInterval(lineTimer); lineTimer = null; }
+      });
     }
   }
 
@@ -363,7 +372,7 @@
   function initWorld() {
     var canvas = $('#os-world-canvas');
     if (!canvas) { return; }
-    var cv = setupCanvas(canvas);
+    var cv = setupCanvas(canvas, function () { draw(performance.now()); });
     var ctx = cv.ctx, st = cv.state;
     var statusEl = $('#os-world-status');
     var mode = 'chaos';
@@ -402,8 +411,9 @@
     }
 
     function draw(now) {
-      var L = layout();
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
+      var L = layout();
       ctx.clearRect(0, 0, w, h);
 
       L.apps.forEach(function (a) {
@@ -512,6 +522,7 @@
     }
 
     var loop = makeLoop(function (t, dt) {
+      if (st.w < 60 || st.h < 60) { return; }
       var L = layout();
       step(t, dt, L);
       draw(t);
@@ -899,8 +910,9 @@
     function timeX(L, t, total) { return L.gx + (t / total) * L.gw; }
 
     function drawFrame(tNow) {
-      var L = layout();
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
+      var L = layout();
       ctx.clearRect(0, 0, w, h);
       var total = result ? result.total : 620;
 
@@ -1117,7 +1129,7 @@
   function initCtx() {
     var canvas = $('#os-ctx-canvas');
     if (!canvas) { return; }
-    var cv = setupCanvas(canvas);
+    var cv = setupCanvas(canvas, function () { draw(); });
     var ctx = cv.ctx, st = cv.state;
     var rate = $('#os-ctx-rate'), rateVal = $('#os-ctx-rateval');
     var overheadEl = $('#os-ctx-overhead');
@@ -1155,6 +1167,7 @@
 
     function draw() {
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var midX = w / 2;
       var boxW = Math.min(150, w * 0.24), boxH = 118;
@@ -1486,8 +1499,9 @@
     }
 
     function draw() {
-      var L = layout();
       var w = st.w, h = st.h;
+      if (w < 60 || h < 60) { return; }
+      var L = layout();
       ctx.clearRect(0, 0, w, h);
       var pcol = proc === 'a' ? C.sky : C.amber;
       var t = tables[proc];
@@ -2339,10 +2353,11 @@
     }
 
     var graph = null;
-    if (canvas) { graph = setupCanvas(canvas); }
+    if (canvas) { graph = setupCanvas(canvas, function () { drawGraph(); }); }
     function drawGraph() {
       if (!graph) { return; }
       var ctx = graph.ctx, w = graph.state.w, h = graph.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       ctx.strokeStyle = C.line;
       ctx.lineWidth = 1;

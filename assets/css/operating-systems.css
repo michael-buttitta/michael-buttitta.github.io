@@ -134,6 +134,12 @@
   color: var(--os-text);
 }
 
+/* A lede introducing one half of a merged chapter, under an .os-h3 subhead. */
+#os-experience .os-lede-sub {
+  max-width: 72ch;
+  margin: 0 0 0.2rem;
+}
+
 #os-experience .os-prose {
   margin: 1.1rem 0;
   max-width: 72ch;
@@ -202,14 +208,16 @@
   transform: none;
 }
 
+/* The hidden-until-revealed state is gated on html.os-js (added by
+   operating-systems.js), so panels stay visible when JavaScript never runs. */
 @media (prefers-reduced-motion: no-preference) {
-  #os-experience [data-os-reveal] {
+  html.os-js #os-experience [data-os-reveal] {
     opacity: 0;
     transform: translateY(18px);
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
-  #os-experience [data-os-reveal].is-in {
+  html.os-js #os-experience [data-os-reveal].is-in {
     opacity: 1;
     transform: none;
   }

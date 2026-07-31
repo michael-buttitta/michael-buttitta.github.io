@@ -35,8 +35,7 @@ extra_js:
     <a class="os-rail-dot" href="#processes" data-label="Processes &amp; threads"><span></span></a>
     <a class="os-rail-dot" href="#scheduling" data-label="CPU scheduling"><span></span></a>
     <a class="os-rail-dot" href="#contextswitch" data-label="Context switching"><span></span></a>
-    <a class="os-rail-dot" href="#memory" data-label="Memory management"><span></span></a>
-    <a class="os-rail-dot" href="#virtualmem" data-label="Virtual memory"><span></span></a>
+    <a class="os-rail-dot" href="#memory" data-label="Memory"><span></span></a>
     <a class="os-rail-dot" href="#files" data-label="File systems"><span></span></a>
     <a class="os-rail-dot" href="#drivers" data-label="Device drivers"><span></span></a>
     <a class="os-rail-dot" href="#syscalls" data-label="System calls"><span></span></a>
@@ -60,7 +59,7 @@ extra_js:
       </p>
       <div class="os-hero-cta">
         <a class="os-btn os-btn-primary" href="#whatis">Begin exploring</a>
-        <span class="os-hero-hint">15 chapters &middot; live simulations &middot; one conductor</span>
+        <span class="os-hero-hint">14 chapters &middot; live simulations &middot; one conductor</span>
       </div>
       <div class="os-hero-boot" aria-hidden="true">
         <span class="os-hero-boot-ok">[ OK ]</span>&nbsp;<span id="os-hero-bootline">Reached target: Graphical Interface</span><span class="os-hero-caret"></span>
@@ -370,19 +369,28 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       07 — MEMORY MANAGEMENT
+       07 — MEMORY: ALLOCATION THEN TRANSLATION
   ================================================================ -->
   <section class="os-section" id="memory" aria-labelledby="memory-h">
     <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">07</span> Handing out RAM</p>
-      <h2 id="memory-h">Memory management</h2>
+      <p class="os-kicker"><span class="os-kicker-num">07</span> The grand illusion</p>
+      <h2 id="memory-h">Memory: the OS&rsquo;s grand illusion</h2>
       <p class="os-lede">
-        Every process wants memory, and none of them may touch anyone
-        else&rsquo;s. The OS keeps the ledger: which pages of RAM are free,
-        which belong to whom, and which are shared. Launch and quit
-        applications below, then try the attack.
+        Memory is two jobs, not one. First the OS has to <strong>hand RAM
+        out</strong>: every process wants memory, and none of them may touch
+        anyone else&rsquo;s. Then it has to <strong>lie about where that
+        memory is</strong>, so each process believes it owns a private,
+        contiguous address space starting at zero. Work through both halves
+        below &mdash; allocation first, then translation.
       </p>
     </div>
+
+    <h3 class="os-h3">Half one: handing out RAM</h3>
+    <p class="os-lede os-lede-sub">
+      The OS keeps the ledger: which pages of RAM are free, which belong to
+      whom, and which are shared. Launch and quit applications below, then
+      try the attack.
+    </p>
 
     <div class="os-panel" data-os-reveal>
       <div class="os-panel-controls" role="group" aria-label="Allocate and free memory">
@@ -406,24 +414,17 @@ extra_js:
         fault, the wall that makes process isolation real.
       </p>
     </div>
-  </section>
 
-  <!-- ================================================================
-       08 — VIRTUAL MEMORY
-  ================================================================ -->
-  <section class="os-section" id="virtualmem" aria-labelledby="virtualmem-h">
-    <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">08</span> The grand illusion</p>
-      <h2 id="virtualmem-h">Virtual memory</h2>
-      <p class="os-lede">
-        Here is the twist: processes never see real RAM addresses at all.
-        Each one lives in its own <strong>virtual</strong> address space
-        &mdash; a private, seemingly contiguous stretch of memory starting
-        at zero &mdash; and a <strong>page table</strong> maps every virtual
-        page to wherever it actually is: some frame of physical RAM, or
-        parked on disk. Touch a page and follow the translation.
-      </p>
-    </div>
+    <h3 class="os-h3">Half two: the address every process believes in</h3>
+    <p class="os-lede os-lede-sub">
+      Here is the twist: processes never see the real RAM addresses you just
+      watched being handed out. Each one lives in its own
+      <strong>virtual</strong> address space &mdash; a private, seemingly
+      contiguous stretch of memory starting at zero &mdash; and a
+      <strong>page table</strong> maps every virtual page to wherever it
+      actually is: some frame of physical RAM, or parked on disk. Touch a
+      page and follow the translation.
+    </p>
 
     <div class="os-panel" data-os-reveal>
       <div class="os-panel-controls" role="group" aria-label="Choose a process and a page to access">
@@ -453,11 +454,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       09 — FILE SYSTEMS
+       08 — FILE SYSTEMS
   ================================================================ -->
   <section class="os-section" id="files" aria-labelledby="files-h">
     <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">09</span> Where your stuff actually lives</p>
+      <p class="os-kicker"><span class="os-kicker-num">08</span> Where your stuff actually lives</p>
       <h2 id="files-h">File systems</h2>
       <p class="os-lede">
         A drive doesn&rsquo;t know what a &ldquo;file&rdquo; is &mdash; it
@@ -527,11 +528,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       10 — DEVICE DRIVERS
+       09 — DEVICE DRIVERS
   ================================================================ -->
   <section class="os-section" id="drivers" aria-labelledby="drivers-h">
     <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">10</span> Speaking every dialect</p>
+      <p class="os-kicker"><span class="os-kicker-num">09</span> Speaking every dialect</p>
       <h2 id="drivers-h">Device drivers</h2>
       <p class="os-lede">
         Thousands of keyboards, printers, GPUs, and Wi-Fi chips exist, each
@@ -579,11 +580,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       11 — SYSTEM CALLS
+       10 — SYSTEM CALLS
   ================================================================ -->
   <section class="os-section" id="syscalls" aria-labelledby="syscalls-h">
     <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">11</span> The doorway to the kernel</p>
+      <p class="os-kicker"><span class="os-kicker-num">10</span> The doorway to the kernel</p>
       <h2 id="syscalls-h">System calls</h2>
       <p class="os-lede">
         User programs cannot touch disks, screens, or network cards directly
@@ -627,11 +628,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       12 — SECURITY & PERMISSIONS
+       11 — SECURITY & PERMISSIONS
   ================================================================ -->
   <section class="os-section" id="security" aria-labelledby="security-h">
     <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">12</span> The bouncer at every door</p>
+      <p class="os-kicker"><span class="os-kicker-num">11</span> The bouncer at every door</p>
       <h2 id="security-h">Security &amp; permissions</h2>
       <p class="os-lede">
         Because every request funnels through the kernel, the kernel is the
@@ -671,12 +672,20 @@ extra_js:
     </div>
   </section>
 
+  <p class="os-prose os-framing">
+    That is the job description complete: boot, kernel, processes,
+    scheduling, memory, files, drivers, syscalls, security. The next two
+    chapters are the wrap-up &mdash; who ships those choices differently,
+    and what people commonly get wrong about them &mdash; before you take
+    the controls yourself in the control center.
+  </p>
+
   <!-- ================================================================
-       13 — MODERN OPERATING SYSTEMS
+       12 — MODERN OPERATING SYSTEMS
   ================================================================ -->
   <section class="os-section" id="modern" aria-labelledby="modern-h">
     <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">13</span> The family portrait</p>
+      <p class="os-kicker"><span class="os-kicker-num">12</span> The family portrait</p>
       <h2 id="modern-h">Modern operating systems</h2>
       <p class="os-lede">
         Every chapter so far applies to all of them: same concepts,
@@ -709,11 +718,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       14 — MISCONCEPTIONS
+       13 — MISCONCEPTIONS
   ================================================================ -->
   <section class="os-section" id="myths" aria-labelledby="myths-h">
     <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">14</span> Setting the record straight</p>
+      <p class="os-kicker"><span class="os-kicker-num">13</span> Setting the record straight</p>
       <h2 id="myths-h">Common misconceptions</h2>
       <p class="os-lede">
         Seven things people believe about operating systems that
@@ -787,11 +796,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       15 — SIMULATOR: OS CONTROL CENTER
+       14 — SIMULATOR: OS CONTROL CENTER
   ================================================================ -->
   <section class="os-section" id="simulator" aria-labelledby="simulator-h">
     <div class="os-section-head">
-      <p class="os-kicker"><span class="os-kicker-num">15</span> The whole story at once</p>
+      <p class="os-kicker"><span class="os-kicker-num">14</span> The whole story at once</p>
       <h2 id="simulator-h">The OS control center</h2>
       <p class="os-lede">
         Everything from the previous fourteen chapters in one running
