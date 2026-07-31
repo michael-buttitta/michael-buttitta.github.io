@@ -179,7 +179,8 @@
   function initHero() {
     var canvas = $('#ai-hero-canvas');
     if (!canvas) { return; }
-    var cv = setupCanvas(canvas);
+    var refit = null; /* set below once a draw function exists */
+    var cv = setupCanvas(canvas, function () { if (refit) { refit(); } });
     var ctx = cv.ctx, st = cv.state;
     var rng = makeRng(19560718);
 
@@ -317,6 +318,7 @@
     }
 
     function draw(t) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var cyc = t % (ERA * 3);
       var era = Math.floor(cyc / ERA);
@@ -329,7 +331,12 @@
 
     if (reduced()) {
       /* single static frame of the modern era */
-      var drawStatic = function () { ctx.clearRect(0, 0, st.w, st.h); drawEra(2, 1, 0); };
+      var drawStatic = function () {
+        if (st.w < 60 || st.h < 60) { return; }
+        ctx.clearRect(0, 0, st.w, st.h);
+        drawEra(2, 1, 0);
+      };
+      refit = drawStatic;
       drawStatic();
       onScreen(canvas, drawStatic);
       return;
@@ -523,6 +530,7 @@
       }
 
       drawCurve = function () {
+        if (st.w < 60 || st.h < 60) { return; }
         ctx.clearRect(0, 0, st.w, st.h);
 
         /* winter bands */
@@ -1025,6 +1033,7 @@
     }
 
     function drawBase() {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var g = cellGeom();
       ctx.fillStyle = C.deep;
@@ -1046,6 +1055,7 @@
     }
 
     function drawOverlay() {
+      if (st.w < 60 || st.h < 60) { return; }
       var i;
       for (i = 0; i < overlay.visCount; i++) {
         var c = overlay.visited[i];
@@ -1259,6 +1269,7 @@
     }
 
     function draw() {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var padL = 46, padB = 34, padT = 16, padR = 16;
 
@@ -1532,6 +1543,7 @@
     }
 
     function draw(prog) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var g = geom();
       var midY = st.h / 2;
@@ -1795,6 +1807,7 @@
     }
 
     function draw() {
+      if (st.w < 60 || st.h < 60 || !Q) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var g = geom();
       var x, y;
@@ -2158,6 +2171,7 @@
     function val() { return parseInt(slider.value, 10) / 100; }
 
     function draw(t) {
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var s = Math.min(st.w, st.h) / N;
       var ox = (st.w - s * N) / 2, oy = (st.h - s * N) / 2;

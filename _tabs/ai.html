@@ -612,6 +612,16 @@ extra_js:
       engineering &mdash; and for images, audio, and language, nobody could
       design features good enough. That is the wall deep learning broke.
     </p>
+
+    <p class="ai-prose">
+      One perceptron and two measurements is the smallest honest version of
+      this idea. <a href="/machine-learning/">Understanding Machine
+      Learning</a> is the full discipline: regression as well as
+      classification, clustering without labels at all, and the part this
+      chapter skipped entirely &mdash; how you find out whether a model
+      actually works, and why training accuracy is the easiest number to
+      fool yourself with.
+    </p>
   </section>
 
   <!-- ================================================================
@@ -671,6 +681,15 @@ extra_js:
       work in concert. Deep learning didn&rsquo;t just borrow the
       computer&rsquo;s infrastructure &mdash; it bent the industry&rsquo;s
       roadmap around itself.
+    </p>
+
+    <p class="ai-prose">
+      The diagram above is a cartoon of a forward pass. If you want the
+      arithmetic behind it &mdash; what a neuron actually computes, how
+      gradient descent moves the weights, and what a network with a hidden
+      layer can separate that a single boundary line cannot &mdash;
+      <a href="/machine-learning/">Understanding Machine Learning</a> builds
+      and trains one in front of you.
     </p>
   </section>
 
@@ -807,6 +826,16 @@ extra_js:
         enough and you can produce new examples of it.</em>
       </p>
     </div>
+
+    <p class="ai-prose">
+      This chapter shows the loop with a toy. Two exhibits show it for real.
+      <a href="/llm/">Large Language Models</a> replaces the word-pair table
+      with the actual machinery &mdash; a byte-pair tokenizer, learned
+      embeddings, and attention computed step by step.
+      <a href="/chatgpt/">How ChatGPT Works</a> then follows one message
+      through a working assistant, from the text you type to the tokens
+      coming back.
+    </p>
   </section>
 
   <!-- ================================================================
@@ -1075,34 +1104,34 @@ extra_js:
       <p class="ai-kicker">Keep exploring</p>
       <h2 id="next-h">One connected story</h2>
       <p class="ai-lede">
-        AI is software with an enormous appetite for hardware. Every layer it
-        runs on has its own exhibit.
+        This page is the survey. Three exhibits go deeper into the approaches
+        it introduced, and three more cover the machinery underneath them.
       </p>
     </div>
     <div class="ai-nextgrid" data-ai-reveal>
+      <a class="ai-next" href="/machine-learning/">
+        <span class="ai-next-tag">Understanding Machine Learning</span>
+        <p>Chapter 6 trained one perceptron on two measurements. This exhibit is the full discipline &mdash; regression, clustering, overfitting, and why a model that scores well can still be wrong.</p>
+      </a>
+      <a class="ai-next" href="/llm/">
+        <span class="ai-next-tag">Large Language Models</span>
+        <p>Chapter 9&rsquo;s word-pair toy, done honestly: a real tokenizer, real embeddings, and a transformer forward pass you can step through.</p>
+      </a>
+      <a class="ai-next" href="/chatgpt/">
+        <span class="ai-next-tag">How ChatGPT Works</span>
+        <p>One assistant traced end to end &mdash; the capstone where the ideas in these chapters become a single product you already use.</p>
+      </a>
       <a class="ai-next" href="/gpu/">
         <span class="ai-next-tag">Inside a Modern GPU</span>
-        <p>The parallel processors whose thousands of cores made deep learning practical &mdash; the hardware half of the 2012 breakthrough.</p>
-      </a>
-      <a class="ai-next" href="/cpu/">
-        <span class="ai-next-tag">Inside a Modern CPU</span>
-        <p>Where the code around every model runs &mdash; and how processors execute the instructions AI workloads compile down to.</p>
-      </a>
-      <a class="ai-next" href="/memory/">
-        <span class="ai-next-tag">Inside Computer Memory</span>
-        <p>Model parameters and training datasets live in the RAM&ndash;SSD hierarchy; moving them is often AI&rsquo;s real bottleneck.</p>
+        <p>The parallel processors whose thousands of cores made deep learning practical &mdash; the hardware half of chapter 7&rsquo;s 2012 breakthrough.</p>
       </a>
       <a class="ai-next" href="/cloud/">
         <span class="ai-next-tag">Understanding Cloud Computing</span>
         <p>Training runs span thousands of machines and deployment serves millions of users &mdash; both are cloud engineering stories.</p>
       </a>
-      <a class="ai-next" href="/cryptography/">
-        <span class="ai-next-tag">Understanding Cryptography</span>
-        <p>Encrypting datasets, securing model endpoints, protecting user prompts &mdash; the mathematics guarding AI systems and their data.</p>
-      </a>
-      <a class="ai-next" href="/blockchain/">
-        <span class="ai-next-tag">Understanding Blockchain</span>
-        <p>A different trust architecture &mdash; occasionally proposed for tracking AI-generated content provenance, and a fascinating design contrast.</p>
+      <a class="ai-next" href="/cpu/">
+        <span class="ai-next-tag">Inside a Modern CPU</span>
+        <p>Where the code around every model runs &mdash; and how processors execute the instructions AI workloads compile down to.</p>
       </a>
     </div>
   </section>
