@@ -31,7 +31,6 @@ extra_js:
     <a class="cl-rail-dot" href="#top" data-label="Top"><span></span></a>
     <a class="cl-rail-dot" href="#what" data-label="What is the cloud?"><span></span></a>
     <a class="cl-rail-dot" href="#why" data-label="Why the cloud exists"><span></span></a>
-    <a class="cl-rail-dot" href="#providers" data-label="The major providers"><span></span></a>
     <a class="cl-rail-dot" href="#regions" data-label="Regions &amp; zones"><span></span></a>
     <a class="cl-rail-dot" href="#vms" data-label="Virtual machines"><span></span></a>
     <a class="cl-rail-dot" href="#containers" data-label="Containers &amp; Kubernetes"><span></span></a>
@@ -39,6 +38,7 @@ extra_js:
     <a class="cl-rail-dot" href="#storage" data-label="Storage"><span></span></a>
     <a class="cl-rail-dot" href="#scaling" data-label="Auto scaling"><span></span></a>
     <a class="cl-rail-dot" href="#serverless" data-label="Serverless"><span></span></a>
+    <a class="cl-rail-dot" href="#providers" data-label="The major providers"><span></span></a>
     <a class="cl-rail-dot" href="#security" data-label="Security"><span></span></a>
     <a class="cl-rail-dot" href="#architecture" data-label="A request's journey"><span></span></a>
     <a class="cl-rail-dot" href="#usecases" data-label="Real-world use cases"><span></span></a>
@@ -251,126 +251,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       03 — THE MAJOR PROVIDERS
-  ================================================================ -->
-  <section class="cl-section" id="providers" aria-labelledby="providers-h">
-    <div class="cl-section-head">
-      <p class="cl-kicker"><span class="cl-kicker-num">03</span> The landscape</p>
-      <h2 id="providers-h">Meet the major cloud providers</h2>
-      <p class="cl-lede">
-        Three companies operate most of the world&rsquo;s public cloud:
-        Amazon Web Services, Microsoft Azure, and Google Cloud Platform.
-        They are different ecosystems solving the same problems &mdash; the
-        concepts you learn on this page transfer between all of them.
-      </p>
-    </div>
-
-    <div class="cl-panel" data-cl-reveal>
-      <div class="cl-ptabs" role="tablist" aria-label="Cloud providers">
-        <button type="button" class="cl-ptab" id="cl-ptab-aws" role="tab" aria-selected="true" aria-controls="cl-ppanel-aws">AWS</button>
-        <button type="button" class="cl-ptab" id="cl-ptab-azure" role="tab" aria-selected="false" aria-controls="cl-ppanel-azure">Microsoft Azure</button>
-        <button type="button" class="cl-ptab" id="cl-ptab-gcp" role="tab" aria-selected="false" aria-controls="cl-ppanel-gcp">Google Cloud</button>
-      </div>
-
-      <div class="cl-ppanel" id="cl-ppanel-aws" role="tabpanel" aria-labelledby="cl-ptab-aws">
-        <h3>Amazon Web Services</h3>
-        <p><strong>History.</strong> Launched in 2006 with S3 (storage) and
-        EC2 (rentable servers), born from Amazon&rsquo;s experience running
-        its own retail infrastructure. First mover, and still the largest
-        provider by market share.</p>
-        <p><strong>Typical strengths.</strong> The broadest service catalog
-        (hundreds of services), the most mature ecosystem of tools and
-        third-party integrations, and the largest hiring pool of experienced
-        engineers.</p>
-        <p><strong>Common customers.</strong> Startups that grew up on it
-        (Netflix, Airbnb, Stripe are famously heavy users), plus enterprises
-        of every size and large public-sector deployments.</p>
-        <p><strong>Global footprint.</strong> Dozens of regions on six
-        continents, each with multiple availability zones.</p>
-        <p><strong>Example services.</strong> EC2 (virtual machines), S3
-        (object storage), Lambda (serverless functions), RDS (managed
-        databases), EKS (managed Kubernetes), CloudFront (CDN).</p>
-      </div>
-
-      <div class="cl-ppanel" id="cl-ppanel-azure" role="tabpanel" aria-labelledby="cl-ptab-azure" hidden>
-        <h3>Microsoft Azure</h3>
-        <p><strong>History.</strong> Announced in 2008 and launched in 2010,
-        built on Microsoft&rsquo;s decades of enterprise software and its own
-        global services (Office, Xbox, Bing).</p>
-        <p><strong>Typical strengths.</strong> Deep integration with the
-        Microsoft stack &mdash; Windows Server, Active Directory, Office 365,
-        .NET &mdash; and strong hybrid-cloud tooling for companies that keep
-        some infrastructure on-premises.</p>
-        <p><strong>Common customers.</strong> Large enterprises,
-        organizations already licensed on Microsoft software, and regulated
-        industries with hybrid requirements.</p>
-        <p><strong>Global footprint.</strong> More announced regions than any
-        other provider, with particular depth in enterprise and government
-        markets.</p>
-        <p><strong>Example services.</strong> Azure Virtual Machines, Blob
-        Storage, Azure Functions, Azure SQL Database, AKS (managed
-        Kubernetes), Azure Front Door / CDN.</p>
-      </div>
-
-      <div class="cl-ppanel" id="cl-ppanel-gcp" role="tabpanel" aria-labelledby="cl-ptab-gcp" hidden>
-        <h3>Google Cloud Platform</h3>
-        <p><strong>History.</strong> Grew from App Engine (2008) into a full
-        platform, exposing the infrastructure Google built to run Search,
-        Gmail, and YouTube &mdash; including technologies like Borg, the
-        internal system that inspired Kubernetes.</p>
-        <p><strong>Typical strengths.</strong> Data analytics and machine
-        learning services (BigQuery is a flagship), a global private network,
-        and first-party Kubernetes expertise &mdash; Google created and
-        open-sourced it.</p>
-        <p><strong>Common customers.</strong> Data-heavy companies, ML/AI
-        teams, and organizations standardized on Kubernetes and open-source
-        tooling.</p>
-        <p><strong>Global footprint.</strong> Dozens of regions linked by one
-        of the largest private fiber networks in the world.</p>
-        <p><strong>Example services.</strong> Compute Engine (virtual
-        machines), Cloud Storage, Cloud Functions / Cloud Run, Cloud SQL, GKE
-        (managed Kubernetes), Cloud CDN.</p>
-      </div>
-    </div>
-
-    <p class="cl-prose">
-      The names differ; the shapes rhyme. Whatever provider you meet, look
-      for the same five primitives &mdash; rentable machines, object storage,
-      functions, managed databases, managed Kubernetes &mdash; and you can
-      orient yourself in minutes:
-    </p>
-
-    <div class="cl-tablewrap" data-cl-reveal>
-      <table class="cl-table">
-        <caption class="cl-visually-hidden">Equivalent services across AWS, Azure, and Google Cloud</caption>
-        <thead>
-          <tr><th scope="col">Concept</th><th scope="col">AWS</th><th scope="col">Azure</th><th scope="col">Google Cloud</th></tr>
-        </thead>
-        <tbody>
-          <tr><th scope="row">Virtual machines</th><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
-          <tr><th scope="row">Object storage</th><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
-          <tr><th scope="row">Serverless functions</th><td>Lambda</td><td>Azure Functions</td><td>Cloud Functions</td></tr>
-          <tr><th scope="row">Managed SQL database</th><td>RDS</td><td>Azure SQL Database</td><td>Cloud SQL</td></tr>
-          <tr><th scope="row">Managed Kubernetes</th><td>EKS</td><td>AKS</td><td>GKE</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <p class="cl-prose">
-      Beyond the big three sit meaningful players with their own niches
-      &mdash; Alibaba Cloud (dominant in China), Oracle and IBM (enterprise
-      workloads), and developer-focused clouds like DigitalOcean, Hetzner,
-      and Cloudflare. None of this page is vendor-specific on purpose:
-      <strong>learn the concepts once, map the names later.</strong>
-    </p>
-  </section>
-
-  <!-- ================================================================
-       04 — REGIONS & AVAILABILITY ZONES
+       03 — REGIONS & AVAILABILITY ZONES
   ================================================================ -->
   <section class="cl-section" id="regions" aria-labelledby="regions-h">
     <div class="cl-section-head">
-      <p class="cl-kicker"><span class="cl-kicker-num">04</span> Geography</p>
+      <p class="cl-kicker"><span class="cl-kicker-num">03</span> Geography</p>
       <h2 id="regions-h">Data centers, regions &amp; availability zones</h2>
       <p class="cl-lede">
         The cloud is not one place &mdash; it&rsquo;s a planet-wide mesh of
@@ -459,11 +344,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       05 — VIRTUAL MACHINES
+       04 — VIRTUAL MACHINES
   ================================================================ -->
   <section class="cl-section" id="vms" aria-labelledby="vms-h">
     <div class="cl-section-head">
-      <p class="cl-kicker"><span class="cl-kicker-num">05</span> The big idea</p>
+      <p class="cl-kicker"><span class="cl-kicker-num">04</span> The big idea</p>
       <h2 id="vms-h">Virtual machines: one computer, many computers</h2>
       <p class="cl-lede">
         The technology that made cloud computing possible is
@@ -535,11 +420,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       06 — CONTAINERS & KUBERNETES
+       05 — CONTAINERS & KUBERNETES
   ================================================================ -->
   <section class="cl-section" id="containers" aria-labelledby="containers-h">
     <div class="cl-section-head">
-      <p class="cl-kicker"><span class="cl-kicker-num">06</span> Shipping code</p>
+      <p class="cl-kicker"><span class="cl-kicker-num">05</span> Shipping code</p>
       <h2 id="containers-h">Containers &amp; Kubernetes</h2>
       <p class="cl-lede">
         Virtual machines solved &ldquo;share the hardware.&rdquo; Containers
@@ -606,7 +491,7 @@ extra_js:
       </div>
       <div class="cl-k8s" id="cl-k8s-nodes" aria-live="polite"></div>
       <p class="cl-panel-status" id="cl-k8s-status" aria-live="polite"></p>
-      <p class="cl-caption">A deliberately simplified scheduler: each node fits four pods. Real Kubernetes weighs CPU and memory requests, affinity rules, and much more &mdash; but the loop of <em>observe &rarr; compare to desired state &rarr; correct</em> is exactly this.</p>
+      <p class="cl-caption">The placement you are watching is a real least-loaded scheduler, not an animation: it walks the nodes that are still alive, puts each pod on the one holding the fewest with room left, and marks pods <strong>Pending</strong> when nothing has room. Kill a node and it genuinely reschedules. What is simplified is the capacity model &mdash; each node fits four pods flat, where real Kubernetes weighs CPU and memory requests, taints, and affinity rules. The loop of <em>observe &rarr; compare to desired state &rarr; correct</em> is exactly this.</p>
     </div>
 
     <p class="cl-prose">
@@ -618,11 +503,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       07 — NETWORKING
+       06 — NETWORKING
   ================================================================ -->
   <section class="cl-section" id="network" aria-labelledby="network-h">
     <div class="cl-section-head">
-      <p class="cl-kicker"><span class="cl-kicker-num">07</span> Plumbing</p>
+      <p class="cl-kicker"><span class="cl-kicker-num">06</span> Plumbing</p>
       <h2 id="network-h">Networking in the cloud</h2>
       <p class="cl-lede">
         Every cloud application lives inside a <strong>virtual network</strong>
@@ -661,11 +546,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       08 — STORAGE
+       07 — STORAGE
   ================================================================ -->
   <section class="cl-section" id="storage" aria-labelledby="storage-h">
     <div class="cl-section-head">
-      <p class="cl-kicker"><span class="cl-kicker-num">08</span> Where data lives</p>
+      <p class="cl-kicker"><span class="cl-kicker-num">07</span> Where data lives</p>
       <h2 id="storage-h">Storage: four shapes of data</h2>
       <p class="cl-lede">
         &ldquo;Store my data in the cloud&rdquo; hides a real decision. Cloud
@@ -741,11 +626,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       09 — AUTO SCALING & LOAD BALANCING
+       08 — AUTO SCALING & LOAD BALANCING
   ================================================================ -->
   <section class="cl-section" id="scaling" aria-labelledby="scaling-h">
     <div class="cl-section-head">
-      <p class="cl-kicker"><span class="cl-kicker-num">09</span> Elasticity</p>
+      <p class="cl-kicker"><span class="cl-kicker-num">08</span> Elasticity</p>
       <h2 id="scaling-h">Auto scaling &amp; load balancing</h2>
       <p class="cl-lede">
         This is the cloud&rsquo;s signature move: capacity that follows
@@ -800,11 +685,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       10 — SERVERLESS
+       09 — SERVERLESS
   ================================================================ -->
   <section class="cl-section" id="serverless" aria-labelledby="serverless-h">
     <div class="cl-section-head">
-      <p class="cl-kicker"><span class="cl-kicker-num">10</span> No servers?</p>
+      <p class="cl-kicker"><span class="cl-kicker-num">09</span> No servers?</p>
       <h2 id="serverless-h">Serverless computing</h2>
       <p class="cl-lede">
         Auto scaling still leaves you managing a fleet. Serverless asks:
@@ -846,6 +731,94 @@ extra_js:
       <div class="cl-def"><h3>Pay-per-use</h3><p>An API that gets 10 requests a day costs effectively nothing. The trade: cold-start latency, execution time limits, and less control over the runtime.</p></div>
       <div class="cl-def"><h3>Versus VMs</h3><p>A VM is always on, always billed, fully yours to configure. Functions fit spiky and event-shaped work; steady heavy traffic often still favors VMs or containers.</p></div>
     </div>
+  </section>
+
+  <!-- ================================================================
+       10 — THE MAJOR PROVIDERS (INTERLUDE)
+  ================================================================ -->
+  <section class="cl-section" id="providers" aria-labelledby="providers-h">
+    <div class="cl-section-head">
+      <p class="cl-kicker"><span class="cl-kicker-num">10</span> The landscape</p>
+      <h2 id="providers-h">A short interlude: who sells all this</h2>
+      <p class="cl-lede">
+        You now know what the products actually are &mdash; rentable
+        machines, containers, storage tiers, elastic fleets, functions. That
+        is the right moment to meet the companies selling them, because the
+        names only make sense once you know what they name.
+      </p>
+    </div>
+
+    <div class="cl-panel" data-cl-reveal>
+      <div class="cl-ptabs" role="tablist" aria-label="Cloud providers">
+        <button type="button" class="cl-ptab" id="cl-ptab-aws" role="tab" aria-selected="true" aria-controls="cl-ppanel-aws">AWS</button>
+        <button type="button" class="cl-ptab" id="cl-ptab-azure" role="tab" aria-selected="false" aria-controls="cl-ppanel-azure">Microsoft Azure</button>
+        <button type="button" class="cl-ptab" id="cl-ptab-gcp" role="tab" aria-selected="false" aria-controls="cl-ppanel-gcp">Google Cloud</button>
+      </div>
+
+      <div class="cl-ppanel" id="cl-ppanel-aws" role="tabpanel" aria-labelledby="cl-ptab-aws">
+        <h3>Amazon Web Services</h3>
+        <p>Launched in 2006 with S3 (storage) and EC2 (rentable servers),
+        born from Amazon&rsquo;s experience running its own retail
+        infrastructure. First mover, and the one with the broadest service
+        catalog and the deepest bench of engineers who already know it.</p>
+        <p><strong>Example services.</strong> EC2 (virtual machines), S3
+        (object storage), Lambda (serverless functions), RDS (managed
+        databases), EKS (managed Kubernetes), CloudFront (CDN).</p>
+      </div>
+
+      <div class="cl-ppanel" id="cl-ppanel-azure" role="tabpanel" aria-labelledby="cl-ptab-azure" hidden>
+        <h3>Microsoft Azure</h3>
+        <p>Announced in 2008 and launched in 2010, built on Microsoft&rsquo;s
+        decades of enterprise software. Its distinguishing pull is
+        integration with the Microsoft stack &mdash; Windows Server, Active
+        Directory, Office 365, .NET &mdash; and tooling for organizations
+        keeping some infrastructure on-premises.</p>
+        <p><strong>Example services.</strong> Azure Virtual Machines, Blob
+        Storage, Azure Functions, Azure SQL Database, AKS (managed
+        Kubernetes), Azure Front Door / CDN.</p>
+      </div>
+
+      <div class="cl-ppanel" id="cl-ppanel-gcp" role="tabpanel" aria-labelledby="cl-ptab-gcp" hidden>
+        <h3>Google Cloud Platform</h3>
+        <p>Grew from App Engine (2008) into a full platform, exposing the
+        infrastructure Google built to run Search, Gmail, and YouTube &mdash;
+        including Borg, the internal system that inspired Kubernetes. Known
+        for data analytics, machine learning services, and first-party
+        Kubernetes expertise.</p>
+        <p><strong>Example services.</strong> Compute Engine (virtual
+        machines), Cloud Storage, Cloud Functions / Cloud Run, Cloud SQL, GKE
+        (managed Kubernetes), Cloud CDN.</p>
+      </div>
+    </div>
+
+    <p class="cl-prose">
+      The names differ; the shapes rhyme. Every chapter you just read has a
+      row in this table, and that is the whole point of the interlude:
+    </p>
+
+    <div class="cl-tablewrap" data-cl-reveal>
+      <table class="cl-table">
+        <caption class="cl-visually-hidden">Equivalent services across AWS, Azure, and Google Cloud</caption>
+        <thead>
+          <tr><th scope="col">Concept</th><th scope="col">AWS</th><th scope="col">Azure</th><th scope="col">Google Cloud</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Virtual machines</th><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
+          <tr><th scope="row">Object storage</th><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
+          <tr><th scope="row">Serverless functions</th><td>Lambda</td><td>Azure Functions</td><td>Cloud Functions</td></tr>
+          <tr><th scope="row">Managed SQL database</th><td>RDS</td><td>Azure SQL Database</td><td>Cloud SQL</td></tr>
+          <tr><th scope="row">Managed Kubernetes</th><td>EKS</td><td>AKS</td><td>GKE</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="cl-prose">
+      Beyond the big three sit meaningful players with their own niches
+      &mdash; Alibaba Cloud (dominant in China), Oracle and IBM (enterprise
+      workloads), and developer-focused clouds like DigitalOcean, Hetzner,
+      and Cloudflare. None of this page is vendor-specific on purpose:
+      <strong>learn the concepts once, map the names later.</strong>
+    </p>
   </section>
 
   <!-- ================================================================
@@ -1277,34 +1250,34 @@ extra_js:
       <p class="cl-kicker">Keep exploring</p>
       <h2 id="next-h">One connected story</h2>
       <p class="cl-lede">
-        The cloud is the top floor of a very tall building. Every layer below
-        it has its own exhibit.
+        The cloud is a floor in a very tall building. The layers holding it up
+        and the ones built on top of it each have their own exhibit.
       </p>
     </div>
     <div class="cl-nextgrid" data-cl-reveal>
-      <a class="cl-next" href="/cpu/">
-        <span class="cl-next-tag">Inside a Modern CPU</span>
-        <p>Every VM, container, and function on this page ultimately executes on the processors dissected here.</p>
+      <a class="cl-next" href="/operating-systems/">
+        <span class="cl-next-tag">Understanding Operating Systems</span>
+        <p>Containers are an OS feature, not a cloud one &mdash; the kernel isolation behind chapter 5, and the scheduler behind every VM.</p>
       </a>
-      <a class="cl-next" href="/memory/">
-        <span class="cl-next-tag">Inside Computer Memory</span>
-        <p>Cloud RAM, SSDs, and storage tiers are the memory hierarchy &mdash; stretched across buildings.</p>
+      <a class="cl-next" href="/internet/">
+        <span class="cl-next-tag">How the Internet Works</span>
+        <p>The hops the request in chapter 12 takes before it reaches a region &mdash; routing, DNS, and TCP, one layer down.</p>
+      </a>
+      <a class="cl-next" href="/machine-learning/">
+        <span class="cl-next-tag">Understanding Machine Learning</span>
+        <p>What the elastic fleets of chapter 8 are increasingly rented for &mdash; real classifiers, clusterers, and trainers you can run.</p>
+      </a>
+      <a class="cl-next" href="/ai/">
+        <span class="cl-next-tag">Understanding Artificial Intelligence</span>
+        <p>The field the cloud made practical: cheap, on-demand compute is why modern AI became buildable at all.</p>
       </a>
       <a class="cl-next" href="/gpu/">
         <span class="cl-next-tag">Inside a Modern GPU</span>
-        <p>The accelerators behind the cloud&rsquo;s AI platforms and rendering farms.</p>
+        <p>The accelerators inside those AI fleets &mdash; the most expensive instances any provider rents.</p>
       </a>
       <a class="cl-next" href="/cryptography/">
         <span class="cl-next-tag">Understanding Cryptography</span>
-        <p>TLS, certificates, and encryption at rest &mdash; the mathematics securing every request on this page.</p>
-      </a>
-      <a class="cl-next" href="/blockchain/">
-        <span class="cl-next-tag">Understanding Blockchain</span>
-        <p>A deliberately <em>de</em>centralized architecture &mdash; the fascinating counterpoint to the cloud&rsquo;s model.</p>
-      </a>
-      <a class="cl-next" href="/bitcoin/">
-        <span class="cl-next-tag">Understanding Bitcoin</span>
-        <p>Nodes, mining, and consensus &mdash; workloads that can run on clouds but derive their security from not depending on one.</p>
+        <p>TLS, certificates, and encryption at rest &mdash; the mathematics under the shared responsibility model in chapter 11.</p>
       </a>
     </div>
   </section>

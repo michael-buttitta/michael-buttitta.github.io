@@ -10,10 +10,17 @@
      3. Everything respects prefers-reduced-motion: ambient animation is
         disabled and story animations jump to labeled final states
 
-   All simulations on this page are honest cartoons: the auto-scaler, the
-   Kubernetes scheduler, the latency and cost numbers are illustrative models
-   built to teach the concepts, not emulations of any provider. The captions
-   in the HTML say so where it matters.
+   Honesty notes: the Kubernetes pod scheduler is a real least-loaded,
+   capacity-constrained placement algorithm — it walks the alive nodes, picks
+   the one holding the fewest pods with room left, genuinely reschedules when
+   a node dies, and genuinely leaves pods Pending when the cluster is full.
+   The architecture builder's scoring model is likewise real: latency, cost,
+   the HA verdict, and the grade are computed from the components you pick,
+   and every deduction is logged. The hero globe, the request path, the
+   demand curve, the region map, the auto-scaler and serverless animations,
+   and all latency and dollar figures are illustrative models with honest
+   ratios, built to teach the concepts and not emulations of any provider.
+   The captions in the HTML say so where it matters.
    ============================================================================ */
 
 (function () {
@@ -225,9 +232,10 @@
   function initHero() {
     var canvas = $('#cl-hero-canvas');
     if (!canvas) { return; }
-    var cv = setupCanvas(canvas);
+    var cv = setupCanvas(canvas, function () { draw(lastT); });
     var ctx = cv.ctx, st = cv.state;
     var rng = makeRng(20260729);
+    var lastT = 0;
 
     var regions = [];
     var users = [];
@@ -257,6 +265,8 @@
     }
 
     function draw(t) {
+      if (st.w < 60 || st.h < 60) { return; }
+      lastT = t;
       ctx.clearRect(0, 0, st.w, st.h);
       var g = geom();
 
@@ -454,7 +464,7 @@
     }
 
     function draw() {
-      if (st.w < 2) { return; }
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var y = yMid();
 
@@ -578,7 +588,7 @@
     }
 
     function render() {
-      if (st.w < 2) { return; }
+      if (st.w < 60 || st.h < 60) { return; }
       var spikeX = parseFloat(spike.value);
       var provX = parseFloat(prov.value);
       spikeOut.textContent = spikeX.toFixed(1) + '×';
@@ -718,7 +728,7 @@
   }
 
   /* ==========================================================================
-     CH.3 — Provider tabs
+     CH.10 — Provider tabs
      ========================================================================== */
 
   function initProviders() {
@@ -737,7 +747,7 @@
   }
 
   /* ==========================================================================
-     CH.4 — World map: users route to the nearest region.
+     CH.3 — World map: users route to the nearest region.
      ========================================================================== */
 
   function initMap() {
@@ -806,7 +816,7 @@
     var pulse = { t: 0, active: false };
 
     function draw(routeProgress) {
-      if (st.w < 2) { return; }
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
 
       /* graticule */
@@ -924,7 +934,7 @@
   }
 
   /* ==========================================================================
-     CH.5 — Be the hypervisor: pack VMs onto a 16-core / 64 GB host.
+     CH.4 — Be the hypervisor: pack VMs onto a 16-core / 64 GB host.
      ========================================================================== */
 
   function initVms() {
@@ -1025,7 +1035,8 @@
   }
 
   /* ==========================================================================
-     CH.6 — A toy Kubernetes: desired replicas, bin-packing, self-healing.
+     CH.5 — Kubernetes: desired replicas, a real least-loaded scheduler,
+     self-healing.
      ========================================================================== */
 
   function initK8s() {
@@ -1045,7 +1056,8 @@
     var startingTimer = null;
 
     function schedule(desired) {
-      /* Round-robin pods across alive nodes, capacity CAP each. */
+      /* Least-loaded placement: each pod goes to the alive node holding the
+         fewest pods that is still under capacity CAP; none fits -> Pending. */
       var placed = [];
       var counts = {};
       nodes.forEach(function (n) { counts[n.id] = 0; });
@@ -1155,7 +1167,7 @@
   }
 
   /* ==========================================================================
-     CH.7 — Networking: DNS, load balancer, subnets, security groups.
+     CH.6 — Networking: DNS, load balancer, subnets, security groups.
      ========================================================================== */
 
   function initNet() {
@@ -1228,7 +1240,7 @@
     }
 
     function draw(packet) {
-      if (st.w < 2) { return; }
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
       var N = nodes();
 
@@ -1376,7 +1388,7 @@
   }
 
   /* ==========================================================================
-     CH.8 — Storage quiz
+     CH.7 — Storage quiz
      ========================================================================== */
 
   function initStore() {
@@ -1401,7 +1413,7 @@
   }
 
   /* ==========================================================================
-     CH.9 — Auto scaling & load balancing simulation.
+     CH.8 — Auto scaling & load balancing simulation.
      ========================================================================== */
 
   function initScale() {
@@ -1503,7 +1515,7 @@
     }
 
     function draw(t) {
-      if (st.w < 2) { return; }
+      if (st.w < 60 || st.h < 60) { return; }
       t = t || 0;
       ctx.clearRect(0, 0, st.w, st.h);
       var users = usersNow();
@@ -1672,7 +1684,7 @@
   }
 
   /* ==========================================================================
-     CH.10 — Serverless: environments appear on demand, stay warm, vanish.
+     CH.9 — Serverless: environments appear on demand, stay warm, vanish.
      ========================================================================== */
 
   function initFn() {
@@ -1720,7 +1732,7 @@
     }
 
     function draw() {
-      if (st.w < 2) { return; }
+      if (st.w < 60 || st.h < 60) { return; }
       ctx.clearRect(0, 0, st.w, st.h);
 
       ctx.font = '600 11px Inter, sans-serif';
