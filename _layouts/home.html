@@ -35,16 +35,30 @@ layout: default
   The map page (/map/) renders the full interactive knowledge graph;
   this section is a hand-curated teaser (static HTML: no JS required,
   html-proofer-visible links). Topic list mirrors assets/js/knowledge-graph.js.
+
+  The exhibit count is derived, not written: every exhibit uses `layout: gpu`, and
+  /map/ is the only non-exhibit that does. Adding a fourteenth exhibit updates the
+  sentence with no edit here.
 ============================================================ -->
+{% assign exhibit_tabs = site.tabs | where: 'layout', 'gpu' | where_exp: 't', 't.url != "/map/"' %}
 <section class="tmap-feature" aria-label="The Technology Map">
   <div class="tmap-feature-head">
     <p class="tmap-kicker">Interactive exhibits</p>
     <h2 class="tmap-title">One living map of computing</h2>
     <p class="tmap-sub">
-      Thirteen interactive exhibits, one connected system — every topic links to
+      {{ exhibit_tabs.size }} interactive exhibits, one connected system — every topic links to
       the ideas it's built on and the ones it unlocks.
     </p>
   </div>
+
+  <!-- Static "start here" — /cpu/ has no prerequisites in knowledge-graph.js and is
+       step 1 of two of the three learning paths. Works without JavaScript. -->
+  <p class="tmap-start"
+     style="margin: 0 0 1.35rem; font-size: 0.9rem; line-height: 1.6; color: var(--text-color);">
+    New here? Start with
+    <a href="{{ '/cpu/' | relative_url }}" style="color: #2DD4BF; font-weight: 700;">Inside a CPU</a>
+    — it assumes nothing, and two of the map's three learning paths start there.
+  </p>
 
   <div class="tmap-groups">
     <div class="tmap-group" style="--cat: #2DD4BF">

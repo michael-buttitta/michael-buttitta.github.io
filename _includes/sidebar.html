@@ -1,9 +1,14 @@
 <!-- The Side Bar -->
 <!-- Override of Chirpy v7.5 sidebar.html
      Source: https://github.com/cotes2020/jekyll-theme-chirpy/blob/v7.5.0/_includes/sidebar.html
-     Change: filter site.tabs by published != false so tabs with `published: false`
+     Change 1: filter site.tabs by published != false so tabs with `published: false`
              are hidden from the sidebar nav (they still build as pages if output:true,
-             but published:false prevents output AND hides from nav). -->
+             but published:false prevents output AND hides from nav).
+     Change 2: emit one divider <li> before the first exhibit tab, separating the site
+             tabs (About, Technology Map) from the thirteen exhibits. Keyed off the
+             first `layout: gpu` tab that is not /map/ (which shares that layout).
+             Styled inline because the skin file was out of scope for the brief that
+             added this — move it to jekyll-theme-chirpy.scss when convenient. -->
 
 <aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end">
   <header class="profile-wrapper">
@@ -31,9 +36,14 @@
         </a>
       </li>
       <!-- the real tabs (published: false tabs are excluded from nav) -->
+      {% assign exhibits_started = false %}
       {% for tab in site.tabs %}
         {% if tab.published == false %}
           {% continue %}
+        {% endif %}
+        {% if exhibits_started == false and tab.layout == 'gpu' and tab.url != '/map/' %}
+          {% assign exhibits_started = true %}
+          <li aria-hidden="true" style="flex:0 0 100%;height:1px;margin:0.55rem 1.5rem 0.75rem;background:var(--sidebar-border-color);"></li>
         {% endif %}
         <li class="nav-item{% if tab.url == page.url %}{{ " active" }}{% endif %}">
           <a href="{{ tab.url | relative_url }}" class="nav-link">
