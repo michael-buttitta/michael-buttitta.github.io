@@ -202,14 +202,16 @@
   transform: none;
 }
 
+/* The hidden-until-revealed state is gated on html.net-js (added by
+   internet.js), so panels stay visible when JavaScript never runs. */
 @media (prefers-reduced-motion: no-preference) {
-  #internet-experience [data-net-reveal] {
+  html.net-js #internet-experience [data-net-reveal] {
     opacity: 0;
     transform: translateY(18px);
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
-  #internet-experience [data-net-reveal].is-in {
+  html.net-js #internet-experience [data-net-reveal].is-in {
     opacity: 1;
     transform: none;
   }

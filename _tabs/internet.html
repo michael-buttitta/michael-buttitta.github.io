@@ -41,7 +41,6 @@ extra_js:
     <a class="net-rail-dot" href="#datacenter" data-label="Data centers"><span></span></a>
     <a class="net-rail-dot" href="#rendering" data-label="Browser rendering"><span></span></a>
     <a class="net-rail-dot" href="#speed" data-label="Why sites are fast"><span></span></a>
-    <a class="net-rail-dot" href="#journey" data-label="Real-world journey"><span></span></a>
     <a class="net-rail-dot" href="#myths" data-label="Misconceptions"><span></span></a>
     <a class="net-rail-dot" href="#simulator" data-label="Request simulator"><span></span></a>
   </nav>
@@ -60,7 +59,7 @@ extra_js:
       </p>
       <div class="net-hero-cta">
         <a class="net-btn net-btn-primary" href="#bigpicture">Begin the journey</a>
-        <span class="net-hero-hint">15 chapters &middot; live simulations &middot; one request</span>
+        <span class="net-hero-hint">14 chapters &middot; live simulations &middot; one request</span>
       </div>
       <div class="net-hero-url" aria-hidden="true">
         <span class="net-hero-url-scheme">https://</span><span id="net-hero-typed">www.google.com</span><span class="net-hero-caret"></span>
@@ -711,50 +710,11 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       13 — REAL-WORLD JOURNEY
-  ================================================================ -->
-  <section class="net-section" id="journey" aria-labelledby="journey-h">
-    <div class="net-section-head">
-      <p class="net-kicker"><span class="net-kicker-num">13</span> Putting it together</p>
-      <h2 id="journey-h">A real-world journey</h2>
-      <p class="net-lede">
-        Pick a destination and read the request&rsquo;s itinerary end to end.
-        The early stages &mdash; DNS, routing, TLS &mdash; are universal;
-        what sits behind the front door varies by the kind of service. These
-        are representative architectures built from common public patterns,
-        not claims about any company&rsquo;s actual internals.
-      </p>
-    </div>
-
-    <div class="net-panel" data-net-reveal>
-      <div class="net-panel-controls" role="group" aria-label="Choose a destination">
-        <button type="button" class="net-chip is-active" data-net-dest="search">Google Search</button>
-        <button type="button" class="net-chip" data-net-dest="wiki">Wikipedia</button>
-        <button type="button" class="net-chip" data-net-dest="github">GitHub</button>
-        <button type="button" class="net-chip" data-net-dest="netflix">Netflix</button>
-        <button type="button" class="net-chip" data-net-dest="amazon">Amazon</button>
-        <button type="button" class="net-chip" data-net-dest="ms">Microsoft</button>
-        <button type="button" class="net-chip" data-net-dest="cf">Cloudflare</button>
-      </div>
-      <ol class="net-journey" id="net-journey-out" aria-live="polite"></ol>
-      <p class="net-caption">
-        Steps tagged <span class="net-tag-universal">universal</span> happen
-        for essentially every HTTPS request on the Internet; steps tagged
-        <span class="net-tag-varies">varies</span> depend on the
-        provider&rsquo;s architecture and are illustrative. Services with
-        AI-powered features (search ranking, recommendations) run those as
-        backend workloads &mdash; the <a href="/ai/">Understanding AI</a>
-        exhibit covers what such systems actually do.
-      </p>
-    </div>
-  </section>
-
-  <!-- ================================================================
-       14 — MISCONCEPTIONS
+       13 — MISCONCEPTIONS
   ================================================================ -->
   <section class="net-section" id="myths" aria-labelledby="myths-h">
     <div class="net-section-head">
-      <p class="net-kicker"><span class="net-kicker-num">14</span> Setting the record straight</p>
+      <p class="net-kicker"><span class="net-kicker-num">13</span> Setting the record straight</p>
       <h2 id="myths-h">Common misconceptions</h2>
       <p class="net-lede">
         Seven things people believe about the Internet that aren&rsquo;t quite
@@ -817,19 +777,59 @@ extra_js:
   </section>
 
   <!-- ================================================================
-       15 — SIMULATOR
+       14 — SIMULATOR (with the real-world journey as its framing)
   ================================================================ -->
   <section class="net-section" id="simulator" aria-labelledby="simulator-h">
     <div class="net-section-head">
-      <p class="net-kicker"><span class="net-kicker-num">15</span> The whole story at once</p>
+      <p class="net-kicker"><span class="net-kicker-num">14</span> The whole story at once</p>
       <h2 id="simulator-h">The request simulator</h2>
       <p class="net-lede">
-        Everything from the previous fourteen chapters in one instrument.
-        Configure the world &mdash; where you are, where the site is, what the
-        network is like &mdash; press <strong>Send request</strong>, and watch
-        the full lifecycle play out with a running log and a timing breakdown.
+        Everything from the previous thirteen chapters in one place. First
+        read a real request&rsquo;s itinerary end to end, then take the
+        controls yourself: configure the world &mdash; where you are, where
+        the site is, what the network is like &mdash; press <strong>Send
+        request</strong>, and watch the full lifecycle play out with a running
+        log and a timing breakdown.
       </p>
     </div>
+
+    <h3 class="net-h3">First, a real-world itinerary</h3>
+    <p class="net-prose">
+      Pick a destination and read the request&rsquo;s itinerary end to end.
+      The early stages &mdash; DNS, routing, TLS &mdash; are universal; what
+      sits behind the front door varies by the kind of service. These are
+      representative architectures built from common public patterns, not
+      claims about any company&rsquo;s actual internals.
+    </p>
+
+    <div class="net-panel" data-net-reveal>
+      <div class="net-panel-controls" role="group" aria-label="Choose a destination">
+        <button type="button" class="net-chip is-active" data-net-dest="search">Google Search</button>
+        <button type="button" class="net-chip" data-net-dest="wiki">Wikipedia</button>
+        <button type="button" class="net-chip" data-net-dest="github">GitHub</button>
+        <button type="button" class="net-chip" data-net-dest="netflix">Netflix</button>
+        <button type="button" class="net-chip" data-net-dest="amazon">Amazon</button>
+        <button type="button" class="net-chip" data-net-dest="ms">Microsoft</button>
+        <button type="button" class="net-chip" data-net-dest="cf">Cloudflare</button>
+      </div>
+      <ol class="net-journey" id="net-journey-out" aria-live="polite"></ol>
+      <p class="net-caption">
+        Steps tagged <span class="net-tag-universal">universal</span> happen
+        for essentially every HTTPS request on the Internet; steps tagged
+        <span class="net-tag-varies">varies</span> depend on the
+        provider&rsquo;s architecture and are illustrative. Services with
+        AI-powered features (search ranking, recommendations) run those as
+        backend workloads &mdash; the <a href="/ai/">Understanding AI</a>
+        exhibit covers what such systems actually do.
+      </p>
+    </div>
+
+    <h3 class="net-h3">Now drive it yourself</h3>
+    <p class="net-prose">
+      The itinerary above is fixed; the one below is yours. Move a visitor
+      across the world, switch the CDN off, add packet loss, or crowd the
+      site with other users, and every stage of the journey re-prices itself.
+    </p>
 
     <div class="net-panel net-sim" data-net-reveal>
       <div class="net-sim-config">

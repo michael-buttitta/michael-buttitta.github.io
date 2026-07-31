@@ -2056,7 +2056,7 @@
   }
 
   /* ==========================================================================
-     13 — REAL-WORLD JOURNEY itineraries
+     14a — REAL-WORLD JOURNEY itineraries (framing half of the simulator chapter)
      ========================================================================== */
 
   function initJourney() {
@@ -2123,7 +2123,7 @@
   }
 
   /* ==========================================================================
-     15 — THE REQUEST SIMULATOR
+     14b — THE REQUEST SIMULATOR
      ========================================================================== */
 
   function initSim() {
