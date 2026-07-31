@@ -314,6 +314,8 @@
 #llm-experience .llm-slider-label {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
+  max-width: 100%;
   gap: 0.55rem;
   font-size: 0.82rem;
   font-weight: 600;
@@ -329,6 +331,7 @@
 
 #llm-experience input[type='range'] {
   width: 130px;
+  max-width: 100%;
   accent-color: var(--llm-teal);
 }
 
@@ -355,6 +358,8 @@
 #llm-experience .llm-select-label {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
+  max-width: 100%;
   gap: 0.55rem;
   font-size: 0.82rem;
   font-weight: 600;
@@ -362,6 +367,7 @@
 }
 
 #llm-experience select {
+  max-width: 100%;
   padding: 0.45rem 0.6rem;
   border: 1px solid var(--llm-line-strong);
   border-radius: 8px;
@@ -1602,6 +1608,12 @@
   display: grid;
   grid-template-columns: 260px 1fr;
   gap: 1.2rem;
+}
+
+/* the matrix inspector's scroll container has a wide min-content size; without
+   this the grid item refuses to shrink and the page scrolls sideways */
+#llm-experience .llm-lab-grid > * {
+  min-width: 0;
 }
 
 @media (max-width: 900px) {
