@@ -1434,6 +1434,13 @@
   margin-top: 1rem;
 }
 
+/* Grid items default to min-width:auto, so the process table's min-content
+   width would push the column wider than the panel on narrow screens. Let the
+   track shrink and hand the scrolling to .os-cc-table's own overflow-x. */
+#os-experience .os-cc-cols > * {
+  min-width: 0;
+}
+
 #os-experience .os-cc-subhead {
   margin: 0 0 0.5rem;
   font-size: 0.72rem;
