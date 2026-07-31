@@ -209,7 +209,7 @@
 
     var canvas = $('#cg-hero-canvas');
     if (!canvas) { return; }
-    var fit = setupCanvas(canvas);
+    var fit = setupCanvas(canvas, draw);
     var ctx = fit.ctx;
     var words = ('Sun sets are red because blue light scatters away token vector GPU cloud ' +
       'DNS TLS attention layer stream probability packet kernel').split(' ');
@@ -227,6 +227,7 @@
 
     function draw(dt) {
       var w = fit.state.w, h = fit.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       chips.forEach(function (c) {
         ctx.font = '600 ' + c.s + 'px Inter, sans-serif';
@@ -460,7 +461,7 @@
     var play = $('#cg-cloud-play');
     var status = $('#cg-cloud-status');
     if (!canvas || !play || !status) { return; }
-    var fit = setupCanvas(canvas);
+    var fit = setupCanvas(canvas, function () { drawScene(layout()); });
     var ctx = fit.ctx;
     var rng = makeRng(424242);
 
@@ -490,6 +491,7 @@
     }
 
     function drawScene(L) {
+      if (L.w < 60 || L.h < 60) { return; }
       ctx.clearRect(0, 0, L.w, L.h);
 
       /* load balancer */
@@ -798,6 +800,7 @@
 
     function draw() {
       var w = fit.state.w, h = fit.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
 
       /* faint axes hint */
@@ -1168,6 +1171,7 @@
 
     function drawGrid(fitRec, done, color) {
       var ctx = fitRec.ctx, w = fitRec.state.w, h = fitRec.state.h;
+      if (w < 60 || h < 60) { return; }
       var cw = (w - 12) / COLS, ch = (h - 12) / ROWS;
       ctx.clearRect(0, 0, w, h);
       for (var i = 0; i < TOTAL; i++) {
@@ -1550,7 +1554,7 @@
     update();
 
     if (!canvas) { return; }
-    var fit = setupCanvas(canvas);
+    var fit = setupCanvas(canvas, draw);
     var ctx = fit.ctx;
     var rng = makeRng(90210);
     var users = [];
@@ -1560,6 +1564,7 @@
 
     function draw() {
       var w = fit.state.w, h = fit.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
 
       /* the data center */
@@ -1853,15 +1858,23 @@
      Boot — every widget isolated so one failure never breaks the page
      ========================================================================== */
 
-  [
-    initReveal, initRail, initIllumination, initHero,
-    initLocalPipeline, initNetwork, initTls, initCloud,
-    initTokenizer, initEmbeddings, initTransformer, initAttention,
-    initGpuRace, initSampling, initStreaming, initSafety, initScale,
-    initTrace, initConstellation
-  ].forEach(function (init) {
-    try { init(); } catch (e) {
-      if (window.console && console.warn) { console.warn('[chatgpt]', init.name, e); }
-    }
-  });
+  function boot() {
+    [
+      initReveal, initRail, initIllumination, initHero,
+      initLocalPipeline, initNetwork, initTls, initCloud,
+      initTokenizer, initEmbeddings, initTransformer, initAttention,
+      initGpuRace, initSampling, initStreaming, initSafety, initScale,
+      initTrace, initConstellation
+    ].forEach(function (init) {
+      try { init(); } catch (e) {
+        if (window.console && console.warn) { console.warn('[chatgpt]', init.name, e); }
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 })();

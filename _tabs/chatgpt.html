@@ -363,7 +363,9 @@ extra_js:
         train their own vocabularies with byte-pair encoding or similar
         algorithms, so the same sentence tokenizes differently in each. The
         principle is identical: text &rarr; subword pieces &rarr; integer IDs
-        &rarr; vectors.
+        &rarr; vectors. If you want the real thing rather than its shape,
+        <a href="/llm/#tokens">Large Language Models</a> trains a genuine
+        byte-pair encoder in your browser and shows you every merge it learns.
       </p>
     </div>
   </section>
@@ -397,7 +399,10 @@ extra_js:
         Real embeddings have thousands of dimensions; this map is a
         hand-made 2-D illustration of the one property that matters:
         <strong>similar meaning &rarr; nearby points</strong>. Distances here
-        are for intuition, not measurements from a real model.
+        are for intuition, not measurements from a real model. For distances
+        that are measurements, <a href="/llm/#embeddings">Large Language
+        Models</a> builds its space from real co-occurrence counts, weights
+        them by pointwise mutual information, and projects the result live.
       </p>
     </div>
   </section>
@@ -485,7 +490,10 @@ extra_js:
         <em>animal</em> to <em>street</em>. Weights here are hand-crafted to
         illustrate the behavior; a real model computes them fresh in every
         one of dozens of layers, with many attention heads looking for
-        different patterns at once.
+        different patterns at once. To watch that computation instead of an
+        illustration of it, <a href="/llm/#attention">Large Language
+        Models</a> runs scaled dot-product attention on real query, key and
+        value matrices &mdash; small enough that every number fits on screen.
       </p>
     </div>
   </section>
@@ -815,6 +823,63 @@ extra_js:
         exhibit, or explore the interactive version on the
         <a href="/map/">Technology Map</a>.
       </p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       NEXT STOPS — static, works without JavaScript
+  ================================================================ -->
+  <section class="cg-section cg-section-next" id="next" aria-labelledby="next-h">
+    <div class="cg-section-head">
+      <p class="cg-kicker">Keep exploring</p>
+      <h2 id="next-h">Where to go from here</h2>
+      <p class="cg-lede">
+        This page traced one prompt across the whole stack without stopping to
+        take any single layer apart. These six exhibits are where each layer
+        gets taken apart &mdash; and the constellation above is a shortcut to
+        the rest.
+      </p>
+    </div>
+    <div class="cg-nextgrid" data-cg-reveal>
+      <a class="cg-next" href="/llm/">
+        <span class="cg-next-tag">Large Language Models</span>
+        <p>Chapters 05, 06 and 08 showed you illustrations of tokenization,
+        embeddings and attention. This exhibit runs all three for real &mdash;
+        a byte-pair encoder that trains live, an embedding space built from
+        actual co-occurrence counts, and attention arithmetic you can read
+        matrix by matrix.</p>
+      </a>
+      <a class="cg-next" href="/machine-learning/">
+        <span class="cg-next-tag">Understanding Machine Learning</span>
+        <p>Chapter 07 kept saying the weights were &ldquo;learned during
+        training&rdquo; and moved on. Here is what that sentence hides:
+        gradient descent running on a model that actually improves while you
+        watch it.</p>
+      </a>
+      <a class="cg-next" href="/ai/">
+        <span class="cg-next-tag">Understanding Artificial Intelligence</span>
+        <p>Language models are one branch of a much older field. Read this for
+        where they came from, and for the training-versus-inference
+        distinction that chapters 07 and 10 both lean on.</p>
+      </a>
+      <a class="cg-next" href="/gpu/">
+        <span class="cg-next-tag">Inside a Modern GPU</span>
+        <p>Chapter 09 raced a CPU against a GPU and told you the GPU wins on
+        wide parallel work. This is why: the die layout, the warps, and the
+        memory bandwidth that decides how fast your tokens actually arrive.</p>
+      </a>
+      <a class="cg-next" href="/cloud/">
+        <span class="cg-next-tag">Understanding Cloud Computing</span>
+        <p>Chapters 04 and 13 put your prompt through a load balancer and a
+        batching queue. The building those live in &mdash; regions, capacity,
+        and who pays for the idle hardware &mdash; is this exhibit.</p>
+      </a>
+      <a class="cg-next" href="/internet/">
+        <span class="cg-next-tag">How the Internet Works</span>
+        <p>Chapter 02 walked your packets through six hops in about a second
+        of animation. Slow it down: DNS, routing, and the protocol layers that
+        make an ocean crossing feel instant.</p>
+      </a>
     </div>
   </section>
 

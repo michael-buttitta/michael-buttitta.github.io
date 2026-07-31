@@ -164,14 +164,14 @@
   font-size: 0.9em;
 }
 
-#chatgpt-experience a:not(.cg-btn, .cg-rail-dot, .cgc-node-link) {
+#chatgpt-experience a:not(.cg-btn, .cg-rail-dot, .cgc-node-link, .cg-next) {
   color: var(--cg-teal);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-color: rgba(45, 212, 191, 0.4);
 }
 
-#chatgpt-experience a:not(.cg-btn, .cg-rail-dot, .cgc-node-link):hover {
+#chatgpt-experience a:not(.cg-btn, .cg-rail-dot, .cgc-node-link, .cg-next):hover {
   text-decoration-color: var(--cg-teal);
 }
 
@@ -952,7 +952,7 @@
 
 #chatgpt-experience .cg-gpu-race {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 0.9rem;
 }
 
@@ -1035,7 +1035,7 @@
 
 #chatgpt-experience .cg-samp-controls {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
   gap: 0.9rem 1.4rem;
   margin-top: 1.1rem;
 }
@@ -1077,7 +1077,7 @@
 
 #chatgpt-experience .cg-stream-race {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
   gap: 0.9rem;
 }
 
@@ -1224,7 +1224,7 @@
 
 #chatgpt-experience .cg-trace-steps {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
   gap: 0.5rem;
   margin: 1.1rem 0 0;
   padding: 0;
@@ -1367,10 +1367,79 @@
 
 #chatgpt-experience .cgc-node.is-lit text { fill: var(--cg-text-strong); }
 
+/* For some visitors this widget IS the page's navigation, so the keyboard
+   story has to be visible. The nodes are <g tabindex="0" role="link">; an
+   `outline` on an SVG group is drawn inconsistently across engines, so the
+   ring is painted on the shape itself and the label is brightened with it. */
+#chatgpt-experience .cgc-node:focus-visible {
+  outline: none;
+}
+
+/* The .is-lit rules above are more specific than a bare :focus-visible, so a
+   lit node would otherwise keep its resting stroke. Both forms are spelled out. */
+#chatgpt-experience .cgc-node:focus-visible :is(circle, polygon),
+#chatgpt-experience .cgc-node.is-lit:focus-visible :is(circle, polygon) {
+  stroke: var(--cg-teal);
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 9px rgba(45, 212, 191, 0.85));
+}
+
+#chatgpt-experience .cgc-node:focus-visible text { fill: var(--cg-text-strong); }
+
 #chatgpt-experience .cgc-node.cgc-capstone.is-lit polygon {
   fill: rgba(248, 250, 252, 0.1);
   stroke: #f8fafc;
   filter: drop-shadow(0 0 12px rgba(248, 250, 252, 0.5));
+}
+
+/* ---------- next stops ---------------------------------------------------
+   Static outbound links for the closing chapter. The constellation above
+   only exists with JavaScript; this grid is plain HTML on purpose, so a
+   visitor who reaches the end without it still leaves with somewhere to go. */
+
+#chatgpt-experience .cg-section-next {
+  padding-bottom: 2rem;
+}
+
+#chatgpt-experience .cg-nextgrid {
+  display: grid;
+  /* min(100%, 240px), not a bare 240px: at 320px the panel's content box is
+     narrower than 240 and a fixed track floor would push the body sideways. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+#chatgpt-experience .cg-next {
+  display: block;
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid var(--cg-line);
+  border-radius: 12px;
+  background: var(--cg-panel);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+#chatgpt-experience .cg-next:hover,
+#chatgpt-experience .cg-next:focus-visible {
+  border-color: var(--cg-teal);
+  transform: translateY(-2px);
+}
+
+#chatgpt-experience .cg-next-tag {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--cg-teal);
+}
+
+#chatgpt-experience .cg-next p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--cg-muted);
 }
 
 /* ---------- closing ------------------------------------------------------ */
