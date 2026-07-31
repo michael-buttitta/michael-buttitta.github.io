@@ -274,14 +274,8 @@
   position: relative;
   z-index: 1;
   max-width: 46rem;
-  padding: 3rem clamp(1.5rem, 4vw, 2.5rem);
+  padding: 3rem 1.5rem;
   text-align: center;
-  margin-inline: clamp(0.85rem, 3vw, 1.5rem);
-  border: 1px solid var(--cl-line);
-  border-radius: 18px;
-  background: rgba(11, 17, 32, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 #cloud-experience .cl-hero-inner .cl-kicker {
@@ -303,6 +297,12 @@
   font-size: clamp(1rem, 2vw, 1.2rem);
   line-height: 1.65;
   color: var(--cl-muted);
+  padding: 0.9rem clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 14px;
+  background: rgba(11, 17, 32, 0.38);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 #cloud-experience .cl-hero-cta {

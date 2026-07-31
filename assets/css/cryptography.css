@@ -347,14 +347,8 @@
   position: relative;
   z-index: 2;
   max-width: 46rem;
-  padding: 4.5rem clamp(1.5rem, 4vw, 2.5rem);
+  padding: 4.5rem 1.5rem;
   text-align: center;
-  margin-inline: clamp(0.85rem, 3vw, 1.5rem);
-  border: 1px solid var(--cy-line);
-  border-radius: 18px;
-  background: rgba(11, 17, 32, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 #crypto-experience .cy-hero-inner .cy-kicker {
@@ -380,6 +374,12 @@
   font-size: 1.12rem;
   line-height: 1.7;
   color: var(--cy-muted);
+  padding: 0.9rem clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 14px;
+  background: rgba(11, 17, 32, 0.38);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 #crypto-experience .cy-hero-cta {
