@@ -22,14 +22,161 @@
 (function () {
   'use strict';
 
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
+  /* ==========================================================================
+     Pure algorithmic core — DOM-free, defined first so Node can require() it.
+     The widgets below call these same functions; there is no second copy.
+     ========================================================================== */
+
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+
+  /* Deterministic LCG. Same seed -> same stream, in the browser and in Node. */
+  function makeRng(seed) {
+    var s = seed >>> 0;
+    return function () {
+      s = (s * 1664525 + 1013904223) >>> 0;
+      return s / 4294967296;
+    };
+  }
+
+  /* Batch gradient descent on a scalar variable. `grad` is the derivative of
+     the loss with respect to x; nothing here knows what the loss looks like. */
+  function gradientDescent(grad, x0, rate, maxSteps, opts) {
+    var o = opts || {};
+    var lo = o.min === undefined ? -Infinity : o.min;
+    var hi = o.max === undefined ? Infinity : o.max;
+    var tol = o.tol === undefined ? 0 : o.tol;
+    var warmup = o.warmup === undefined ? 0 : o.warmup;
+    var x = x0;
+    var path = [x];
+    var diverged = false;
+    var converged = false;
+    for (var i = 0; i < maxSteps; i++) {
+      x = x - rate * grad(x);
+      path.push(x);
+      if (!isFinite(x) || x < lo || x > hi) { diverged = true; break; }
+      if (Math.abs(grad(x)) < tol && i >= warmup) { converged = true; break; }
+    }
+    return { x: x, path: path, steps: path.length - 1, diverged: diverged, converged: converged };
+  }
+
+  /* Forgy initialisation: k distinct data points become the first centroids. */
+  function kmeansInit(points, k, rand) {
+    var centroids = [];
+    var used = {};
+    var guard = 0;
+    var limit = Math.min(k, points.length);
+    while (centroids.length < limit && guard++ < points.length * 50) {
+      var idx = Math.floor(rand() * points.length);
+      if (used[idx]) { continue; }
+      used[idx] = true;
+      centroids.push({ x: points[idx].x, y: points[idx].y });
+    }
+    return centroids;
+  }
+
+  /* One Lloyd iteration: assign every point to its nearest centroid, then move
+     each centroid to the mean of its members. Mutates `centroids` and `assign`
+     in place and returns whether anything actually moved. */
+  function kmeansStep(points, centroids, assign) {
+    var moved = false;
+    for (var i = 0; i < points.length; i++) {
+      var best = 0, bd = Infinity;
+      for (var c = 0; c < centroids.length; c++) {
+        var dx = points[i].x - centroids[c].x, dy = points[i].y - centroids[c].y;
+        var d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = c; }
+      }
+      if (assign[i] !== best) { assign[i] = best; moved = true; }
+    }
+    for (var c2 = 0; c2 < centroids.length; c2++) {
+      var sx = 0, sy = 0, n = 0;
+      for (var j = 0; j < points.length; j++) {
+        if (assign[j] === c2) { sx += points[j].x; sy += points[j].y; n++; }
+      }
+      if (n > 0) {
+        var nx = sx / n, ny = sy / n;
+        if (Math.abs(nx - centroids[c2].x) > 1e-5 || Math.abs(ny - centroids[c2].y) > 1e-5) { moved = true; }
+        centroids[c2].x = nx;
+        centroids[c2].y = ny;
+      }
+    }
+    return moved;
+  }
+
+  /* Total (not mean) Euclidean distance from every point to its centroid. */
+  function kmeansInertia(points, centroids, assign) {
+    var s = 0;
+    for (var i = 0; i < points.length; i++) {
+      var c = centroids[assign[i]];
+      if (!c) { continue; }
+      var dx = points[i].x - c.x, dy = points[i].y - c.y;
+      s += Math.sqrt(dx * dx + dy * dy);
+    }
+    return s;
+  }
+
+  /* Run Lloyd's algorithm to convergence. Seeded, so runs are reproducible. */
+  function kmeans(points, k, opts) {
+    var o = opts || {};
+    var rand = o.rand || makeRng(o.seed === undefined ? 1 : o.seed);
+    var maxIter = o.maxIter === undefined ? 100 : o.maxIter;
+    var centroids = kmeansInit(points, k, rand);
+    var assign = points.map(function () { return 0; });
+    var iterations = 0;
+    var converged = false;
+    while (iterations < maxIter) {
+      var moved = kmeansStep(points, centroids, assign);
+      iterations++;
+      if (!moved) { converged = true; break; }
+    }
+    return {
+      centroids: centroids, assign: assign, iterations: iterations,
+      converged: converged, inertia: kmeansInertia(points, centroids, assign)
+    };
+  }
+
+  /* Under Node the file exports the core above and stops before touching the
+     DOM, so the shipped artifact is directly unit-testable — same pattern as
+     blockchain.js / bitcoin.js.
+
+     Signatures:
+       gradientDescent(grad, x0, rate, maxSteps, {min, max, tol, warmup})
+         -> {x, path, steps, diverged, converged}
+       kmeansInit(points, k, rand)             -> [{x, y}]   (Forgy)
+       kmeansStep(points, centroids, assign)   -> moved (mutates in place)
+       kmeansInertia(points, centroids, assign)-> total Euclidean distance
+       kmeans(points, k, {seed, rand, maxIter})
+         -> {centroids, assign, iterations, converged, inertia}
+       makeRng(seed) -> () -> [0,1)
+
+     Recorded suite (all PASS, node 22, `node _audit/ml-vectors.js`):
+       gd: f(x)=(x-3)^2, grad=2(x-3), x0=0, rate=0.1, 200 steps, tol=1e-9
+           -> |x - 3| = 4.9e-10, converged = true, diverged = false, and f()
+              strictly decreases across all 102 path entries
+       gd: same landscape at rate=1.5 -> diverged = true (x leaves [-1e3,1e3])
+       kmeans: 40 points, two 0.8-wide clusters centred on (0,0) and (10,10),
+           k=2, seed=7 -> converged = true in 2 iterations, 20 points per
+           cluster, both centroids equal their cluster's arithmetic mean to
+           < 1e-12, inertia = 12.721830785345725
+       kmeans: seed 7 twice -> identical centroids and inertia; seeds
+           1/2/3/7/42/99/1234 all recover the same two means */
+  if (typeof window === 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      module.exports = {
+        gradientDescent: gradientDescent,
+        kmeans: kmeans,
+        kmeansInit: kmeansInit,
+        kmeansStep: kmeansStep,
+        kmeansInertia: kmeansInertia,
+        makeRng: makeRng
+      };
+    }
     return;
   }
+  if (typeof document === 'undefined') { return; }
 
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
-
-  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
 
   document.documentElement.classList.add('ml-js');
 
@@ -106,14 +253,6 @@
   }
 
   function easeInOut(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
-
-  function makeRng(seed) {
-    var s = seed >>> 0;
-    return function () {
-      s = (s * 1664525 + 1013904223) >>> 0;
-      return s / 4294967296;
-    };
-  }
 
   function gauss(rng) {
     var u = Math.max(rng(), 1e-9);
@@ -222,7 +361,8 @@
   function initHero() {
     var canvas = $('#ml-hero-canvas');
     if (!canvas) { return; }
-    var cv = setupCanvas(canvas);
+    /* refit callback so a canvas that boots with no box redraws once it has one */
+    var cv = setupCanvas(canvas, function () { redraw(); });
     var ctx = cv.ctx;
     var rng = makeRng(20260729);
     var N = 210;
@@ -261,6 +401,7 @@
 
     function draw(t) {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       var p = clamp(phaseT / MORPH, 0, 1);
       var e = easeInOut(p);
@@ -303,22 +444,28 @@
       ctx.globalAlpha = 1;
     }
 
+    /* static, fully-formed clusters (reduced-motion final state) */
+    function drawStatic() {
+      var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
+      ctx.clearRect(0, 0, w, h);
+      pts.forEach(function (pt) {
+        ctx.fillStyle = pt.colors[0];
+        ctx.globalAlpha = 0.75;
+        ctx.beginPath();
+        ctx.arc(pt.targets[0].x * w, pt.targets[0].y * h, 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function redraw() {
+      if (reduced()) { drawStatic(); } else { draw(); }
+    }
+
     if (reduced()) {
       phase = 0;
       phaseT = MORPH;
-      /* static, fully-formed clusters */
-      var drawStatic = function () {
-        var w = cv.state.w, h = cv.state.h;
-        ctx.clearRect(0, 0, w, h);
-        pts.forEach(function (pt) {
-          ctx.fillStyle = pt.colors[0];
-          ctx.globalAlpha = 0.75;
-          ctx.beginPath();
-          ctx.arc(pt.targets[0].x * w, pt.targets[0].y * h, 2.4, 0, Math.PI * 2);
-          ctx.fill();
-        });
-        ctx.globalAlpha = 1;
-      };
       drawStatic();
       onScreen(canvas, drawStatic);
       return;
@@ -506,6 +653,7 @@
 
     function draw() {
       var w = cv.state.w, h = cv.state.h, pad = 34;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
       drawFrameAxes(ctx, w, h, pad, 'floor area (m²)', 'price (k$)');
 
@@ -675,6 +823,7 @@
 
     function draw() {
       var w = cv.state.w, h = cv.state.h, pad = 34;
+      if (w < 60 || h < 60) { return; }
       var iw = w - 2 * pad, ih = h - 2 * pad;
       ctx.clearRect(0, 0, w, h);
 
@@ -842,62 +991,26 @@
     function k() { return kSlider ? parseInt(kSlider.value, 10) : 3; }
 
     function initCentroids() {
-      var kk = k();
-      centroids = [];
-      var used = {};
-      var r2 = makeRng(Math.floor(Math.random() * 1e9));
-      while (centroids.length < kk) {
-        var idx = Math.floor(r2() * pts.length);
-        if (used[idx]) { continue; }
-        used[idx] = true;
-        centroids.push({ x: pts[idx].x, y: pts[idx].y });
-      }
+      centroids = kmeansInit(pts, k(), makeRng(Math.floor(Math.random() * 1e9)));
       assign = pts.map(function () { return 0; });
       iter = 0;
       converged = false;
     }
 
+    /* One Lloyd iteration, from the exported core. */
     function step() {
-      /* assignment */
-      var moved = false;
-      for (var i = 0; i < pts.length; i++) {
-        var best = 0, bd = Infinity;
-        for (var c = 0; c < centroids.length; c++) {
-          var dx = pts[i].x - centroids[c].x, dy = pts[i].y - centroids[c].y;
-          var d = dx * dx + dy * dy;
-          if (d < bd) { bd = d; best = c; }
-        }
-        if (assign[i] !== best) { assign[i] = best; moved = true; }
-      }
-      /* update */
-      for (var c2 = 0; c2 < centroids.length; c2++) {
-        var sx = 0, sy = 0, n = 0;
-        for (var j = 0; j < pts.length; j++) {
-          if (assign[j] === c2) { sx += pts[j].x; sy += pts[j].y; n++; }
-        }
-        if (n > 0) {
-          var nx = sx / n, ny = sy / n;
-          if (Math.abs(nx - centroids[c2].x) > 1e-5 || Math.abs(ny - centroids[c2].y) > 1e-5) { moved = true; }
-          centroids[c2].x = nx;
-          centroids[c2].y = ny;
-        }
-      }
+      var moved = kmeansStep(pts, centroids, assign);
       iter++;
       if (!moved) { converged = true; }
     }
 
     function inertia() {
-      var s = 0;
-      for (var i = 0; i < pts.length; i++) {
-        var c = centroids[assign[i]];
-        var dx = pts[i].x - c.x, dy = pts[i].y - c.y;
-        s += Math.sqrt(dx * dx + dy * dy);
-      }
-      return s;
+      return kmeansInertia(pts, centroids, assign);
     }
 
     function draw() {
       var w = cv.state.w, h = cv.state.h, pad = 26;
+      if (w < 60 || h < 60) { return; }
       var iw = w - 2 * pad, ih = h - 2 * pad;
       ctx.clearRect(0, 0, w, h);
       ctx.strokeStyle = C.line;
@@ -1065,6 +1178,7 @@
 
     function draw(trail) {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
 
       var maxQ = 0.001;
@@ -1274,6 +1388,10 @@
 
     function drawAll() {
       var w = cv.state.w, h = cv.state.h, pad = 30;
+      var lw = lv.state.w, lh = lv.state.h, lpad = 28;
+      /* both canvases live in one grid row: if either has no box yet, wait for
+         the ResizeObserver refit rather than drawing into a zero-width buffer */
+      if (w < 60 || h < 60 || lw < 60 || lh < 60) { return; }
       var iw = w - 2 * pad, ih = h - 2 * pad;
       ctx.clearRect(0, 0, w, h);
       ctx.strokeStyle = C.line;
@@ -1314,7 +1432,6 @@
       ctx.fillText('model (teal) · errors (red stems)', pad + 6, pad + 16);
 
       /* loss curve */
-      var lw = lv.state.w, lh = lv.state.h, lpad = 28;
       lctx.clearRect(0, 0, lw, lh);
       lctx.strokeStyle = C.line;
       lctx.strokeRect(lpad, lpad, lw - 2 * lpad, lh - 2 * lpad);
@@ -1426,6 +1543,7 @@
 
     function draw() {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       var iw = w - 2 * pad, ih = h - 2 * pad;
       ctx.clearRect(0, 0, w, h);
       ctx.strokeStyle = C.line;
@@ -1608,6 +1726,7 @@
 
     function draw() {
       var w = cv.state.w, h = cv.state.h;
+      if (w < 60 || h < 60) { return; }
       ctx.clearRect(0, 0, w, h);
 
       /* terrain */
@@ -1669,15 +1788,10 @@
       if (running) { return; }
       var rate = lr();
       var steps = maxSteps();
-      var x = startX;
-      var seq = [x];
-      var diverged = false;
-      for (var i = 0; i < steps; i++) {
-        x = x - rate * fp(x);
-        seq.push(x);
-        if (x < -0.35 || x > 1.35) { diverged = true; break; }
-        if (Math.abs(fp(x)) < 1e-4 && i > 3) { break; }
-      }
+      /* the descent itself comes from the exported core */
+      var res = gradientDescent(fp, startX, rate, steps, { min: -0.35, max: 1.35, tol: 1e-4, warmup: 4 });
+      var seq = res.path;
+      var diverged = res.diverged;
       var show = function () {
         trail = seq;
         draw();
@@ -1836,6 +1950,9 @@
     function drawAll() {
       var d = deg();
       var w = cv.state.w, h = cv.state.h, pad = 30;
+      var ew = ev.state.w, eh = ev.state.h, epad = 32;
+      /* fit plot and error chart share one grid row — draw both or neither */
+      if (w < 60 || h < 60 || ew < 60 || eh < 60) { return; }
       var iw = w - 2 * pad, ih = h - 2 * pad;
       ctx.clearRect(0, 0, w, h);
       ctx.strokeStyle = C.line;
@@ -1891,7 +2008,6 @@
 
       /* error chart */
       var curves = computeErrCurves();
-      var ew = ev.state.w, eh = ev.state.h, epad = 32;
       ectx.clearRect(0, 0, ew, eh);
       ectx.strokeStyle = C.line;
       ectx.strokeRect(epad, epad, ew - 2 * epad, eh - 2 * epad);
@@ -2086,6 +2202,7 @@
 
     function draw() {
       var w = cv.state.w, h = cv.state.h, pad = 32;
+      if (w < 60 || h < 60) { return; }
       var iw = w - 2 * pad, ih = h - 2 * pad;
       ctx.clearRect(0, 0, w, h);
       drawFrameAxes(ctx, w, h, pad, 'spam score (model output)', 'emails');
@@ -2422,6 +2539,7 @@
 
     function drawStage() {
       var w = cv.state.w, h = cv.state.h, pad = 26;
+      if (w < 60 || h < 60) { return; }
       var iw = w - 2 * pad, ih = h - 2 * pad;
       ctx.clearRect(0, 0, w, h);
 
@@ -2512,6 +2630,7 @@
 
     function drawLoss() {
       var w = lv.state.w, h = lv.state.h, pad = 28;
+      if (w < 60 || h < 60) { return; }
       lctx.clearRect(0, 0, w, h);
       lctx.strokeStyle = C.line;
       lctx.strokeRect(pad, pad, w - 2 * pad, h - 2 * pad);
@@ -2642,7 +2761,9 @@
         drawLoss();
         var finished = done >= iters;
         updateStats(finished);
-        if (!finished) { requestAnimationFrame(chunk); }
+        /* setTimeout, not rAF: rAF is frozen on a hidden tab, which would stall
+           the trainer mid-run. Same reason as assets/js/blockchain.js:1060. */
+        if (!finished) { setTimeout(chunk, 16); }
       })();
     }
 
