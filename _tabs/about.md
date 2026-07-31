@@ -25,22 +25,23 @@ now work in strategic finance at a crypto startup. I build projects and post fin
 
 ## Background & experience
 
-I dual majored at UNC, studying computer science and business at Kenan-Flagler. I find myself striving to
-live and work in the intersection of finance and technology.
+I've always gravitated toward the overlap between finance and technology. At UNC, that meant
+splitting my time between Kenan-Flagler and the CS department. After graduating, I joined
+Microsoft's finance rotation program, which dropped me into four very different seats in two
+years: supply chain, sales, the CEE regional HQ in Prague, and Azure cloud finance.
 
-I started at Microsoft as a finance rotation analyst, which meant four seats in two years:
-supply chain finance, sales finance, the Central and Eastern Europe HQ finance team
-in Prague, and Azure cloud finance. After the program I spent a year on Azure for
-Operators, at the time a nascent Azure for Telecom cloud unit, and then a year at GitHub.
+After the program, I worked on Azure for Operators — at the time a brand-new push into
+telecom cloud — and then moved to GitHub.
 
-Covering GitHub Copilot is the one that shaped my focus now. Pricing an AI product means
-answering in dollars what the rest of the industry argues about in the abstract: how do you allocate
-GPUs, what does inference cost, how do users behave on various models, and what happens to margins
-when the model underneath you changes every month. The job also meant working directly with OpenAI and
-Anthropic as we procure capacity, and studying what Cursor, Lovable, and the rest of the field were doing.
+The GitHub Copilot role is the one that reshaped how I think. Pricing an AI product forces
+you to answer, in dollars, questions the industry usually debates in abstractions: how to
+allocate GPUs, what inference actually costs, how usage shifts across models, and how
+margins behave when the underlying model changes every month. It also meant working
+directly with OpenAI and Anthropic on capacity, and keeping a close eye on what Cursor,
+Lovable, and the rest of the ecosystem were building.
 
-Now I'm on the FP&A and strategic finance team at a crypto startup — crypto being the other space
-I've long wanted to work in.
+Now I'm on the FP&A and strategic finance team at a crypto startup — finally working in the
+other space I've been drawn to for years.
 
 ---
 
