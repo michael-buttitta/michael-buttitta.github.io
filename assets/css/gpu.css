@@ -1756,6 +1756,12 @@ html.gx-js #gpu-experience .gx-era.is-in {
   padding: 4rem 0 2.5rem;
   border-top: 1px solid var(--gx-line);
   text-align: center;
+  /* This outro is a <footer>, and Chirpy's theme sets a bare `footer { height:
+     5rem }` for the SITE footer. With border-box, that fixed height collapses
+     this element's content box to zero (padding alone exceeds 5rem), so every
+     child escapes and paints over whatever follows — the "Where this fits"
+     panel. Must stay. Only /gpu/, /cpu/ and /bitcoin/ use <footer> here. */
+  height: auto;
 }
 
 #gpu-experience .gx-outro-kicker {
