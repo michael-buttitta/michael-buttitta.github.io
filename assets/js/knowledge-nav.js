@@ -55,8 +55,22 @@
   }
 
   function build() {
-    var host = document.querySelector('main [id$="-experience"]') ||
-               document.querySelector('main');
+    /* Append to <main>, NOT to #<slug>-experience.
+
+       This section is injected markup styled by knowledge-nav.css with class
+       selectors, e.g. `.kn-root .kn-title` (specificity 0,2,0). Every exhibit
+       stylesheet scopes its own rules under `#<slug>-experience`, and a rule
+       like `#gpu-experience h2` (1,0,1) beats any number of classes — so while
+       this section lived *inside* that id, the host page silently restyled it.
+       Measured on /gpu/: .kn-title rendered at 30.4px with a 16px bottom margin
+       (gpu.css's h2) instead of the intended clamp(1.3rem,3vw,1.7rem)/8px.
+       12 of the 13 exhibits carry at least one such bare-tag rule.
+
+       Appending to <main> puts the section immediately after the experience div
+       — same visual position, outside the id's reach. `.kn-root` already sets
+       `margin: 4rem auto`, so it centres itself in the wider column. Do not
+       move this back inside the experience div. */
+    var host = document.querySelector('main');
     if (!host) return;
 
     var prereqs = G.prereqsOf(topic.id).map(function (id) { return G.byId[id]; })
