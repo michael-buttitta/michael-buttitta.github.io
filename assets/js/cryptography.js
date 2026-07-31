@@ -1486,6 +1486,12 @@
 
     btnPlay.addEventListener('click', function () {
       mode = 'play';
+      /* Under reduced motion goTo() draws its target and returns instead of
+         animating forward, so goTo(0) would leave Play behaving exactly like
+         Step — the visitor would have to press Step four more times to reach
+         the sealed channel. Jump to the labeled final state, which is what
+         every other story widget on this page does. */
+      if (reduced()) { goTo(4, true); return; }
       goTo(0, true);
       setStatus(statusEl, 'Step 1 of 5');
     });

@@ -597,3 +597,13 @@ code.highlighter-rouge {
   border-radius: 0 8px 8px 0;
   margin: 2rem 0;
 }
+
+/* Sidebar divider between the site tabs (About, Technology Map) and the thirteen
+   exhibits. The <li> is emitted by the _includes/sidebar.html override ("Change 2");
+   this rule replaces the inline style it originally shipped with. */
+#sidebar .nav .nav-divider {
+  flex: 0 0 100%;
+  height: 1px;
+  margin: 0.55rem 1.5rem 0.75rem;
+  background: var(--sidebar-border-color);
+}

@@ -7,8 +7,7 @@
      Change 2: emit one divider <li> before the first exhibit tab, separating the site
              tabs (About, Technology Map) from the thirteen exhibits. Keyed off the
              first `layout: gpu` tab that is not /map/ (which shares that layout).
-             Styled inline because the skin file was out of scope for the brief that
-             added this — move it to jekyll-theme-chirpy.scss when convenient. -->
+             Styled by `.nav-divider` in assets/css/jekyll-theme-chirpy.scss. -->
 
 <aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end">
   <header class="profile-wrapper">
@@ -43,7 +42,7 @@
         {% endif %}
         {% if exhibits_started == false and tab.layout == 'gpu' and tab.url != '/map/' %}
           {% assign exhibits_started = true %}
-          <li aria-hidden="true" style="flex:0 0 100%;height:1px;margin:0.55rem 1.5rem 0.75rem;background:var(--sidebar-border-color);"></li>
+          <li class="nav-divider" aria-hidden="true"></li>
         {% endif %}
         <li class="nav-item{% if tab.url == page.url %}{{ " active" }}{% endif %}">
           <a href="{{ tab.url | relative_url }}" class="nav-link">

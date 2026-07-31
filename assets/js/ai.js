@@ -1888,15 +1888,24 @@
       epsEl.textContent = Math.round(eps * 100) + '%';
       var ar = avgReward();
       rewEl.textContent = ar === null ? '–' : ar.toFixed(1);
-      if (milestone === 0 && episodes >= 15) {
-        milestone = 1;
-        setStatus(statusEl, 'Mostly random wandering so far — exploration. But every step already updates a value estimate somewhere.');
-      } else if (milestone === 1 && eps < 0.5) {
-        milestone = 2;
-        setStatus(statusEl, 'Exploration is winding down and a corridor of teal is forming — the agent is starting to trust what it learned.');
-      } else if (milestone === 2 && (avgReward() || -99) > 5) {
-        milestone = 3;
-        setStatus(statusEl, 'Converged: the arrows now trace an efficient route around the pits, and reward per episode has plateaued near its maximum. Nobody showed it that route — rewards did.', 'ok');
+      /* Advance to the HIGHEST milestone the current state satisfies, not just
+         the next one in sequence. Under prefers-reduced-motion, start() bulk-trains
+         all 400 episodes and calls this once — the old one-step chain then left the
+         status reading "Mostly random wandering so far" next to an already-converged
+         reward readout. */
+      var target = milestone;
+      if (episodes >= 15) { target = Math.max(target, 1); }
+      if (eps < 0.5) { target = Math.max(target, 2); }
+      if ((ar === null ? -99 : ar) > 5) { target = Math.max(target, 3); }
+      if (target > milestone) {
+        milestone = target;
+        if (milestone === 1) {
+          setStatus(statusEl, 'Mostly random wandering so far — exploration. But every step already updates a value estimate somewhere.');
+        } else if (milestone === 2) {
+          setStatus(statusEl, 'Exploration is winding down and a corridor of teal is forming — the agent is starting to trust what it learned.');
+        } else {
+          setStatus(statusEl, 'Converged: the arrows now trace an efficient route around the pits, and reward per episode has plateaued near its maximum. Nobody showed it that route — rewards did.', 'ok');
+        }
       }
     }
 
