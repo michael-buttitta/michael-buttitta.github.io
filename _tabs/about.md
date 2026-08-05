@@ -40,10 +40,10 @@ other space I've been drawn to for years.
 
 ## What I've built
 
-The projects are the interactive exhibits on this site — each one a walkthrough of how a
-single piece of computing actually works, from a CPU up to a language model. None of them
-are animations of the idea: every exhibit runs at least one genuine algorithm live in the
-browser, from SHA-256 and secp256k1 signatures to gradient descent and a transformer
+Most of the projects are the interactive exhibits on this site — each one a walkthrough of
+how a single piece of computing actually works, from a CPU up to a language model. None of
+them are animations of the idea: every exhibit runs at least one genuine algorithm live in
+the browser, from SHA-256 and secp256k1 signatures to gradient descent and a transformer
 forward pass.
 
 The **[Technology Map](/map/)** is the way in — it connects every exhibit and lays out
@@ -59,6 +59,14 @@ learning paths through them. A few to start with:
   mathematics, and run a transformer forward pass.
 - **[How ChatGPT Works](/chatgpt/)** — the capstone: one prompt traced from keystroke to
   streamed answer, through every layer above.
+
+### Beyond the site
+
+- **[League War Room](https://michael-buttitta.github.io/league-war-room/)** — a fantasy
+  football draft-order lottery, run as a live reveal show. The draw is provably fair: the
+  whole order is derived from a random seed and locked in before the first briefcase opens,
+  and anyone in the league can re-derive it from that seed afterward to confirm the reveal
+  never touched the result.
 
 ---
 
