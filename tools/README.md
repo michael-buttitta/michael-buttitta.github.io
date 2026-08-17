@@ -1,13 +1,14 @@
 # Editing the site's text
 
-Double-click **`edit-site.cmd`** in the repo root. It starts the local editor and opens
-your browser. Leave that window open while you edit; close it when you're done.
+Three ways in, all the same thing:
 
-Equivalent from a terminal:
+- In Claude Code, type **`/edit`**.
+- Double-click **`edit-site.cmd`** in the repo root.
+- From a terminal: `node tools/edit.js`
 
-```
-node tools/edit.js
-```
+Any of them opens `http://localhost:8790/` in your browser. If the editor is already
+running they just bring it to the front rather than starting a second copy, so it is safe
+to do repeatedly.
 
 Then: **click any paragraph, type, press Ctrl+S.** The bottom toolbar has a dropdown to
 jump between pages, a Save button showing how many blocks you've changed, and an

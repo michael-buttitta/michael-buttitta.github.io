@@ -569,6 +569,14 @@ const ROUTES = routes();
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent(req.url.split('?')[0]);
 
+  /* Lets a second launch recognise a running editor instead of starting
+     another one on the next port up. */
+  if (urlPath === '/__alive') {
+    res.writeHead(200, { 'content-type': 'text/plain' });
+    res.end('edit.js');
+    return;
+  }
+
   if (urlPath === '/__editor.js') {
     res.writeHead(200, { 'content-type': 'text/javascript', 'cache-control': 'no-store' });
     res.end(fs.readFileSync(path.join(__dirname, 'editor-client.js')));
@@ -630,6 +638,37 @@ const server = http.createServer((req, res) => {
   serveAsset(urlPath, res);
 });
 
+/* Open the browser. Async on purpose: a synchronous launch that hung would
+   take the server down with it, and the URL is always printed anyway. */
+function openBrowser(port) {
+  const url = 'http://localhost:' + port + '/';
+  const cmd = process.platform === 'win32'
+    ? ['cmd', ['/c', 'start', '', url]]
+    : process.platform === 'darwin' ? ['open', [url]] : ['xdg-open', [url]];
+  execFile(cmd[0], cmd[1], () => { /* no browser available; ignore */ });
+}
+
+/* If an editor is already up on this port, just bring it to the front. Without
+   this, asking for the editor twice leaves two servers on climbing ports and
+   the browser pointed at whichever one you opened last. */
+function reuseOrStart(start) {
+  let done = false;
+  const go = () => { if (!done) { done = true; start(); } };
+  const req = http.get({ host: 'localhost', port: PORT, path: '/__alive', timeout: 800 }, (res) => {
+    let body = '';
+    res.on('data', (c) => { body += c; });
+    res.on('end', () => {
+      if (body.trim() !== 'edit.js') { go(); return; }
+      done = true;
+      console.log('\n  Editor already running on http://localhost:' + PORT + '/ — opening it.\n');
+      if (!NO_OPEN) { openBrowser(PORT); }
+      setTimeout(() => process.exit(0), 300);
+    });
+  });
+  req.on('error', go);
+  req.on('timeout', () => { req.destroy(); go(); });
+}
+
 /* A server left running by an earlier session squats its port, and Git Bash on
    Windows has no pkill — walk up rather than dying on EADDRINUSE. */
 function listen(port, attemptsLeft) {
@@ -654,17 +693,8 @@ function listen(port, attemptsLeft) {
     console.log('\n  Click any paragraph, type, Ctrl+S. Jump between pages with the');
     console.log('  dropdown in the bottom toolbar. Stop with Ctrl-C.\n');
     watch();
-    /* Open the browser too — the whole point is that this takes one action.
-       Async on purpose: a synchronous launch that hung would take the server
-       down with it, and the URL is printed above either way. */
-    if (!NO_OPEN) {
-      const url = 'http://localhost:' + port + '/';
-      const cmd = process.platform === 'win32'
-        ? ['cmd', ['/c', 'start', '', url]]
-        : process.platform === 'darwin' ? ['open', [url]] : ['xdg-open', [url]];
-      execFile(cmd[0], cmd[1], () => { /* no browser available; ignore */ });
-    }
+    if (!NO_OPEN) { openBrowser(port); }
   });
 }
 
-listen(PORT, 8);
+reuseOrStart(() => listen(PORT, 8));

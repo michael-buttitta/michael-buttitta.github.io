@@ -21,6 +21,9 @@ tools/.shell-cache/
 # Front Matter CMS local state (the shared config, frontmatter.json, IS tracked)
 .frontmatter/
 
+# Claude Code local session state (.claude/commands/ IS tracked)
+.claude/worktrees/
+
 # IDE configurations
 .idea
 .vscode/*
