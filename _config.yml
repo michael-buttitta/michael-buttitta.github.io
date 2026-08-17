@@ -192,6 +192,10 @@ exclude:
   - purgecss.js
   - "*.config.js"
   - "package*.json"
+  # Local editor launcher — a dev tool, never part of the site
+  - "*.cmd"
+  - frontmatter.json
+  - .frontmatter
   # Internal docs — keep out of the published site
   - CLAUDE.md
   - BUILD-NOTES.md

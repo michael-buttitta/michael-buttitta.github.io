@@ -15,6 +15,12 @@ _site
 node_modules
 package-lock.json
 
+# Local editor's cached copies of the deployed page shell
+tools/.shell-cache/
+
+# Front Matter CMS local state (the shared config, frontmatter.json, IS tracked)
+.frontmatter/
+
 # IDE configurations
 .idea
 .vscode/*
