@@ -6,12 +6,11 @@ order: 1
 
 <!-- ── SECTION 1: SHORT INTRO / POSITIONING ─────────────────── -->
 
-I write about AI and crypto, starting from first principles. [What a GPU does](/gpu/),
-[how Bitcoin is mined](/bitcoin/), and where technologies intersect.
+I explore technologies as I seek to better understand AI and crypto. Technology is compounding more than ever and I believe starting from the ground up is the best way to attempt to understand it all.
 
 I dual majored in business and computer science at UNC, spent four years at Microsoft —
 including a year at GitHub working on GitHub Copilot's AI GTM strategy, economics, and pricing — and
-now work in strategic finance at a crypto startup. I build projects and post findings along the way.
+now work in strategic finance at a crypto startup.
 
 ---
 
@@ -25,7 +24,7 @@ years: supply chain, sales, the CEE regional HQ in Prague, and Azure cloud finan
 After the program, I worked on Azure for Operators — at the time a brand-new push into
 telecom cloud — and then moved to GitHub.
 
-The GitHub Copilot role is the one that reshaped how I think. Pricing an AI product forces
+The GitHub role is the one that reshaped how I think. Focused mainly on GitHub Copilot, pricing a nascent AI product forces
 you to answer, in dollars, questions the industry usually debates in abstractions: how to
 allocate GPUs, [what inference actually costs](/llm/),
 [how usage shifts across models](/machine-learning/), and how margins behave when the
@@ -40,7 +39,7 @@ other space I've been drawn to for years.
 
 ## What I've built
 
-Most of the projects are the interactive exhibits on this site — each one a walkthrough of
+Most of the projects so far are the interactive exhibits on this site as I have attempted to learn and document — each one a walkthrough of
 how a single piece of computing actually works, from a CPU up to a language model. None of
 them are animations of the idea: every exhibit runs at least one genuine algorithm live in
 the browser, from SHA-256 and secp256k1 signatures to gradient descent and a transformer
