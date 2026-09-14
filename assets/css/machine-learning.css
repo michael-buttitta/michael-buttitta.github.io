@@ -1147,6 +1147,8 @@
 
 #ml-experience .ml-lab-tasks {
   margin-bottom: 1.1rem;
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 
 #ml-experience .ml-lab-grid {

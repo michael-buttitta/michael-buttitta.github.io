@@ -252,6 +252,26 @@
     };
   }
 
+  /* User-started computation must advance even when rAF is suspended in a
+     hidden tab. Keep ambient drawing on makeLoop; timers may be throttled,
+     but pause/reset still cancels the pending work. */
+  function makeComputeLoop(fn) {
+    var id = null;
+    var last = 0;
+    function frame() {
+      var t = performance.now();
+      var dt = Math.min(50, t - last);
+      last = t;
+      fn(t, dt);
+      if (id !== null) { id = setTimeout(frame, 16); }
+    }
+    return {
+      start: function () { if (id === null) { last = performance.now(); id = setTimeout(frame, 16); } },
+      stop: function () { if (id !== null) { clearTimeout(id); id = null; } },
+      running: function () { return id !== null; }
+    };
+  }
+
   function easeInOut(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
 
   function gauss(rng) {
@@ -1459,7 +1479,7 @@
 
     var playing = false;
     var accum = 0;
-    var loop = makeLoop(function (t, dt) {
+    var loop = makeComputeLoop(function (t, dt) {
       if (!playing) { return; }
       var speed = speedSlider ? parseInt(speedSlider.value, 10) : 12;
       accum += dt * speed / 1000;
@@ -1468,6 +1488,11 @@
         accum -= n;
         for (var i = 0; i < n && it < 4000; i++) { stepGD(); }
         drawAll();
+      }
+      if (it >= 4000) {
+        playing = false;
+        if (bPlay) { bPlay.textContent = 'Train'; }
+        loop.stop();
       }
     });
 
@@ -1481,7 +1506,7 @@
         }
         playing = !playing;
         bPlay.textContent = playing ? 'Pause' : 'Train';
-        if (playing) { loop.start(); }
+        if (playing) { loop.start(); } else { loop.stop(); }
       });
     }
     onScreen(canvas, null, function () { playing = false; if (bPlay) { bPlay.textContent = 'Train'; } loop.stop(); });
@@ -1492,6 +1517,8 @@
     if (bReset) {
       bReset.addEventListener('click', function () {
         playing = false;
+        loop.stop();
+        accum = 0;
         if (bPlay) { bPlay.textContent = 'Train'; }
         resetModel();
       });

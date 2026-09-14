@@ -189,12 +189,12 @@
       g.addEventListener('click', function (ev) {
         if (suppressClick) return;
         ev.stopPropagation();
-        openPanel(t.id);
+        openPanel(t.id, g);
       });
       g.addEventListener('keydown', function (ev) {
         if (ev.key === 'Enter' || ev.key === ' ') {
           ev.preventDefault();
-          openPanel(t.id);
+          openPanel(t.id, g);
         }
       });
 
@@ -267,7 +267,9 @@
     return '<li><span class="tm-pill-planned">' + t.short + ' · soon</span></li>';
   }
 
-  function openPanel(id) {
+  var panelOpener = null;
+
+  function openPanel(id, opener) {
     var t = G.byId[id];
     if (!t) return;
     focusNode(id);
@@ -276,7 +278,7 @@
     var html = '';
     html += '<span class="tm-panel-cat" style="--cat:' + catColor(t) + '">' +
       (G.categories[t.cat] ? G.categories[t.cat].name : '') + '</span>';
-    html += '<h3>' + t.name + '</h3>';
+    html += '<h3 id="tm-panel-title" tabindex="-1">' + t.name + '</h3>';
     html += '<p>' + (t.blurb || t.tagline) + '</p>';
 
     var prereqs = G.prereqsOf(id).map(function (pid) { return G.byId[pid]; }).filter(Boolean);
@@ -317,11 +319,19 @@
 
     panelBody.innerHTML = html;
     panel.hidden = false;
+    panelOpener = opener || nodeEls[id];
+    document.getElementById('tm-panel-title').focus();
+    focusNode(id);
   }
 
-  function closePanel() {
+  function closePanel(restoreFocus) {
+    if (panel.hidden) return;
     panel.hidden = true;
     clearFocus();
+    if (restoreFocus !== false && panelOpener && panelOpener.isConnected) {
+      panelOpener.focus();
+    }
+    panelOpener = null;
   }
 
   /* ======================================================================
@@ -367,6 +377,8 @@
 
   function initPanZoom() {
     stage.addEventListener('wheel', function (ev) {
+      /* The details panel scrolls independently of the graph beneath it. */
+      if (ev.target.closest('.tm-panel')) return;
       ev.preventDefault();
       var p = clientToVb(ev.clientX, ev.clientY);
       zoomAt(p.x, p.y, view.k * Math.exp(-ev.deltaY * 0.0016));
@@ -425,7 +437,7 @@
     stage.addEventListener('click', function (ev) {
       if (suppressClick) return;
       if (!ev.target.closest('.tm-node') && !ev.target.closest('.tm-panel')) {
-        closePanel();
+        closePanel(false);
       }
     });
 
@@ -441,7 +453,10 @@
     });
 
     document.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Escape' && !panel.hidden) closePanel();
+      if (ev.key === 'Escape' && !panel.hidden) {
+        ev.preventDefault();
+        closePanel();
+      }
     });
     document.getElementById('tm-panel-close').addEventListener('click', closePanel);
   }
@@ -491,7 +506,7 @@
       var first = G.topics.filter(function (t) {
         return (t.name + ' ' + t.short + ' ' + t.tagline).toLowerCase().indexOf(q) !== -1;
       })[0];
-      if (first) openPanel(first.id);
+      if (first) openPanel(first.id, input);
     });
   }
 
@@ -501,6 +516,7 @@
     activeCat = null;
     chipEls.forEach(function (c) {
       c.el.classList.toggle('is-on', c.cat === null);
+      c.el.setAttribute('aria-pressed', c.cat === null ? 'true' : 'false');
     });
   }
 

@@ -114,6 +114,26 @@
     };
   }
 
+  /* User-started computation must advance even when rAF is suspended in a
+     hidden tab. Keep ambient drawing on makeLoop; timers may be throttled,
+     but pause/reset still cancels the pending work. */
+  function makeComputeLoop(fn) {
+    var id = null;
+    var last = 0;
+    function frame() {
+      var t = performance.now();
+      var dt = Math.min(50, t - last);
+      last = t;
+      fn(t, dt);
+      if (id !== null) { id = setTimeout(frame, 16); }
+    }
+    return {
+      start: function () { if (id === null) { last = performance.now(); id = setTimeout(frame, 16); } },
+      stop: function () { if (id !== null) { clearTimeout(id); id = null; } },
+      running: function () { return id !== null; }
+    };
+  }
+
   function easeInOut(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
 
   /* A simple seeded PRNG so ambient scenes are repeatable. */
@@ -1235,6 +1255,12 @@
     var model = { w0: 0, w1: 0, b: 0, trained: false };
     var addClass = 0;
     var anim = null;
+    var stageTimer = null;
+
+    function stopTraining() {
+      if (anim) { anim.stop(); anim = null; }
+      if (stageTimer !== null) { clearTimeout(stageTimer); stageTimer = null; }
+    }
 
     function setStage(k, label) {
       flowSteps.forEach(function (s, i) { s.classList.toggle('is-hot', i === k); });
@@ -1357,7 +1383,7 @@
     }
 
     function train() {
-      if (anim) { anim.stop(); anim = null; }
+      stopTraining();
       if (pts.length < 4) {
         setStatus(statusEl, 'Add a few points of each class first — a model needs data.', 'bad');
         return;
@@ -1392,7 +1418,10 @@
         epochsEl.textContent = String(epoch);
         accEl.textContent = Math.round(acc * 100) + '%';
         draw();
-        setTimeout(function () { setStage(3, 'Predictions'); }, reduced() ? 0 : 700);
+        stageTimer = setTimeout(function () {
+          stageTimer = null;
+          setStage(3, 'Predictions');
+        }, reduced() ? 0 : 700);
         if (acc >= 0.999) {
           setStatus(statusEl, 'Converged after ' + epoch + ' passes: the boundary separates every training point. Now click to drop a point anywhere — the tinted regions are the model’s predictions for every possible animal.', 'ok');
         } else {
@@ -1410,7 +1439,7 @@
       }
 
       var acc = 0;
-      anim = makeLoop(function () {
+      anim = makeComputeLoop(function () {
         var mistakes = 0;
         var k;
         for (k = 0; k < 2; k++) {
@@ -1436,6 +1465,7 @@
       var rect = canvas.getBoundingClientRect();
       var p = fromPx(ev.clientX - rect.left, ev.clientY - rect.top);
       if (p.x < 0 || p.x > 10 || p.y < 0 || p.y > 10) { return; }
+      stopTraining();
       pts.push({ x: p.x, y: p.y, c: addClass });
       setStage(0, 'Data');
       model.trained = false;
@@ -1455,7 +1485,7 @@
 
     trainBtn.addEventListener('click', train);
     resetBtn.addEventListener('click', function () {
-      if (anim) { anim.stop(); anim = null; }
+      stopTraining();
       seedData();
       model = { w0: 0, w1: 0, b: 0, trained: false };
       epochsEl.textContent = '–';
@@ -1933,7 +1963,7 @@
         trainBtn.textContent = 'Train more';
         return;
       }
-      loop = makeLoop(function (t, dt) {
+      loop = makeComputeLoop(function (t, dt) {
         var speed = parseInt(speedInput.value, 10);
         if (speed === 0) {
           /* animated: walk the recorded path of one episode step by step */

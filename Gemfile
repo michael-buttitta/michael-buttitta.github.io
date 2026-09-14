@@ -2,7 +2,8 @@
 
 source "https://rubygems.org"
 
-gem "jekyll-theme-chirpy", "~> 7.5"
+# Match the deployed theme and local overrides; review upgrades explicitly.
+gem "jekyll-theme-chirpy", "7.6.0"
 
 gem "html-proofer", "~> 5.0", group: :test
 
